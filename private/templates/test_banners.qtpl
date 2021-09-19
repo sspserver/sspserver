@@ -1,0 +1,137 @@
+{% func TestBanners(zoneID uint64) %}{% collapsespace %}{% stripspace %}
+  {%code
+    var sizes = []struct{
+      title string
+      w, h int
+    }{
+      {
+        title: "leaderboard",
+        w: 728, h: 90,
+      },
+      {
+        title: "Large Leaderboard",
+        w: 728, h: 210,
+      },
+      {
+        title: "Large Leaderboard",
+        w: 720, h: 300,
+      },
+      {
+        title: "banner",
+        w: 468, h: 60,
+      },
+      {
+        title: "half banner",
+        w: 234, h: 60,
+      },
+      {
+        title: "mobile banner",
+        w: 320, h: 50,
+      },
+      {
+        title: "small rectangle",
+        w: 180, h: 150,
+      },
+      {
+        title: "small square",
+        w: 200, h: 200,
+      },
+      {
+        title: "Small Banner",
+        w: 230, h: 33,
+      },
+      {
+        title: "square",
+        w: 250, h: 250,
+      },
+      {
+        title: "300x100",
+        w: 300, h: 100,
+      },
+      {
+        title: "medium rectangle",
+        w: 300, h: 250,
+      },
+      {
+        title: "large rectangle",
+        w: 336, h: 280,
+      },
+      {
+        title: "unstandart",
+        w: 315, h: 300,
+      },
+      {
+        title: "half page",
+        w: 300, h: 600,
+      },
+      {
+        title: "wide skyscraper",
+        w: 160, h: 600,
+      },
+      {
+        title: "Button",
+        w: 120, h: 30,
+      },
+      {
+        title: "skyscraper",
+        w: 120, h: 600,
+      },
+      {
+        title: "portrait",
+        w: 300, h: 1050,
+      },
+      {
+        title: "large leaderboard",
+        w: 970, h: 90,
+      },
+      {
+        title: "billboard",
+        w: 970, h: 250,
+      },
+    }
+  %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <style type="text/css">
+        *, body, html {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        iframe[seamless] {
+            background-color: transparent;
+            border: 0px none transparent;
+            padding: 0px;
+            overflow: hidden;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+  {% for _, size := range sizes %}
+  <div style="float:left;display:block;padding:10px">
+    <h4>{%s= size.title %} ({%d size.w %}x{%d size.h %})</h4>
+    <iframe src="/ad/{%d int(zoneID) %}.html?w={%d size.w %}&amp;h={%d size.h %}"
+      style="width:{%d size.w %}px;height:{%d size.h %}px;border:1px solid #ccc"
+      scrolling="no"
+      allowtransparency="true"
+      allowfullscreen="true"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+      vspace="0"
+      hspace="0"></iframe>
+  </div>
+  {% endfor %}
+</body>
+</html>
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}

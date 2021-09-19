@@ -1,0 +1,6 @@
+adserver:
+  storage:
+    connection: fs:configs
+    formats: formats.json
+    sources: rtb_sources.json
+    zones: zones.json

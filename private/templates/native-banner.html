@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Native Banner</title>
+</head>
+<body>
+<style>
+	/* demo styles */
+	body {
+		padding: 100px;
+		background: #efefef;
+	}
+	/* --- */
+
+	.banner {
+		/* demo styles */
+		max-width: 900px;
+		min-height: 60px;
+		margin: 0 auto;
+		/* --- */
+
+		font-family: Arial,Helvetica,sans-serif;
+		background: #fff;
+		overflow: hidden;
+		cursor: pointer;
+	}
+	.image {
+		/* background-image: url(https://i.pinimg.com/originals/eb/29/3a/eb293ae23cd50d4dba77ef35c8c3c0f6.jpg); */
+		border-style: none;
+		-moz-border-radius: 0;
+		-webkit-border-radius: 0;
+		border-radius: 0;
+		border-width: 0;
+		background-color: #b8dbff;
+		width: 100%;
+		padding-bottom: 100%;
+		position: relative;
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		display: block;
+		overflow: hidden!important;
+		margin: 0;
+	}
+	.video {
+		border-style: none;
+		-moz-border-radius: 0;
+		-webkit-border-radius: 0;
+		border-radius: 0;
+		border-width: 0;
+		background-color: #b8dbff;
+		width: 100%;
+		padding: none;
+		position: relative;
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		display: block;
+		overflow: hidden!important;
+		margin: 0;
+	}
+	.video video {
+		width: 100%;
+		object-fit: cover;
+	}
+	.label {
+		padding: 2px 5px;
+		box-sizing: border-box;
+	}
+	.label a {
+		text-decoration: none !important;
+		word-wrap: break-word;
+		overflow: hidden;
+		background-image: none;
+		box-sizing: content-box;
+		display: block;
+	}
+	.label a:hover {
+		color: #35327b;
+	}
+	.title {
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.3em;
+		max-height: 65px;
+		color: #000;
+	}
+	.brand {
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1em;
+		max-height: 22px;
+		color: #999;
+		padding: 3px 0 0;
+	}
+	.phone {
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1em;
+		max-height: 22px;
+		color: #699;
+		padding: 3px 0 0;
+	}
+
+	/* === horizontal orientation === */
+	.banner.horizontal {
+		min-width: 212px;
+	}
+	.horizontal .image-wrap{
+		width: 40%;
+		float: left;
+	}
+	.horizontal .label{
+		width: 60%;
+		float: left;
+	}
+</style>
+	<div class="banner horizontal">
+		<div class="image-wrap">
+			<a href="/"  class="image"></a>
+		</div>
+		<div class="label">
+			<a href="/" class="title">
+				Demo title text, demo title text, demo title text, demo title text
+			</a>
+			<a href="/" class="brand">
+				Brand name
+			</a>
+			<a href="/" class="phone">
+				+357 99-670-416
+			</a>
+		</div>
+	</div>
+
+	<p>&nbsp;</p>
+	
+	<div class="banner verical">
+		<div class="image-wrap">
+			<a href="/"  class="image"></a>
+		</div>
+		<div class="label">
+			<a href="/" class="title">
+				Demo title text, demo title text, demo title text, demo title text
+			</a>
+			<a href="/" class="brand">
+				Brand name
+			</a>
+			<a href="/" class="phone">
+				+357 99-670-416
+			</a>
+		</div>
+	</div>
+
+	<p>&nbsp;</p>
+	
+	<div class="banner horizontal">
+		<div class="image-wrap">
+			<a href="/"  class="video"><video id="video1">
+				<source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+				<source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
+			</video></a>
+		</div>
+		<div class="label">
+			<a href="/" class="title">
+				Demo title text, demo title text, demo title text, demo title text
+			</a>
+			<a href="/" class="brand">
+				Brand name
+			</a>
+			<a href="/" class="phone">
+				+357 99-670-416
+			</a>
+		</div>
+	</div>
+
+</body>
+</html>

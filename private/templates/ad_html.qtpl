@@ -1,0 +1,103 @@
+{% 
+  import (
+    "strings"
+
+    "geniusrabbit.dev/sspserver/internal/adsource"
+    "geniusrabbit.dev/sspserver/internal/models/types"
+  )
+%}
+
+{% func AdRenderRTBIFrame(bidResponse adsource.Responser) %}{% collapsespace %}{% stripspace %}
+  {%= adHeader() %}
+  {% for _, bid := range bidResponse.Ads() %}
+    {%= AdRenderRTBBid(bidResponse, bid.(*adsource.ResponseBidItem)) %}
+  {% endfor %}
+  {%= adFooter() %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func AdRenderRTBBid(bidResponse adsource.Responser, bid *adsource.ResponseBidItem) %}{% collapsespace %}{% stripspace %}
+  {%= adPixelItem(bid, bidResponse) %}
+  {% if strings.HasPrefix(bid.Bid.AdMarkup, "http://") ||
+        strings.HasPrefix(bid.Bid.AdMarkup, "https://") ||
+        strings.HasPrefix(bid.Bid.AdMarkup, "//") %}
+    <iframe src="{%s bid.Bid.AdMarkup %}"
+      style="width:100%;height:100%;border:none"
+      scrolling="no"
+      allowtransparency="true"
+      allowfullscreen="true"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+      vspace="0"
+      hspace="0"
+      onload="u{%s= bid.Bid.ID %}(1);v{%s= bid.Bid.ID %}(1)"
+      onerror="u{%s= bid.Bid.ID %}(0);v{%s= bid.Bid.ID %}(0)"
+      seamless></iframe>
+  {% else %}
+    {%s= bid.Bid.AdMarkup %}
+  {% endif %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func AdRenderComplexIFrame(resp adsource.Responser) %}{% collapsespace %}{% stripspace %}
+  {%= adHeader() %}
+  {% for _, ad := range resp.Ads() %}
+    {% switch it := ad.(type) %}
+      {% case adsource.ResponserItem %}
+        {%= adRenderOne(resp, it) %}
+      {% case adsource.ResponserMultipleItem %}
+        {%= adRenderMulty(resp, it) %}
+      {% default %}
+        Unsupported type response type
+    {% endswitch %}
+  {% endfor %}
+  {%= adFooter() %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func AdRenderIFrame(resp adsource.Responser, ad adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+  {%= adHeader() %}
+  {%= adRenderOne(resp, ad) %}
+  {%= adFooter() %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func AdRenderOne(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+  {%= adActionScript() %}
+  {%= adRenderOne(resp, it) %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func AdRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) %}{% collapsespace %}{% stripspace %}
+  {%= adActionScript() %}
+  {%= adRenderMulty(resp, it) %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func adRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) %}{% collapsespace %}{% stripspace %}
+  {% for _, ad := range it.Ads() %}
+    {%= adRenderOne(resp, ad) %}
+  {% endfor %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func adRenderOne(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+  {%= adPixelItem(it, resp) %}
+  {%code /* Extract more preority AD format */ %}
+  {% switch it.PriorityFormatType() %}
+    {% case types.FormatProxyType, types.FormatBannerHTML5Type %}
+      {%= adRenderProxy(resp, it) %}
+    {% case types.FormatBannerType %}
+      {%= adRenderBanner(resp, it) %}
+    {% case types.FormatNativeType %}
+      {%= adRenderNative(resp, it) %}
+    {% default %}
+      Unsupported type: {%v it.PriorityFormatType() %}
+  {% endswitch %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func adRenderCustom(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+  CUSTOM
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}

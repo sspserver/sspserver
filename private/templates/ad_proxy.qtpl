@@ -1,0 +1,46 @@
+{% 
+  import (
+    "geniusrabbit.dev/sspserver/internal/adsource"
+  )
+%}
+
+{% func adRenderProxy(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+  {% if url := it.ContentItemString("iframe_url"); len(url) > 0  %}
+  <iframe src="{%s url %}"
+    style="width:100%;height:100%;border:none"
+    scrolling="no"
+    allowtransparency="true"
+    allowfullscreen="true"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    vspace="0"
+    hspace="0"
+    onload="u{%d int(it.AdID()) %}(1);v{%d int(it.AdID()) %}(1)"
+    onerror="u{%d int(it.AdID()) %}(0);v{%d int(it.AdID()) %}(0)"
+    seamless></iframe>
+  {% else %}
+    <script type="text/javascript">u{%d int(it.AdID()) %}(1);v{%d int(it.AdID()) %}(1);</script>
+    {%s= it.ContentItemString("content") %}
+  {% endif %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}
+
+
+{% func adDefault(spotID int, tag string) %}{% collapsespace %}{% stripspace %}
+  {%= adHeader() %}
+  {%= adPixel(0, spotID, 0, tag) %}
+  <iframe src="//cdn.gr.com/page/error_banner.html"
+    style="width:100%;height:100%;border:none"
+    scrolling="no"
+    allowtransparency="true"
+    allowfullscreen="true"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    vspace="0"
+    hspace="0"
+    onload="u0(1);v0(1)"
+    onerror="u0(0);v0(0)"
+    seamless></iframe>
+  {%= adFooter() %}
+{% endstripspace %}{% endcollapsespace %}{% endfunc %}

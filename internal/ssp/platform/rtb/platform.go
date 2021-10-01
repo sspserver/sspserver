@@ -21,8 +21,8 @@ import (
 	"go.uber.org/zap"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/events"
-	"geniusrabbit.dev/sspserver/internal/eventstream"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventstream"
 	"geniusrabbit.dev/sspserver/internal/models"
 	counter "geniusrabbit.dev/sspserver/internal/ssp/errorcounter"
 	"geniusrabbit.dev/sspserver/internal/ssp/openlatency"
@@ -68,7 +68,7 @@ type Platform struct {
 	revenueShareReduce float64
 
 	// win events stream
-	winEvents platform.WinNotifications
+	winEvents platform.WinNotifier
 
 	// bid action stream
 	bidActions eventstream.Stream
@@ -89,7 +89,7 @@ type Platform struct {
 func New(source *models.RTBSource, opts ...interface{}) (*Platform, error) {
 	var (
 		extend      platformExt
-		eventer     platform.WinNotifications
+		eventer     *platform.WinNotifier
 		eventStream eventstream.Stream
 		optim       *optimizer.Optimizer
 		logger      *zap.Logger
@@ -99,7 +99,7 @@ func New(source *models.RTBSource, opts ...interface{}) (*Platform, error) {
 		switch o := opt.(type) {
 		case platformExt:
 			extend = o
-		case platform.WinNotifications:
+		case *platform.WinNotifier:
 			eventer = o
 		case eventstream.Stream:
 			eventStream = o
@@ -277,7 +277,7 @@ func (p *Platform) ProcessResponseItem(response adsource.Responser, it adsource.
 		switch bid := ad.(type) {
 		case *adsource.ResponseBidItem:
 			if len(bid.Bid.NURL) > 0 {
-				p.winEvents.Publish(response.Context(), adsource.WinEvent{URL: bid.Bid.NURL})
+				p.winEvents.Send(response.Context(), bid.Bid.NURL)
 				p.logInfo("ping", bid.Bid.NURL)
 			}
 			p.bidActions.Send(events.Impression, events.StatusUndefined, response, bid)

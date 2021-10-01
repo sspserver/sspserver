@@ -17,7 +17,7 @@ import (
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
 	"geniusrabbit.dev/sspserver/internal/endpoint"
-	"geniusrabbit.dev/sspserver/internal/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 )
 

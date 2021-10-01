@@ -5,7 +5,10 @@
 
 package models
 
-import "geniusrabbit.dev/sspserver/internal/billing"
+import (
+	"geniusrabbit.dev/sspserver/internal/billing"
+	"geniusrabbit.dev/sspserver/internal/data/models"
+)
 
 // Target type object
 type Target interface {
@@ -34,11 +37,11 @@ type Target interface {
 	CompanyID() uint64
 }
 
-// // TargetFromModel convert datavase model specified model
-// // which implements Target interface
-// func TargetFromModel(zone models.Zone) Target {
-// 	if zone.Type == models.ZoneTypeSmartlink {
-// 		return SmartlinkFromModel(zone)
-// 	}
-// 	return ZoneFromModel(zone)
-// }
+// TargetFromModel convert datavase model specified model
+// which implements Target interface
+func TargetFromModel(zone models.Zone) Target {
+	if zone.Type == models.ZoneTypeSmartlink {
+		return SmartlinkFromModel(zone)
+	}
+	return ZoneFromModel(zone)
+}

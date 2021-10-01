@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	cmodels "bitbucket.org/geniusrabbit/corelib/models"
+	cmodels "geniusrabbit.dev/sspserver/internal/data/models"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 )

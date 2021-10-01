@@ -11,8 +11,8 @@ import (
 	nc "github.com/geniusrabbit/notificationcenter"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/eventgenerator"
-	"geniusrabbit.dev/sspserver/internal/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventgenerator"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
 )
 
 // Stream accessor

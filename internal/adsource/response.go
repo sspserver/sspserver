@@ -48,14 +48,6 @@ func (r *Response) Source() Sourcer {
 	return r.source
 }
 
-// AccessPoint of response
-func (r *Response) AccessPoint() AccessPoint {
-	if r.request == nil || r.request.AccessPoint == nil {
-		return nil
-	}
-	return r.request.AccessPoint
-}
-
 // Request information
 func (r *Response) Request() *BidRequest {
 	return r.request

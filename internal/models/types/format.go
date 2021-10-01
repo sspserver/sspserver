@@ -8,18 +8,20 @@ package types
 import (
 	"fmt"
 	"math"
+
+	"geniusrabbit.dev/sspserver/internal/data/models"
 )
 
 // Format struct
 type Format struct {
-	ID        uint64           `json:"id"`
-	Codename  string           `json:"codename"`
-	Types     FormatTypeBitset `json:"type"`
-	Width     int              `json:"w"`
-	Height    int              `json:"h"`
-	MinWidth  int              `json:"mw,omitempty"`
-	MinHeight int              `json:"mh,omitempty"`
-	Config    *FormatConfig    `json:"config,omitempty"`
+	ID        uint64               `json:"id"`
+	Codename  string               `json:"codename"`
+	Types     FormatTypeBitset     `json:"type"`
+	Width     int                  `json:"w"`
+	Height    int                  `json:"h"`
+	MinWidth  int                  `json:"mw,omitempty"`
+	MinHeight int                  `json:"mh,omitempty"`
+	Config    *models.FormatConfig `json:"config,omitempty"`
 	cloned    bool
 }
 
@@ -66,7 +68,7 @@ func (f Format) String() string {
 }
 
 // GetConfig of the format object
-func (f *Format) GetConfig() *FormatConfig {
+func (f *Format) GetConfig() *models.FormatConfig {
 	if f == nil {
 		return nil
 	}

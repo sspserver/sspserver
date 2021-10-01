@@ -1,57 +1,79 @@
 //
-// @project geniusrabbit::rotator 2016 - 2017, 2019
-// @author Dmitry Ponomarev <demdxx@gmail.com> 2016 - 2017, 2019
+// @project geniusrabbit::rotator 2016 - 2017, 2019, 2021
+// @author Dmitry Ponomarev <demdxx@gmail.com> 2016 - 2017, 2019, 2021
 //
 
 package middleware
 
 import (
+	"strconv"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/valyala/fasthttp"
 
-	"bitbucket.org/geniusrabbit/bigbrother/client"
-	"github.com/geniusrabbit/notificationcenter"
+	"geniusrabbit.dev/sspserver/internal/personification"
 )
 
 // CollectMetrics and send to metrics
-func CollectMetrics(metric string, spy Spy, next func(p client.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler {
+func CollectMetrics(metric string, spy Spy, next func(p personification.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler {
 	var (
-		metrics          = notificationcenter.PublisherByName("metrics")
-		metricsCountKey  = metric + ".count"
-		metricsTimingKey = metric + ".timing"
+		buckets      = []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10}
+		metricsCount = promauto.NewCounterVec(prometheus.CounterOpts{
+			Name: metric + "_count",
+			Help: "Count of requests by country",
+		}, []string{"country"})
+		metricTiming = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Namespace: "spy",
+			Name:      metric + "_duration_seconds",
+			Help:      "Histogram of response time for handler in seconds by country",
+			Buckets:   buckets,
+		}, []string{"country", "method", "status_code"})
 	)
 
-	return spy(func(p client.Person, ctx *fasthttp.RequestCtx) {
+	return spy(func(p personification.Person, ctx *fasthttp.RequestCtx) {
 		var (
-			info              = p.UserInfo()
-			country           = info.Country().Code2
-			_metricsCountKey  = metricsCountKey
-			_metricsTimingKey = metricsTimingKey
+			info    = p.UserInfo()
+			country = info.Country().Country
+			start   = time.Now()
 		)
 
 		if len(country) != 2 || country == "**" { // Undefined country
 			country = "A1"
 		}
 
-		_metricsCountKey += ",country=" + country
-		_metricsTimingKey += ",country=" + country
+		metricsCount.WithLabelValues(country).Inc()
 
-		metrics.Send(_metricsCountKey, map[string]func() error{
-			_metricsTimingKey: func() error { next(p, ctx); return nil },
-		})
-	}) // end func
+		next(p, ctx)
+		duration := time.Since(start)
+		statusCode := strconv.Itoa(ctx.Response.StatusCode())
+		metricTiming.WithLabelValues(country, string(ctx.Method()), statusCode).Observe(duration.Seconds())
+	})
 }
 
 // CollectSimpleMetrics and send to metrics
 func CollectSimpleMetrics(metric string, next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	var (
-		metrics          = notificationcenter.PublisherByName("metrics")
-		metricsCountKey  = metric + ".count"
-		metricsTimingKey = metric + ".timing"
+		buckets      = []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10}
+		metricsCount = promauto.NewCounter(prometheus.CounterOpts{
+			Name: metric + "_count",
+			Help: "Count of requests by country",
+		})
+		metricTiming = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Namespace: "simple",
+			Name:      metric + "_duration_seconds",
+			Help:      "Histogram of response time for handler in seconds",
+			Buckets:   buckets,
+		}, []string{"method", "status_code"})
 	)
 
 	return func(ctx *fasthttp.RequestCtx) {
-		metrics.Send(metricsCountKey, map[string]func() error{
-			metricsTimingKey: func() error { next(ctx); return nil },
-		})
-	} // end func
+		start := time.Now()
+		metricsCount.Inc()
+		next(ctx)
+		duration := time.Since(start)
+		statusCode := strconv.Itoa(ctx.Response.StatusCode())
+		metricTiming.WithLabelValues(string(ctx.Method()), statusCode).Observe(duration.Seconds())
+	}
 }

@@ -11,18 +11,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sspserver/udetect"
 	"github.com/valyala/fasthttp"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
 	"geniusrabbit.dev/sspserver/internal/i18n/languages"
-	"geniusrabbit.dev/sspserver/internal/infostructs"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/personification"
 	"geniusrabbit.dev/sspserver/internal/searchtypes"
 )
 
-var defaultUserdata = User{Geo: &infostructs.GeoDefault}
+var defaultUserdata = User{Geo: &udetect.GeoDefault}
 
 // Native asset IDs
 const (
@@ -43,15 +43,14 @@ type BidRequest struct {
 	ExtID           string                 `json:"bidid,omitempty"` // External Auction ID
 	Debug           bool                   `json:"debug,omitempty"`
 	AuctionType     AuctionType            `json:"auction_type,omitempty"`
-	AccessPoint     *models.RTBAccessPoint `json:"-"`
 	RequestCtx      *fasthttp.RequestCtx   `json:"-"` // HTTP request context
 	Request         interface{}            `json:"-"` // Contains original request from RTB or another protocol
 	Person          personification.Person `json:"-"`
 	Imps            []Impression           `json:"imps,omitempty"`
 	AppTarget       *models.Application    `json:"app_target,omitempty"`
-	Device          *infostructs.Device    `json:"device,omitempty"`
-	App             *infostructs.App       `json:"app,omitempty"`
-	Site            *infostructs.Site      `json:"site,omitempty"`
+	Device          *udetect.Device        `json:"device,omitempty"`
+	App             *udetect.App           `json:"app,omitempty"`
+	Site            *udetect.Site          `json:"site,omitempty"`
 	User            *User                  `json:"user,omitempty"`
 	Secure          int                    `json:"secure,omitempty"`
 	Adblock         int                    `json:"adb,omitempty"`
@@ -308,7 +307,7 @@ func (r *BidRequest) BrowserID() uint {
 	if r.Device == nil || r.Device.Browser == nil {
 		return 0
 	}
-	return r.Device.Browser.ID
+	return uint(r.Device.Browser.ID)
 }
 
 // OSID by request
@@ -392,18 +391,18 @@ func (r *BidRequest) IsPrivateBrowsing() bool {
 }
 
 // SiteInfo object
-func (r *BidRequest) SiteInfo() *infostructs.Site {
+func (r *BidRequest) SiteInfo() *udetect.Site {
 	if r.Site != nil {
 		return r.Site
 	}
 	if r.App == nil {
-		return &infostructs.SiteDefault
+		return &udetect.SiteDefault
 	}
 	return nil
 }
 
 // AppInfo object
-func (r *BidRequest) AppInfo() *infostructs.App {
+func (r *BidRequest) AppInfo() *udetect.App {
 	return r.App
 }
 
@@ -417,32 +416,32 @@ func (r *BidRequest) UserInfo() *User {
 		*r.User = defaultUserdata
 	}
 	if r.User.Geo == nil {
-		r.User.Geo = &infostructs.Geo{}
-		*r.User.Geo = infostructs.GeoDefault
+		r.User.Geo = &udetect.Geo{}
+		*r.User.Geo = udetect.GeoDefault
 	}
 	if r.User.Geo.Carrier == nil {
-		r.User.Geo.Carrier = &infostructs.Carrier{}
-		*r.User.Geo.Carrier = infostructs.CarrierDefault
+		r.User.Geo.Carrier = &udetect.Carrier{}
+		*r.User.Geo.Carrier = udetect.CarrierDefault
 	}
 	return r.User
 }
 
 // DeviceInfo data
-func (r *BidRequest) DeviceInfo() *infostructs.Device {
+func (r *BidRequest) DeviceInfo() *udetect.Device {
 	if r == nil {
 		return nil
 	}
 	if r.Device == nil {
-		r.Device = &infostructs.Device{}
-		*r.Device = infostructs.DeviceDefault
+		r.Device = &udetect.Device{}
+		*r.Device = udetect.DeviceDefault
 	}
 	if r.Device.Browser == nil {
-		r.Device.Browser = &infostructs.Browser{}
-		*r.Device.Browser = infostructs.BrowserDefault
+		r.Device.Browser = &udetect.Browser{}
+		*r.Device.Browser = udetect.BrowserDefault
 	}
 	if r.Device.OS == nil {
-		r.Device.OS = &infostructs.OS{}
-		*r.Device.OS = infostructs.OSDefault
+		r.Device.OS = &udetect.OS{}
+		*r.Device.OS = udetect.OSDefault
 	}
 	return r.Device
 }
@@ -464,7 +463,7 @@ func (r *BidRequest) DeviceType() uint {
 }
 
 // OSInfo data
-func (r *BidRequest) OSInfo() *infostructs.OS {
+func (r *BidRequest) OSInfo() *udetect.OS {
 	if r == nil {
 		return nil
 	}
@@ -472,7 +471,7 @@ func (r *BidRequest) OSInfo() *infostructs.OS {
 }
 
 // BrowserInfo data
-func (r *BidRequest) BrowserInfo() *infostructs.Browser {
+func (r *BidRequest) BrowserInfo() *udetect.Browser {
 	if r == nil {
 		return nil
 	}
@@ -492,7 +491,7 @@ func (r *BidRequest) MinECPM() (minBid billing.Money) {
 }
 
 // GeoInfo data
-func (r *BidRequest) GeoInfo() *infostructs.Geo {
+func (r *BidRequest) GeoInfo() *udetect.Geo {
 	if r == nil {
 		return nil
 	}
@@ -500,7 +499,7 @@ func (r *BidRequest) GeoInfo() *infostructs.Geo {
 }
 
 // CarrierInfo data
-func (r *BidRequest) CarrierInfo() *infostructs.Carrier {
+func (r *BidRequest) CarrierInfo() *udetect.Carrier {
 	if geo := r.GeoInfo(); geo != nil {
 		return geo.Carrier
 	}

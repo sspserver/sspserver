@@ -40,9 +40,6 @@ type Responser interface {
 	// Source of response
 	Source() Sourcer
 
-	// Consumer of response
-	AccessPoint() AccessPoint
-
 	// Request information
 	Request() *BidRequest
 

@@ -8,6 +8,7 @@ import (
 	"github.com/valyala/fasthttp"
 
 	"geniusrabbit.dev/sspserver/internal/ssp/platform"
+	"geniusrabbit.dev/sspserver/internal/ssp/platform/info"
 	// "geniusrabbit.dev/sspserver/cmd/rotator/api/v1/dsp/platform"
 	// "geniusrabbit.dev/sspserver/cmd/rotator/api/v1/info"
 )

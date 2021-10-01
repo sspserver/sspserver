@@ -51,14 +51,6 @@ func (r *BidResponse) Source() Sourcer {
 	return r.Src
 }
 
-// AccessPoint of response
-func (r *BidResponse) AccessPoint() AccessPoint {
-	if r.Req == nil || r.Req.AccessPoint == nil {
-		return nil
-	}
-	return r.Req.AccessPoint
-}
-
 // Prepare bid response
 func (r *BidResponse) Prepare() {
 	for i, seat := range r.BidResponse.SeatBid {

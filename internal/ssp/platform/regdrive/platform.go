@@ -21,8 +21,8 @@ import (
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
 	"geniusrabbit.dev/sspserver/internal/billing"
-	"geniusrabbit.dev/sspserver/internal/events"
-	"geniusrabbit.dev/sspserver/internal/eventstream"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventstream"
 	"geniusrabbit.dev/sspserver/internal/models"
 	counter "geniusrabbit.dev/sspserver/internal/ssp/errorcounter"
 	"geniusrabbit.dev/sspserver/internal/ssp/openlatency"

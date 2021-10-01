@@ -5,7 +5,7 @@
 
 package adsource
 
-import "geniusrabbit.dev/sspserver/internal/events"
+import "geniusrabbit.dev/sspserver/internal/eventtraking/events"
 
 // URLGenerator of advertisement
 type URLGenerator interface {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/bsm/openrtb"
 	openrtbnreq "github.com/bsm/openrtb/native/request"
+	uopenrtb "github.com/sspserver/udetect/openrtb"
 
 	"geniusrabbit.dev/sspserver/internal/models/types"
 )
@@ -62,9 +63,9 @@ func (r *BidRequest) RTBBidRequest(opts ...BidRequestRTBOption) *RTBRequest {
 		RTBRequest: openrtb.BidRequest{
 			ID:          r.ID,
 			Imp:         r._RTBImpressions(&opt),
-			Site:        r.SiteInfo().RTBObject(),
-			App:         r.AppInfo().RTBObject(),
-			Device:      r.DeviceInfo().RTBObject(r.UserInfo().Geo),
+			Site:        uopenrtb.SiteFrom(r.SiteInfo()),
+			App:         uopenrtb.ApplicationFrom(r.AppInfo()),
+			Device:      uopenrtb.DeviceFrom(r.DeviceInfo(), r.UserInfo().Geo),
 			User:        r.UserInfo().RTBObject(),
 			AuctionType: 1,                // 1 = First Price, 2 = Second Price Plus
 			TMax:        0,                // Maximum amount of time in milliseconds to submit a bid

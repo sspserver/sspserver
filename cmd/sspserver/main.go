@@ -26,8 +26,9 @@ import (
 	"geniusrabbit.dev/sspserver/internal/data/targetaccessor"
 	"geniusrabbit.dev/sspserver/internal/endpoint"
 	_ "geniusrabbit.dev/sspserver/internal/endpoint/init"
-	"geniusrabbit.dev/sspserver/internal/eventgenerator"
-	"geniusrabbit.dev/sspserver/internal/eventstream"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventgenerator"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventstream"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/pixelgenerator"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/notifications"
@@ -125,7 +126,7 @@ func main() {
 	// URL generator object
 	urlGenerator := &urlgenerator.Generator{
 		EventGenerator: eventGenerator,
-		PixelGenerator: nil, //client.NewPixelGenerator(adServerConf.TrackerHost),
+		PixelGenerator: pixelgenerator.NewPixelGenerator(adServerConf.TrackerHost),
 		CDNDomain:      adServerConf.CDNDomain,
 		ClickPattern:   "/click?c={code}",
 		DirectPattern:  "/direct?c={code}",
@@ -147,14 +148,9 @@ func main() {
 		loaders.SourceReloader(
 			zap.L(),
 			datasourceFrom(datasource, storageConf.Sources),
-			func(id uint64) *models.Company {
-				return &models.Company{
-					ID:       id,
-					Balance:  billing.MoneyFloat(9999999),
-					MaxDaily: billing.MoneyFloat(9999999),
-				}
-			},
+			companyGetter,
 			eventStream,
+			notificationcenter.PublisherByName(winStreamName),
 		),
 	)
 
@@ -245,7 +241,7 @@ func onKillApplication(fnk func()) {
 
 func fatalError(err error, message ...interface{}) {
 	if err != nil {
-		log.Fatal(fmt.Sprint(append(message, err)...))
+		zap.L().Fatal(fmt.Sprint(message...), zap.Error(err))
 	}
 }
 
@@ -284,6 +280,15 @@ func newLogger(debug bool, loglevel string, options ...zap.Option) (logger *zap.
 	logger = zap.New(core, options...)
 
 	return logger, nil
+}
+
+// fake companyGetter with unlimited balance
+func companyGetter(id uint64) *models.Company {
+	return &models.Company{
+		ID:       id,
+		Balance:  billing.MoneyFloat(9999999),
+		MaxDaily: billing.MoneyFloat(9999999),
+	}
 }
 
 func datasourceFrom(datasource interface{}, postfix string) interface{} {

@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
-	"geniusrabbit.dev/sspserver/internal/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 )
@@ -82,14 +82,6 @@ func (it *ResponseAdItem) Source() Sourcer {
 // NetworkName by source
 func (it *ResponseAdItem) NetworkName() string {
 	return ""
-}
-
-// AccessPoint of response
-func (it *ResponseAdItem) AccessPoint() AccessPoint {
-	if it.Req == nil || it.Req.AccessPoint == nil {
-		return nil
-	}
-	return it.Req.AccessPoint
 }
 
 // PriorityFormatType from current Ad

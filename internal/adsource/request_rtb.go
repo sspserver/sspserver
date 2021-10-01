@@ -12,9 +12,9 @@ import (
 	"net"
 
 	"github.com/bsm/openrtb"
+	"github.com/sspserver/udetect"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
-	"geniusrabbit.dev/sspserver/internal/infostructs"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/personification"
@@ -23,13 +23,11 @@ import (
 )
 
 var (
-	emptyRtbGeo      = openrtb.Geo{}
-	emptyRtbDevice   = openrtb.Device{}
-	emptyRtbUser     = openrtb.User{Geo: &emptyRtbGeo}
-	emptyOsInfo      = infostructs.OS{}
-	emptyBrowserInfo = infostructs.Browser{}
-	emptyCompany     = models.Company{}
-	emptyZone        = models.Zone{Comp: &emptyCompany}
+	emptyRtbGeo    = openrtb.Geo{}
+	emptyRtbDevice = openrtb.Device{}
+	emptyRtbUser   = openrtb.User{Geo: &emptyRtbGeo}
+	emptyCompany   = models.Company{}
+	emptyZone      = models.Zone{Comp: &emptyCompany}
 )
 
 // RTBRequest object
@@ -123,7 +121,7 @@ func (r *RTBRequest) ImpressionByID(id string) *openrtb.Impression {
 }
 
 // BidRequest from RTB request
-func (r *RTBRequest) BidRequest(formats types.FormatsAccessor, person personification.Person, defaultTarget models.Target, accessPoint ...*models.RTBAccessPoint) (request *BidRequest, err error) {
+func (r *RTBRequest) BidRequest(formats types.FormatsAccessor, person personification.Person, defaultTarget models.Target) (request *BidRequest, err error) {
 	if err = r.Validate([]string{"USD"}); err != nil {
 		return nil, err
 	}
@@ -148,9 +146,6 @@ func (r *RTBRequest) BidRequest(formats types.FormatsAccessor, person personific
 		}
 	}
 
-	if len(accessPoint) > 0 && accessPoint[0] != nil {
-		request.AccessPoint = accessPoint[0]
-	}
 	request.Init(formats)
 	return request, nil
 }
@@ -159,12 +154,12 @@ func (r *RTBRequest) BidRequest(formats types.FormatsAccessor, person personific
 /// Converters
 ///////////////////////////////////////////////////////////////////////////////
 
-func (r *RTBRequest) app() *infostructs.App {
+func (r *RTBRequest) app() *udetect.App {
 	if r.RTBRequest.App == nil {
 		return nil
 	}
 
-	return &infostructs.App{
+	return &udetect.App{
 		ExtID:         r.RTBRequest.App.ID,                 // External ID
 		Bundle:        r.RTBRequest.App.Bundle,             // App bundle or package name
 		Cat:           r.RTBRequest.App.Cat,                // Array of categories
@@ -175,12 +170,12 @@ func (r *RTBRequest) app() *infostructs.App {
 	}
 }
 
-func (r *RTBRequest) site() *infostructs.Site {
+func (r *RTBRequest) site() *udetect.Site {
 	if r.RTBRequest.Site == nil {
 		return nil
 	}
 
-	return &infostructs.Site{
+	return &udetect.Site{
 		ExtID:         r.RTBRequest.Site.ID,                 // External ID
 		Domain:        r.RTBRequest.Site.Domain,             //
 		Cat:           r.RTBRequest.Site.Cat,                // Array of categories
@@ -193,7 +188,7 @@ func (r *RTBRequest) site() *infostructs.Site {
 	}
 }
 
-func (r *RTBRequest) device(person personification.Person) *infostructs.Device {
+func (r *RTBRequest) device(person personification.Person) *udetect.Device {
 	var (
 		os      = r.os(person)
 		browser = r.browser(person)
@@ -201,7 +196,7 @@ func (r *RTBRequest) device(person personification.Person) *infostructs.Device {
 	)
 
 	if r.RTBRequest.Device == nil {
-		return &infostructs.Device{
+		return &udetect.Device{
 			// Make:       info.Device.Make,       // Device make
 			// Model:      info.Device.Model,      // Device model
 			OS:      os,      // Device OS
@@ -217,8 +212,8 @@ func (r *RTBRequest) device(person personification.Person) *infostructs.Device {
 		}
 	}
 
-	devType := infostructs.DeviceType(r.RTBRequest.Device.DeviceType)
-	return &infostructs.Device{
+	devType := udetect.DeviceType(r.RTBRequest.Device.DeviceType)
+	return &udetect.Device{
 		Make:       r.RTBRequest.Device.Make,     // Device make
 		Model:      r.RTBRequest.Device.Model,    // Device model
 		OS:         os,                           // Device OS
@@ -234,14 +229,14 @@ func (r *RTBRequest) device(person personification.Person) *infostructs.Device {
 	}
 }
 
-func (r *RTBRequest) browser(person personification.Person) *infostructs.Browser {
+func (r *RTBRequest) browser(person personification.Person) *udetect.Browser {
 	// var info = person.UserInfo()
 
 	// if r.RTBRequest.Device == nil {
 	// 	return info.Device.Browser
 	// }
 
-	return &infostructs.Browser{
+	return &udetect.Browser{
 		// ID:              info.Device.Browser.ID,       // Internal system ID
 		// Name:            info.Device.Browser.Name,     //
 		// Version:         info.Device.Browser.Version,  //
@@ -256,14 +251,14 @@ func (r *RTBRequest) browser(person personification.Person) *infostructs.Browser
 	}
 }
 
-func (r *RTBRequest) os(person personification.Person) *infostructs.OS {
+func (r *RTBRequest) os(person personification.Person) *udetect.OS {
 	// var info = person.UserInfo()
 
 	// if info.Device.OS.ID > 0 || r.RTBRequest.Device == nil {
 	// 	return info.Device.OS
 	// }
 
-	return &infostructs.OS{
+	return &udetect.OS{
 		ID:      0,
 		Name:    r.RTBRequest.Device.OS,
 		Version: r.RTBRequest.Device.OSVer,
@@ -294,11 +289,11 @@ func (r *RTBRequest) user(person personification.Person) *User {
 	}
 }
 
-func (r *RTBRequest) geo(person personification.Person) *infostructs.Geo {
+func (r *RTBRequest) geo(person personification.Person) *udetect.Geo {
 	var (
 		ip net.IP
 		// info = person.UserInfo()
-		geo infostructs.Geo
+		geo udetect.Geo
 	)
 
 	if r.RTBRequest.Device != nil {
@@ -309,7 +304,7 @@ func (r *RTBRequest) geo(person personification.Person) *infostructs.Geo {
 	// }
 
 	if r.RTBRequest.User != nil && r.RTBRequest.User.Geo != nil {
-		geo = infostructs.Geo{
+		geo = udetect.Geo{
 			// ID:            info.Geo.ID,                                                         // Internal geo ID
 			IP:      ip,                // IPv4/6
 			Carrier: r.carrier(person), // Carrier or ISP derived from the IP address
@@ -324,7 +319,7 @@ func (r *RTBRequest) geo(person personification.Person) *infostructs.Geo {
 			// UTCOffset:     defInt(info.Geo.UTCOffset, r.RTBRequest.User.Geo.UTCOffset),         // Local time as the number +/- of minutes from UTC
 		}
 	} else {
-		geo = infostructs.Geo{
+		geo = udetect.Geo{
 			// ID:            info.Geo.ID,            // Internal geo ID
 			IP:      ip,                // IPv4/6
 			Carrier: r.carrier(person), // Carrier or ISP derived from the IP address
@@ -343,14 +338,14 @@ func (r *RTBRequest) geo(person personification.Person) *infostructs.Geo {
 	return &geo
 }
 
-func (r *RTBRequest) carrier(person personification.Person) *infostructs.Carrier {
+func (r *RTBRequest) carrier(person personification.Person) *udetect.Carrier {
 	// carrier := person.UserInfo().CarrierInfo()
 	// return &infostructs.Carrier{
 	// 	ID:   carrier.ID,
 	// 	Name: carrier.Name,
 	// 	Code: carrier.Code,
 	// }
-	return &infostructs.Carrier{}
+	return &udetect.Carrier{}
 }
 
 func (r *RTBRequest) imp(target models.Target, imp *openrtb.Impression) *Impression {

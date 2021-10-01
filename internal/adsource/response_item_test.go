@@ -85,7 +85,7 @@ func newAdResponse(comp *models.Company, imp Impression) *ResponseAdItem {
 		Req:    &BidRequest{ID: "xxx", Imps: []Impression{imp}},
 		Imp:    &imp,
 		Ad: &models.Ad{
-			Format:      types.FormatFromSize(250, 250, 0, 0),
+			Format:      &types.Format{Width: 250, Height: 250},
 			BidPrice:    billing.MoneyFloat(5),
 			Price:       billing.MoneyFloat(60),
 			LeadPrice:   billing.MoneyFloat(120),

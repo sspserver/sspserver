@@ -16,16 +16,16 @@ import (
 	"time"
 
 	"github.com/demdxx/gocast"
+	"github.com/sspserver/udetect"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
-	"bitbucket.org/geniusrabbit/bigbrother/client"
 	fasthttpext "bitbucket.org/geniusrabbit/corelib/net/fasthttp"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/infostructs"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
+	"geniusrabbit.dev/sspserver/internal/personification"
 	"geniusrabbit.dev/sspserver/internal/rand"
 )
 
@@ -98,7 +98,7 @@ func NewDirectRequestOptions(ctx *fasthttp.RequestCtx) *RequestOptions {
 }
 
 // NewRequestFor person
-func NewRequestFor(ctx context.Context, requestID string, target models.Target, person client.Person, opt *RequestOptions, formatAccessor types.FormatsAccessor) (req *adsource.BidRequest) {
+func NewRequestFor(ctx context.Context, requestID string, target models.Target, person personification.Person, opt *RequestOptions, formatAccessor types.FormatsAccessor) (req *adsource.BidRequest) {
 	var (
 		userInfo         = person.UserInfo()
 		ageStart, ageEnd = userInfo.Ages()
@@ -145,7 +145,7 @@ func NewRequestFor(ctx context.Context, requestID string, target models.Target, 
 			Keywords:      userInfo.Keywords(),                 // Comma separated list of keywords, interests, or intent
 			Geo:           userInfo.GeoInfo(),
 		},
-		Site: &infostructs.Site{
+		Site: &udetect.Site{
 			ExtID:         "",              // External ID
 			Domain:        domain(referer), //
 			Cat:           nil,             // Array of categories

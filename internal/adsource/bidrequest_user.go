@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/bsm/openrtb"
-
-	"geniusrabbit.dev/sspserver/internal/infostructs"
+	"github.com/sspserver/udetect"
+	uopenrtb "github.com/sspserver/udetect/openrtb"
 )
 
 // TypeSex type
@@ -72,19 +72,19 @@ type Data struct {
 
 // User information
 type User struct {
-	ID            string           `json:"id,omitempty"`        // Unique User ID
-	Email         string           `json:"email,omitempty"`     // In some cases it's able the use email, and we are gonna use it
-	Username      string           `json:"username,omitempty"`  // User profile name from the external service or potentional username
-	SessionID     string           `json:"sessid,omitempty"`    // Unique session ID
-	FingerPrintID string           `json:"fpid,omitempty"`      //
-	ETag          string           `json:"etag,omitempty"`      //
-	Birthday      string           `json:"birthday,omitempty"`  // * Prefer do not use such personal information in alghoritm
-	AgeStart      int              `json:"age_start,omitempty"` // Year of birth from
-	AgeEnd        int              `json:"age_end,omitempty"`   // Year of birth from
-	Gender        string           `json:"gender,omitempty"`    // Gender ("M": male, "F" female, "O" Other)
-	Keywords      string           `json:"keywords,omitempty"`  // Comma separated list of keywords, interests, or intent
-	Geo           *infostructs.Geo `json:"geo,omitempty"`
-	Data          []Data           `json:"data,omitempty"`
+	ID            string       `json:"id,omitempty"`        // Unique User ID
+	Email         string       `json:"email,omitempty"`     // In some cases it's able the use email, and we are gonna use it
+	Username      string       `json:"username,omitempty"`  // User profile name from the external service or potentional username
+	SessionID     string       `json:"sessid,omitempty"`    // Unique session ID
+	FingerPrintID string       `json:"fpid,omitempty"`      //
+	ETag          string       `json:"etag,omitempty"`      //
+	Birthday      string       `json:"birthday,omitempty"`  // * Prefer do not use such personal information in alghoritm
+	AgeStart      int          `json:"age_start,omitempty"` // Year of birth from
+	AgeEnd        int          `json:"age_end,omitempty"`   // Year of birth from
+	Gender        string       `json:"gender,omitempty"`    // Gender ("M": male, "F" female, "O" Other)
+	Keywords      string       `json:"keywords,omitempty"`  // Comma separated list of keywords, interests, or intent
+	Geo           *udetect.Geo `json:"geo,omitempty"`
+	Data          []Data       `json:"data,omitempty"`
 	birthday      time.Time
 }
 
@@ -131,7 +131,7 @@ func (u User) RTBObject() *openrtb.User {
 		Gender:     u.Gender,   // Gender ("M": male, "F" female, "O" Other)
 		Keywords:   u.Keywords, // Comma separated list of keywords, interests, or intent
 		CustomData: "",         // Optional feature to pass bidder data that was set in the exchange's cookie. The string must be in base85 cookie safe characters and be in any format. Proper JSON encoding must be used to include "escaped" quotation marks.
-		Geo:        u.Geo.RTBObject(),
+		Geo:        uopenrtb.GeoFrom(u.Geo),
 		Data:       data,
 		Ext:        nil,
 	}

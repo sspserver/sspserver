@@ -51,14 +51,6 @@ func (r ResponseEmpty) Source() Sourcer {
 	return r.Src
 }
 
-// AccessPoint of response
-func (r ResponseEmpty) AccessPoint() AccessPoint {
-	if r.Req == nil || r.Req.AccessPoint == nil {
-		return nil
-	}
-	return r.Req.AccessPoint
-}
-
 // PriorityFormatType from current Ad
 func (r ResponseEmpty) PriorityFormatType() types.FormatType {
 	return types.FormatUndefinedType

@@ -1,8 +1,10 @@
 package personification
 
 import (
+	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sspserver/udetect"
 	"github.com/valyala/fasthttp"
 
@@ -19,41 +21,53 @@ type Signeture struct {
 }
 
 // Whois user information
-func (sign *Signeture) Whois(ctx *fasthttp.RequestCtx) (Person, error) {
+func (sign *Signeture) Whois(ctx context.Context, req *fasthttp.RequestCtx) (Person, error) {
 	var (
 		uuidCookie   fasthttp.Cookie
 		sessidCookie fasthttp.Cookie
 	)
 
-	if span, _ := gtracing.StartSpanFromFastContext(ctx, "personification.whois"); span != nil {
+	if span, _ := gtracing.StartSpanFromFastContext(req, "personification.whois"); span != nil {
 		defer span.Finish()
 	}
 
 	uuidCookie.ParseBytes(
-		ctx.Request.Header.Cookie(sign.uuidName),
+		req.Request.Header.Cookie(sign.uuidName),
 	)
 
 	sessidCookie.ParseBytes(
-		ctx.Request.Header.Cookie(sign.sessidName),
+		req.Request.Header.Cookie(sign.sessidName),
 	)
 
-	uuidObj, _ := udetect.UUIDFromString(string(uuidCookie.Value()))
-	sessidObj, _ := udetect.UUIDFromString(string(sessidCookie.Value()))
+	uuidObj, _ := uuid.Parse(string(uuidCookie.Value()))
+	sessidObj, _ := uuid.Parse(string(sessidCookie.Value()))
 	request := &udetect.Request{
-		Uid:    uuidObj,
-		Sessid: sessidObj,
-		Ip:     fasthttpext.IPAdressByRequestCF(ctx),
-		Ua:     string(ctx.UserAgent()),
-		Url:    string(ctx.Referer()),
+		UID:             uuidObj,
+		SessID:          sessidObj,
+		IP:              fasthttpext.IPAdressByRequestCF(req),
+		UA:              string(req.UserAgent()),
+		URL:             string(req.Referer()),
+		Ref:             "", // TODO: add additional information
+		DNT:             0,
+		LMT:             0,
+		Adblock:         0,
+		PrivateBrowsing: 0,
+		JS:              0,
+		Languages:       nil,
+		PrimaryLanguage: "",
+		FlashVer:        "",
+		Width:           0,
+		Height:          0,
+		Extensions:      nil,
 	}
 
-	_, err := sign.detector.Detect(request)
+	_, err := sign.detector.Detect(ctx, request)
 	return &person{request: request}, err
 }
 
 // SignCookie do sign request by traking response
-func (sign *Signeture) SignCookie(resp Person, ctx *fasthttp.RequestCtx) {
-	if span, _ := gtracing.StartSpanFromFastContext(ctx, "personification.sign"); span != nil {
+func (sign *Signeture) SignCookie(resp Person, req *fasthttp.RequestCtx) {
+	if span, _ := gtracing.StartSpanFromFastContext(req, "personification.sign"); span != nil {
 		defer span.Finish()
 	}
 
@@ -61,21 +75,21 @@ func (sign *Signeture) SignCookie(resp Person, ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	// if len(resp.UserInfo().UUID()) > 0 {
-	// 	c := &fasthttp.Cookie{}
-	// 	c.SetKey(sign.uuidName)
-	// 	c.SetValue(resp.UserInfo().UUID())
-	// 	c.SetHTTPOnly(true)
-	// 	c.SetExpire(time.Now().Add(365 * 24 * time.Hour))
-	// 	ctx.Response.Header.SetCookie(c)
-	// }
+	if _uuid := resp.UserInfo().UUID(); len(_uuid) > 0 {
+		c := &fasthttp.Cookie{}
+		c.SetKey(sign.uuidName)
+		c.SetValue(_uuid)
+		c.SetHTTPOnly(true)
+		c.SetExpire(time.Now().Add(365 * 24 * time.Hour))
+		req.Response.Header.SetCookie(c)
+	}
 
-	// if len(resp.UserInfo().SessionID()) > 0 {
-	// 	c := &fasthttp.Cookie{}
-	// 	c.SetKey(sign.sessidName)
-	// 	c.SetValue(resp.UserInfo().SessionID())
-	// 	c.SetHTTPOnly(true)
-	// 	c.SetExpire(time.Now().Add(sign.sessidLifetime))
-	// 	ctx.Response.Header.SetCookie(c)
-	// }
+	if sessid := resp.UserInfo().SessionID(); len(sessid) > 0 {
+		c := &fasthttp.Cookie{}
+		c.SetKey(sign.sessidName)
+		c.SetValue(sessid)
+		c.SetHTTPOnly(true)
+		c.SetExpire(time.Now().Add(sign.sessidLifetime))
+		req.Response.Header.SetCookie(c)
+	}
 }

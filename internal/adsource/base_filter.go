@@ -11,8 +11,7 @@ import (
 	"sort"
 
 	"github.com/cznic/sortutil"
-
-	"geniusrabbit.dev/sspserver/internal/infostructs"
+	"github.com/sspserver/udetect"
 )
 
 // BaseFilter object
@@ -64,7 +63,7 @@ func (f *BaseFilter) Test(request *BidRequest) bool {
 	}
 
 	var (
-		deviceType  infostructs.DeviceType
+		deviceType  udetect.DeviceType
 		countryCode string
 	)
 

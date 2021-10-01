@@ -13,7 +13,7 @@ import (
 	"github.com/demdxx/gocast"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
 	"geniusrabbit.dev/sspserver/internal/models"
 )
 
@@ -46,19 +46,14 @@ func New(service string) Generator {
 // Event object by response
 func (g generator) Event(event events.Type, status uint8, response adsource.Responser, it adsource.ResponserItem) (*events.Event, error) {
 	var (
-		r             = response.Request()
-		imp           = it.Impression()
-		sourceID      uint64
-		accessPointID uint64
-		zoneID        uint64
+		r        = response.Request()
+		imp      = it.Impression()
+		sourceID uint64
+		zoneID   uint64
 	)
 
 	if src := it.Source(); src != nil {
 		sourceID = src.ID()
-	}
-
-	if response.AccessPoint() != nil {
-		accessPointID = response.AccessPoint().ID()
 	}
 
 	if imp != nil && imp.Target != nil {
@@ -89,7 +84,7 @@ func (g generator) Event(event events.Type, status uint8, response adsource.Resp
 		ExtImpID:     it.ExtImpressionID(),          // External auction Imp ID
 		Source:       sourceID,                      // Advertisement Source ID
 		Network:      it.NetworkName(),              // Source Network Name or Domain (Cross sails)
-		AccessPoint:  accessPointID,                 // Access Point ID to own Advertisement
+		AccessPoint:  0,                             // Access Point ID to own Advertisement
 		// State Location
 		Platform:    0,                 // Where displaid? 0 – undefined, 1 – web site, 2 – native app, 3 – game
 		Domain:      r.DomainName(),    //
@@ -132,7 +127,7 @@ func (g generator) Event(event events.Type, status uint8, response adsource.Resp
 		UserAgent:       r.BrowserInfo().UA,
 		Device:          r.DeviceInfo().ID,
 		OS:              r.DeviceInfo().OS.ID,
-		Browser:         r.BrowserInfo().ID,
+		Browser:         uint(r.BrowserInfo().ID),
 		Categories:      "",
 		Adblock:         b2u(r.IsAdblock()),
 		PrivateBrowsing: b2u(r.IsPrivateBrowsing()),

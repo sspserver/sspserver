@@ -6,27 +6,26 @@
 package models
 
 import (
+	"strings"
+
 	"github.com/geniusrabbit/gosql"
 
+	"geniusrabbit.dev/sspserver/internal/data/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 )
 
 // RTBRequestType contains type of representation of request information
-type RTBRequestType int
+type RTBRequestType = models.RTBRequestType
 
 // Request types
 const (
-	RTBRequestTypeUndefined       RTBRequestType = 0
-	RTBRequestTypeJSON            RTBRequestType = 1
-	RTBRequestTypeXML             RTBRequestType = 2
-	RTBRequestTypeProtoBUFF       RTBRequestType = 3
-	RTBRequestTypePOSTFormEncoded RTBRequestType = 4 // application/x-www-form-urlencoded
-	RTBRequestTypePLAINTEXT       RTBRequestType = 5
+	RTBRequestTypeUndefined       = models.RTBRequestTypeUndefined
+	RTBRequestTypeJSON            = models.RTBRequestTypeJSON
+	RTBRequestTypeXML             = models.RTBRequestTypeXML
+	RTBRequestTypeProtoBUFF       = models.RTBRequestTypeProtoBUFF
+	RTBRequestTypePOSTFormEncoded = models.RTBRequestTypePOSTFormEncoded
+	RTBRequestTypePLAINTEXT       = models.RTBRequestTypePLAINTEXT
 )
-
-type companyStore interface {
-	CompanyByID(id uint64) *Company
-}
 
 // RTBSourceOptions flags
 type RTBSourceOptions struct {
@@ -60,56 +59,56 @@ type RTBSource struct {
 	Config gosql.NullableJSON
 }
 
-// // RTBSourceFromModel convert database model to specified model
-// func RTBSourceFromModel(cl *models.RTBSource, comp *Company) (src *RTBSource) {
-// 	if comp == nil {
-// 		return nil
-// 	}
+// RTBSourceFromModel convert database model to specified model
+func RTBSourceFromModel(cl *models.RTBSource, comp *Company) (src *RTBSource) {
+	if comp == nil {
+		return nil
+	}
 
-// 	var (
-// 		opt = RTBSourceOptions{
-// 			ErrorsIgnore: cl.Flags.GetBool("errors_ignore"),
-// 			Trace:        cl.Flags.GetBool("trace"),
-// 		}
-// 		filter = types.BaseFilter{
-// 			Secure:          cl.Secure,
-// 			Adblock:         cl.AdBlock,
-// 			PrivateBrowsing: cl.PrivateBrowsing,
-// 			IP:              cl.IP,
-// 		}
-// 	)
+	var (
+		opt = RTBSourceOptions{
+			ErrorsIgnore: cl.Flags.GetBool("errors_ignore"),
+			Trace:        cl.Flags.GetBool("trace"),
+		}
+		filter = types.BaseFilter{
+			Secure:          cl.Secure,
+			Adblock:         cl.AdBlock,
+			PrivateBrowsing: cl.PrivateBrowsing,
+			IP:              cl.IP,
+		}
+	)
 
-// 	filter.Set(types.FieldFormat, cl.Formats)
-// 	filter.Set(types.FieldDeviceTypes, cl.DeviceTypes)
-// 	filter.Set(types.FieldDevices, cl.Devices)
-// 	filter.Set(types.FieldOS, cl.OS)
-// 	filter.Set(types.FieldBrowsers, cl.Browsers)
-// 	filter.Set(types.FieldCategories, cl.Categories)
-// 	filter.Set(types.FieldCountries, cl.Countries)
-// 	filter.Set(types.FieldLanguages, cl.Languages)
-// 	filter.Set(types.FieldZones, cl.Zones)
-// 	filter.Set(types.FieldDomains, cl.Domains)
+	filter.Set(types.FieldFormat, cl.Formats)
+	filter.Set(types.FieldDeviceTypes, cl.DeviceTypes)
+	filter.Set(types.FieldDevices, cl.Devices)
+	filter.Set(types.FieldOS, cl.OS)
+	filter.Set(types.FieldBrowsers, cl.Browsers)
+	filter.Set(types.FieldCategories, cl.Categories)
+	filter.Set(types.FieldCountries, cl.Countries)
+	filter.Set(types.FieldLanguages, cl.Languages)
+	filter.Set(types.FieldZones, cl.Zones)
+	filter.Set(types.FieldDomains, cl.Domains)
 
-// 	return &RTBSource{
-// 		ID:                 cl.ID,
-// 		Company:            comp,
-// 		Protocol:           strings.ToLower(cl.Protocol),
-// 		URL:                cl.URL,
-// 		Method:             strings.ToUpper(cl.Method),
-// 		RequestType:        cl.RequestType,
-// 		Headers:            cl.Headers,
-// 		AuctionType:        cl.AuctionType,
-// 		RPS:                cl.RPS,
-// 		Timeout:            cl.Timeout,
-// 		Options:            opt,
-// 		Filter:             filter,
-// 		Accuracy:           cl.Accuracy,
-// 		RevenueShareReduce: cl.RevenueShareReduce,
-// 		MinimalWeight:      cl.MinimalWeight,
-// 		Flags:              cl.Flags,
-// 		Config:             cl.Config,
-// 	}
-// }
+	return &RTBSource{
+		ID:                 cl.ID,
+		Company:            comp,
+		Protocol:           strings.ToLower(cl.Protocol),
+		URL:                cl.URL,
+		Method:             strings.ToUpper(cl.Method),
+		RequestType:        cl.RequestType,
+		Headers:            cl.Headers,
+		AuctionType:        cl.AuctionType,
+		RPS:                cl.RPS,
+		Timeout:            cl.Timeout,
+		Options:            opt,
+		Filter:             filter,
+		Accuracy:           cl.Accuracy,
+		RevenueShareReduce: cl.RevenueShareReduce,
+		MinimalWeight:      cl.MinimalWeight,
+		Flags:              cl.Flags,
+		Config:             cl.Config,
+	}
+}
 
 // Test RTB source
 func (s *RTBSource) Test(t types.TargetPointer) bool {

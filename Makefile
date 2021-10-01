@@ -58,8 +58,20 @@ $(GOMOCK):
 	@mkdir -p $(dir $(GOMOCK))
 	@touch $(GOMOCK)
 
+
+QTC_VERSION := latest
+QTC := $(TMP_VERSIONS)/qtc/$(QTC_VERSION)
+$(QTC):
+	$(eval QTC_TMP := $(shell mktemp -d))
+	cd $(QTC_TMP); go get github.com/valyala/quicktemplate/qtc@$(QTC_VERSION)
+	@rm -rf $(QTC_TMP)
+	@rm -rf $(dir $(QTC))
+	@mkdir -p $(dir $(QTC))
+	@touch $(QTC)
+
+
 .PHONY: deps
-deps: $(GOLANGLINTCI) $(GOMOCK)
+deps: $(GOLANGLINTCI) $(GOMOCK) $(QTC)
 
 .PHONY: all
 all: lint cover
@@ -80,6 +92,10 @@ fmt: ## Run formatting code
 .PHONY: test
 test: ## Run unit tests
 	go test -v -tags ${APP_TAGS} -race ./...
+
+.PHONY: qtc
+qtc: ## Build templates
+	qtc -dir=private/templates
 
 .PHONY: tidy
 tidy:
@@ -108,7 +124,7 @@ build: ## Build application
 	@rm -rf .build/accessor
 	GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} CGO_ENABLED=${BUILD_CGO_ENABLED} \
 		go build -ldflags "-X main.buildDate=`date -u +%Y%m%d.%H%M%S` -X main.buildCommit=${COMMIT_NUMBER}" \
-			-tags ${APP_TAGS} -o ".build/accessor" cmd/accessor/main.go
+			-tags ${APP_TAGS} -o ".build/sspserver" cmd/sspserver/main.go
 
 .PHONY: run
 run: build ## Run service by docker-compose

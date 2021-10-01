@@ -11,16 +11,16 @@ import (
 	"time"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/client"
-	"geniusrabbit.dev/sspserver/internal/eventgenerator"
-	"geniusrabbit.dev/sspserver/internal/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventgenerator"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/pixelgenerator"
 	"geniusrabbit.dev/sspserver/internal/models"
 )
 
 // Generator of URLs
 type Generator struct {
 	EventGenerator eventgenerator.Generator
-	PixelGenerator client.PixelGenerator
+	PixelGenerator pixelgenerator.PixelGenerator
 	CDNDomain      string
 	ClickPattern   string
 	DirectPattern  string

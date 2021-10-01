@@ -6,9 +6,12 @@
 package models
 
 import (
+	"strconv"
+
 	"github.com/geniusrabbit/gosql"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
+	"geniusrabbit.dev/sspserver/internal/data/models"
 )
 
 // Smartlink model
@@ -25,24 +28,24 @@ type Smartlink struct {
 	DefaultCode       map[string]string
 }
 
-// // SmartlinkFromModel convert database model to specified model
-// func SmartlinkFromModel(zone models.Zone) *Smartlink {
-// 	var code map[string]string
-// 	zone.DefaultCode.UnmarshalTo(&code)
+// SmartlinkFromModel convert database model to specified model
+func SmartlinkFromModel(zone models.Zone) *Smartlink {
+	var code map[string]string
+	zone.DefaultCode.UnmarshalTo(&code)
 
-// 	return &Smartlink{
-// 		id:                zone.ID,
-// 		StringID:          strconv.FormatUint(zone.ID, 10),
-// 		Price:             zone.Price,
-// 		Comp:              nil,
-// 		CompID:            zone.CompanyID,
-// 		AllowedTypes:      zone.AllowedTypes,
-// 		AllowedSources:    zone.AllowedSources,
-// 		DisallowedSources: zone.DisallowedSources,
-// 		Campaigns:         zone.Campaigns,
-// 		DefaultCode:       code,
-// 	}
-// }
+	return &Smartlink{
+		id:                zone.ID,
+		StringID:          strconv.FormatUint(zone.ID, 10),
+		Price:             zone.Price,
+		Comp:              nil,
+		CompID:            zone.CompanyID,
+		AllowedTypes:      zone.AllowedTypes,
+		AllowedSources:    zone.AllowedSources,
+		DisallowedSources: zone.DisallowedSources,
+		Campaigns:         zone.Campaigns,
+		DefaultCode:       code,
+	}
+}
 
 // ID of object
 func (l *Smartlink) ID() uint64 {
@@ -55,12 +58,11 @@ func (l *Smartlink) Codename() string {
 }
 
 // AlternativeAdCode returns URL or any code (HTML, XML, etc)
-func (l *Smartlink) AlternativeAdCode(key string) (val string) {
+func (l *Smartlink) AlternativeAdCode(key string) string {
 	if l.DefaultCode == nil {
 		return ""
 	}
-	val, _ = l.DefaultCode[key]
-	return val
+	return l.DefaultCode[key]
 }
 
 // PurchasePrice gives the price of view from external resource

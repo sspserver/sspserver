@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/eventstream"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventstream"
 	"geniusrabbit.dev/sspserver/internal/middleware"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 )

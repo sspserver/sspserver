@@ -6,9 +6,12 @@
 package models
 
 import (
+	"strconv"
+
 	"github.com/geniusrabbit/gosql"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
+	"geniusrabbit.dev/sspserver/internal/data/models"
 )
 
 // Zone model
@@ -26,25 +29,25 @@ type Zone struct {
 	DefaultCode       map[string]string
 }
 
-// // ZoneFromModel convert database model to specified model
-// func ZoneFromModel(zone models.Zone) *Zone {
-// 	var code map[string]string
-// 	zone.DefaultCode.UnmarshalTo(&code)
+// ZoneFromModel convert database model to specified model
+func ZoneFromModel(zone models.Zone) *Zone {
+	var code map[string]string
+	zone.DefaultCode.UnmarshalTo(&code)
 
-// 	return &Zone{
-// 		id:                zone.ID,
-// 		StringID:          strconv.FormatUint(zone.ID, 10),
-// 		Price:             zone.Price,
-// 		Comp:              nil,
-// 		CompID:            zone.CompanyID,
-// 		MinECPM:           zone.MinECPM,
-// 		MinECPMByGeo:      nil,
-// 		AllowedTypes:      zone.AllowedTypes,
-// 		AllowedSources:    zone.AllowedSources,
-// 		DisallowedSources: zone.DisallowedSources,
-// 		DefaultCode:       code,
-// 	}
-// }
+	return &Zone{
+		id:                zone.ID,
+		StringID:          strconv.FormatUint(zone.ID, 10),
+		Price:             zone.Price,
+		Comp:              nil,
+		CompID:            zone.CompanyID,
+		MinECPM:           zone.MinECPM,
+		MinECPMByGeo:      nil,
+		AllowedTypes:      zone.AllowedTypes,
+		AllowedSources:    zone.AllowedSources,
+		DisallowedSources: zone.DisallowedSources,
+		DefaultCode:       code,
+	}
+}
 
 // ID of object
 func (z *Zone) ID() uint64 {
@@ -57,12 +60,11 @@ func (z *Zone) Codename() string {
 }
 
 // AlternativeAdCode returns URL or any code (HTML, XML, etc)
-func (z *Zone) AlternativeAdCode(key string) (val string) {
+func (z *Zone) AlternativeAdCode(key string) string {
 	if z.DefaultCode == nil {
 		return ""
 	}
-	val, _ = z.DefaultCode[key]
-	return val
+	return z.DefaultCode[key]
 }
 
 // PurchasePrice gives the price of view from external resource

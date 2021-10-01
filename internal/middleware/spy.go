@@ -9,19 +9,19 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/valyala/fasthttp"
 
-	"bitbucket.org/geniusrabbit/bigbrother/client"
 	"geniusrabbit.dev/sspserver/internal/gtracing"
+	"geniusrabbit.dev/sspserver/internal/personification"
 )
 
-type whoisFn func(ctx *fasthttp.RequestCtx) (client.Person, error)
-type signFn func(resp client.Person, ctx *fasthttp.RequestCtx)
+type whoisFn func(ctx *fasthttp.RequestCtx) (personification.Person, error)
+type signFn func(resp personification.Person, ctx *fasthttp.RequestCtx)
 
 // Spy function wrapper
-type Spy func(next func(p client.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler
+type Spy func(next func(p personification.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler
 
 // NewSpy wrapper looking information about user and pass it in to
 func NewSpy(whois whoisFn, sign signFn) Spy {
-	return func(next func(p client.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler {
+	return func(next func(p personification.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler {
 		var newLog = logrus.WithField("middleware", "spy")
 
 		return func(ctx *fasthttp.RequestCtx) {

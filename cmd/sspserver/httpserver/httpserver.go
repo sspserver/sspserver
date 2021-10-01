@@ -14,18 +14,19 @@ import (
 	"time"
 
 	"github.com/buaazp/fasthttprouter"
+	fastp "github.com/flf2ko/fasthttp-prometheus"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+	"github.com/sspserver/udetect"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
 	"geniusrabbit.dev/sspserver/internal/debugtool"
 	"geniusrabbit.dev/sspserver/internal/endpoint"
-	"geniusrabbit.dev/sspserver/internal/events"
-	"geniusrabbit.dev/sspserver/internal/eventstream"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
+	"geniusrabbit.dev/sspserver/internal/eventtraking/eventstream"
 	"geniusrabbit.dev/sspserver/internal/gtracing"
-	"geniusrabbit.dev/sspserver/internal/infostructs"
 	"geniusrabbit.dev/sspserver/internal/middleware"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/personification"
@@ -133,7 +134,9 @@ func (srv *Server) Listen(ctx context.Context, address string) (err error) {
 	if srv.httpServer == nil {
 		srv.httpServer = &fasthttp.Server{ReadBufferSize: 1 << 20}
 	}
-	srv.httpServer.Handler = srv.newRouter(ctx).Handler
+
+	p := fastp.NewPrometheus("fasthttp")
+	srv.httpServer.Handler = p.WrapHandler(srv.newRouter(ctx))
 
 	srv.httpConnection, err = net.Listen("tcp4", address)
 	if err != nil {
@@ -359,7 +362,7 @@ func (srv *Server) prepareRequest(request *adsource.BidRequest) {
 
 	// Fill GEO info
 	if request.User.Geo == nil {
-		request.User.Geo = &infostructs.Geo{
+		request.User.Geo = &udetect.Geo{
 			IP: request.RequestCtx.RemoteIP(),
 		}
 	}
@@ -420,7 +423,7 @@ func (srv *Server) metricsWrapper(metric string, next func(p personification.Per
 
 func (srv *Server) logError(err error) error {
 	if err != nil {
-		srv.logger.Error(err)
+		srv.logger.Error("", zap.Error(err))
 	}
 	return err
 }

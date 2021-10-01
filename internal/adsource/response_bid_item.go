@@ -56,14 +56,6 @@ func (it *ResponseBidItem) NetworkName() string {
 	return ""
 }
 
-// AccessPoint of response
-func (it *ResponseBidItem) AccessPoint() AccessPoint {
-	if it.Req == nil || it.Req.AccessPoint == nil {
-		return nil
-	}
-	return it.Req.AccessPoint
-}
-
 // ContentItemString from the ad
 func (it *ResponseBidItem) ContentItemString(name string) string {
 	val := it.ContentItem(name)

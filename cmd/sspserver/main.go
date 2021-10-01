@@ -8,12 +8,14 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
-	"github.com/geniusrabbit/notificationcenter"
+	nc "github.com/geniusrabbit/notificationcenter"
 	"github.com/jinzhu/gorm"
-	log "github.com/sirupsen/logrus"
+	ugrpc "github.com/sspserver/udetect/transport/grpc"
+	uhttp "github.com/sspserver/udetect/transport/http"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -29,10 +31,13 @@ import (
 	"geniusrabbit.dev/sspserver/internal/eventtraking/eventgenerator"
 	"geniusrabbit.dev/sspserver/internal/eventtraking/eventstream"
 	"geniusrabbit.dev/sspserver/internal/eventtraking/pixelgenerator"
+	"geniusrabbit.dev/sspserver/internal/middleware"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/notifications"
+	"geniusrabbit.dev/sspserver/internal/personification"
 	"geniusrabbit.dev/sspserver/internal/ssp"
+	_ "geniusrabbit.dev/sspserver/internal/ssp/platform/init"
 	"geniusrabbit.dev/sspserver/internal/urlgenerator"
 	"geniusrabbit.dev/sspserver/private/templates"
 )
@@ -118,8 +123,8 @@ func main() {
 	// Event flow
 	eventGenerator := eventgenerator.New(config.ServiceName)
 	eventStream := eventstream.New(
-		notificationcenter.PublisherByName(eventsStreamName),
-		notificationcenter.PublisherByName(userInfoStreamName),
+		nc.PublisherByName(eventsStreamName),
+		nc.PublisherByName(userInfoStreamName),
 		eventGenerator,
 	)
 
@@ -138,10 +143,10 @@ func main() {
 	templates.URLGen = urlGenerator
 
 	// Run notification listener
-	go notificationcenter.Listen(ctx)
+	go nc.Listen(ctx)
 
 	// Close notification processors
-	defer notificationcenter.Close()
+	defer nc.Close()
 
 	// Create new source accessor which returns preorety iterator to every request
 	sourceAccessor := adsourceaccessor.MustNewAccessor(
@@ -150,7 +155,7 @@ func main() {
 			datasourceFrom(datasource, storageConf.Sources),
 			companyGetter,
 			eventStream,
-			notificationcenter.PublisherByName(winStreamName),
+			nc.PublisherByName(winStreamName),
 		),
 	)
 
@@ -161,6 +166,11 @@ func main() {
 		loaders.FormatLoader(datasourceFrom(datasource, storageConf.Formats)),
 	)
 
+	// Connect to the detector
+	detector, err := newDetector(ctx, config.Person.Connect,
+		config.Person.MaxConn, config.Person.RequestTimeout, config.Person.KeepAliveTimeout)
+	fatalError(err, "Connect detector")
+
 	// Configure advertisement service
 	sspServer, err := ssp.NewServer(
 		ssp.WithBaseSource(nil),
@@ -168,7 +178,7 @@ func main() {
 		ssp.WithTimeout(time.Duration(sspConf.RequestTimeout)*time.Millisecond),
 		ssp.WithMaxParallelRequests(sspConf.MaxParallelRequests),
 	)
-	fatalError(err)
+	fatalError(err, "Create server")
 
 	server, err := httpserver.NewServer(
 		httpserver.WithDebugMode(config.IsDebug()),
@@ -179,6 +189,7 @@ func main() {
 		httpserver.WithURLGenerator(urlGenerator),
 		httpserver.WithEventStream(eventStream),
 		httpserver.WithLogger(logger.With(zap.String("module", "httpserver"))),
+		httpserver.WithSpy(newSpy(ctx, &config, detector)),
 		httpserver.WithCustomHTTPServer(&fasthttp.Server{
 			ReadBufferSize: 1 << 20,
 			ReadTimeout:    time.Duration(config.Server.HTTP.ReadTimeout) * time.Millisecond,
@@ -202,12 +213,42 @@ func main() {
 
 	onKillApplication(func() {
 		timer.Stop()
-		notificationcenter.Close()
+		nc.Close()
 		server.Shutdown()
 	})
 
 	fmt.Println("Run HTTP server", config.Server.HTTP.Listen)
 	fatalError(server.Listen(ctx, config.Server.HTTP.Listen))
+}
+
+func newDetector(ctx context.Context, url string, maxConn int, timeout, keepAlive time.Duration) (cli personification.Client, err error) {
+	switch {
+	case strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://"):
+		tr := uhttp.NewTransport(url,
+			uhttp.WithGET,
+			uhttp.WithMaxConn(maxConn),
+			uhttp.WithTimeout(timeout, keepAlive))
+		cli = personification.Connect(tr)
+	case strings.HasPrefix(url, "grpc://"):
+		tr, err := ugrpc.NewTransport(ctx, url, ugrpc.WithSecure(false))
+		if err != nil {
+			return nil, err
+		}
+		cli = personification.Connect(tr)
+	default:
+		cli = personification.DummyClient{}
+	}
+	return cli, err
+}
+
+func newSpy(ctx context.Context, cfg *appcontext.Config, detector personification.Client) middleware.Spy {
+	signature := personification.Signeture{
+		UUIDName:       cfg.Person.UUIDCookieName,
+		SessidName:     cfg.Person.SessiCookiedName,
+		SessidLifetime: cfg.Person.SessionLifetime,
+		Detector:       detector,
+	}
+	return middleware.NewSpy(ctx, signature.Whois, signature.SignCookie)
 }
 
 func reloadLoop(duration time.Duration, fnk func()) *time.Ticker {
@@ -220,7 +261,7 @@ func reloadLoop(duration time.Duration, fnk func()) *time.Ticker {
 			select {
 			case <-timer.C:
 				fnk()
-			case <-notificationcenter.OnClose():
+			case <-nc.OnClose():
 				break loop
 			}
 		}
@@ -247,7 +288,7 @@ func fatalError(err error, message ...interface{}) {
 
 func logError(err error, message ...interface{}) error {
 	if err != nil {
-		log.Error(append(message, err)...)
+		zap.L().Error(fmt.Sprint(message...), zap.Error(err))
 	}
 	return err
 }

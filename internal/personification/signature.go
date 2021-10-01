@@ -14,10 +14,10 @@ import (
 
 // Signeture provides the builder of cookie assigned to the user by HTTP
 type Signeture struct {
-	uuidName       string
-	sessidName     string
-	sessidLifetime time.Duration
-	detector       Client
+	UUIDName       string
+	SessidName     string
+	SessidLifetime time.Duration
+	Detector       Client
 }
 
 // Whois user information
@@ -32,11 +32,11 @@ func (sign *Signeture) Whois(ctx context.Context, req *fasthttp.RequestCtx) (Per
 	}
 
 	uuidCookie.ParseBytes(
-		req.Request.Header.Cookie(sign.uuidName),
+		req.Request.Header.Cookie(sign.UUIDName),
 	)
 
 	sessidCookie.ParseBytes(
-		req.Request.Header.Cookie(sign.sessidName),
+		req.Request.Header.Cookie(sign.SessidName),
 	)
 
 	uuidObj, _ := uuid.Parse(string(uuidCookie.Value()))
@@ -61,7 +61,7 @@ func (sign *Signeture) Whois(ctx context.Context, req *fasthttp.RequestCtx) (Per
 		Extensions:      nil,
 	}
 
-	_, err := sign.detector.Detect(ctx, request)
+	_, err := sign.Detector.Detect(ctx, request)
 	return &person{request: request}, err
 }
 
@@ -77,7 +77,7 @@ func (sign *Signeture) SignCookie(resp Person, req *fasthttp.RequestCtx) {
 
 	if _uuid := resp.UserInfo().UUID(); len(_uuid) > 0 {
 		c := &fasthttp.Cookie{}
-		c.SetKey(sign.uuidName)
+		c.SetKey(sign.UUIDName)
 		c.SetValue(_uuid)
 		c.SetHTTPOnly(true)
 		c.SetExpire(time.Now().Add(365 * 24 * time.Hour))
@@ -86,10 +86,10 @@ func (sign *Signeture) SignCookie(resp Person, req *fasthttp.RequestCtx) {
 
 	if sessid := resp.UserInfo().SessionID(); len(sessid) > 0 {
 		c := &fasthttp.Cookie{}
-		c.SetKey(sign.sessidName)
+		c.SetKey(sign.SessidName)
 		c.SetValue(sessid)
 		c.SetHTTPOnly(true)
-		c.SetExpire(time.Now().Add(sign.sessidLifetime))
+		c.SetExpire(time.Now().Add(sign.SessidLifetime))
 		req.Response.Header.SetCookie(c)
 	}
 }

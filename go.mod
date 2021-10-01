@@ -47,7 +47,7 @@ require (
 	github.com/qor/qor v0.0.0-20200729071734-d587cffbbb93 // indirect
 	github.com/samuel/go-zookeeper v0.0.0-20190923202752-2cc03de413da // indirect
 	github.com/sirupsen/logrus v1.6.0
-	github.com/sspserver/udetect v0.0.0-20210930115530-142c488ceb84
+	github.com/sspserver/udetect v0.0.0-20211001130742-4b256d514f6d
 	github.com/stretchr/testify v1.7.0
 	github.com/tarantool/go-tarantool v0.0.0-20190724152954-a23ca0eac539
 	github.com/thrift-iterator/go v0.0.0-20190402154806-9b5a67519118
@@ -63,8 +63,9 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0
-	golang.org/x/net v0.0.0-20210924151903-3ad01bbaa167
-	google.golang.org/genproto v0.0.0-20210924002016-3dee208752a0
+	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6
+	golang.org/x/sys v0.0.0-20211001092434-39dca1131b70 // indirect
+	google.golang.org/genproto v0.0.0-20210930144712-2e2e1008e8a3
 	google.golang.org/grpc v1.41.0
 	gopkg.in/alexcesaro/statsd.v2 v2.0.0
 	gopkg.in/go-playground/validator.v9 v9.28.0

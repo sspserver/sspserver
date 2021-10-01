@@ -21,7 +21,7 @@ func getRoutes(endp endpointer) (routes map[string][]string) {
 	}
 	if routes == nil || len(routes) < 1 {
 		routes = map[string][]string{
-			":zone": []string{http.MethodGet},
+			":zone": {http.MethodGet},
 		}
 	}
 	return routes

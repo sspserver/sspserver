@@ -6,40 +6,42 @@
 package middleware
 
 import (
-	"github.com/sirupsen/logrus"
+	"context"
+
 	"github.com/valyala/fasthttp"
+	"go.uber.org/zap"
 
 	"geniusrabbit.dev/sspserver/internal/gtracing"
 	"geniusrabbit.dev/sspserver/internal/personification"
 )
 
-type whoisFn func(ctx *fasthttp.RequestCtx) (personification.Person, error)
-type signFn func(resp personification.Person, ctx *fasthttp.RequestCtx)
+type (
+	whoisFn func(ctx context.Context, req *fasthttp.RequestCtx) (personification.Person, error)
+	signFn  func(resp personification.Person, ctx *fasthttp.RequestCtx)
 
-// Spy function wrapper
-type Spy func(next func(p personification.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler
+	// Spy function wrapper
+	Spy func(next func(p personification.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler
+)
 
 // NewSpy wrapper looking information about user and pass it in to
-func NewSpy(whois whoisFn, sign signFn) Spy {
+func NewSpy(ctx context.Context, whois whoisFn, sign signFn) Spy {
 	return func(next func(p personification.Person, ctx *fasthttp.RequestCtx)) fasthttp.RequestHandler {
-		var newLog = logrus.WithField("middleware", "spy")
-
-		return func(ctx *fasthttp.RequestCtx) {
-			if span, _ := gtracing.StartSpanFromFastContext(ctx, "middleware.spy"); span != nil {
-				gtracing.FastContextWithSpan(ctx, span)
+		newLog := zap.L().With(zap.String("middleware", "spy"))
+		return func(req *fasthttp.RequestCtx) {
+			if span, _ := gtracing.StartSpanFromFastContext(req, "middleware.spy"); span != nil {
+				gtracing.FastContextWithSpan(req, span)
 				defer span.Finish()
 			}
-
-			person, err := whois(ctx)
+			person, err := whois(ctx, req)
 			doLogError(newLog, err)
-			next(person, ctx)
-			sign(person, ctx)
+			next(person, req)
+			sign(person, req)
 		}
 	}
 }
 
-func doLogError(log *logrus.Entry, err error) {
+func doLogError(log *zap.Logger, err error) {
 	if err != nil {
-		log.Error(err)
+		log.Error("", zap.Error(err))
 	}
 }

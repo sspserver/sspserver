@@ -21,7 +21,7 @@ TMP_LIB := $(TMP)/lib
 TMP_VERSIONS := $(TMP)/versions
 TMP_FOSSA_GOPATH := $(TMP)/fossa/go
 
-APP_TAGS := "nats"
+APP_TAGS := "nats allplatform"
 
 unexport GOPATH
 export GOPATH=$(abspath $(TMP))
@@ -33,6 +33,8 @@ export GOFLAGS=-mod=mod
 # Go 1.13 defaults to TLS 1.3 and requires an opt-out.  Opting out for now until certs can be regenerated before 1.14
 # https://golang.org/doc/go1.12#tls_1_3
 export GODEBUG := tls13=0
+
+CONTAINER_IMAGE ?= rtb/sspserver
 
 DOCKER_COMPOSE := docker-compose -p $(PROJECT_WORKSPACE) -f deploy/develop/docker-compose.yml
 DOCKER_BUILDKIT := 1
@@ -121,15 +123,20 @@ generate-code: ## Run codegeneration procedure
 .PHONY: build
 build: ## Build application
 	@echo "Build application"
-	@rm -rf .build/accessor
+	@rm -rf .build/sspserver
 	GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} CGO_ENABLED=${BUILD_CGO_ENABLED} \
 		go build -ldflags "-X main.buildDate=`date -u +%Y%m%d.%H%M%S` -X main.buildCommit=${COMMIT_NUMBER}" \
 			-tags ${APP_TAGS} -o ".build/sspserver" cmd/sspserver/main.go
 
+.PHONY: docker-dev-build
+docker-dev-build: build
+	echo "Build develop docker image"
+	DOCKER_BUILDKIT=${DOCKER_BUILDKIT} docker build -t ${CONTAINER_IMAGE} -f deploy/develop/Dockerfile .
+
 .PHONY: run
-run: build ## Run service by docker-compose
-	@echo "Run accessor service"
-	$(DOCKER_COMPOSE) up accessor
+run: docker-dev-build ## Run service by docker-compose
+	@echo "Run sspserver service"
+	$(DOCKER_COMPOSE) up sspserver
 
 .PHONY: stop
 stop: ## Stop all services

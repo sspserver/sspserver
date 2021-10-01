@@ -1,3 +1,33 @@
 {
-  "rtb_sources": []
+  "sources": [
+    {
+      "id": 1,
+      "company_id": 1,
+      "title": "TS source",
+      "status": 1,
+      "active": 1,
+      "protocol": "openrtb",
+      "minimal_weight": 1,
+      "url": "http://tsyndicate.com/",
+      "method": "POST",
+      "request_type": 1
+    },
+    {
+      "id": 2,
+      "company_id": 1,
+      "title": "Exo source",
+      "status": 1,
+      "active": 1,
+      "protocol": "openrtb",
+      "minimal_weight": 1,
+      "url": "http://rtb.exoclick.com/rtb.php?idzone=3726595&fid=a0b6a86474f363991b924c5d7719c62141d44122",
+      "method": "POST",
+      "request_type": 1,
+      "rps": 10,
+      "timeout": 1000,
+      "accuracy": 100,
+      "auction_type": 1,
+      "formats": ["native", "video", "proxy", "direct", "banner_250x250"]
+    }
+  ]
 }

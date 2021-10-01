@@ -30,6 +30,7 @@ import (
 	"geniusrabbit.dev/sspserver/internal/middleware"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/personification"
+	"geniusrabbit.dev/sspserver/internal/ssp/platform"
 )
 
 type (
@@ -191,12 +192,26 @@ func (srv *Server) newRouter(ctx context.Context) *fasthttprouter.Router {
 	if srv.endpoints != nil {
 		for name, factory := range srv.endpoints {
 			if endpoint, err := factory(srv.source, options...); err == nil {
-				srv.registerEndpointHandler(ctx, endpoint.Version(), name, endpoint, routeWrapper)
+				ver := endpoint.Version()
+				if ver != "" {
+					ver = "/" + ver
+				}
+				srv.registerEndpointHandler(ctx, ver, name, endpoint, routeWrapper)
 			} else {
 				panic(err)
 			}
 		}
 	}
+
+	platform.Each(func(protocol string, platFact platform.Factory) {
+		router.GET("/protocol/"+protocol+"/info",
+			srv.metricsWrapper("ssp."+protocol+".info", func(p personification.Person, ctx *fasthttp.RequestCtx) {
+				ctx.Response.SetStatusCode(http.StatusOK)
+				ctx.Response.Header.SetContentType("text/json")
+				json.NewEncoder(ctx.Response.BodyWriter()).Encode(platFact.Info())
+			}),
+		)
+	})
 
 	// Click/Direct links
 	router.GET(srv.urlGenerator.ClickRouterURL(),
@@ -206,7 +221,7 @@ func (srv *Server) newRouter(ctx context.Context) *fasthttprouter.Router {
 		srv.metricsWrapper("ssp.direct", srv.eventHandler(ctx, events.Direct)),
 	)
 
-	router.GET("/health-check", srv.spyMiddleware(srv.healthCheck))
+	router.GET("/healthcheck", srv.spyMiddleware(srv.healthCheck))
 	router.GET("/check", srv.check)
 
 	if srv.customRouter != nil {

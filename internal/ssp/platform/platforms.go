@@ -8,7 +8,7 @@ package platform
 import (
 	"fmt"
 
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 )
 
 var (
@@ -21,7 +21,9 @@ func Register(fact Factory) error {
 	if _, ok := platforms[protocol]; ok {
 		return fmt.Errorf("platform [%s] already exists", protocol)
 	}
-	log.WithField("module", "ssp:platform").Infof("Register platform: %s", protocol)
+	zap.L().Info("Register platform",
+		zap.String("module", "ssp:platform"),
+		zap.String("protocol", protocol))
 	platforms[protocol] = fact
 	return nil
 }

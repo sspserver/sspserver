@@ -17,7 +17,7 @@ import (
 
 	"github.com/demdxx/gocast"
 	"github.com/geniusrabbit/notificationcenter"
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 
 	"geniusrabbit.dev/sspserver/internal/adsource"
 	"geniusrabbit.dev/sspserver/internal/billing"
@@ -105,7 +105,7 @@ type platformDriver struct {
 	// Datetime of last first request
 	lastPeriod time.Time
 
-	logger log.FieldLogger
+	logger *zap.Logger
 }
 
 // New client object by client
@@ -113,7 +113,7 @@ func new(source *models.RTBSource, opts ...interface{}) (_ *platformDriver, err 
 	var (
 		eventer     notificationcenter.Publisher
 		eventStream eventstream.Stream
-		logger      *log.Entry
+		logger      *zap.Logger
 	)
 
 	for _, opt := range opts {
@@ -122,7 +122,7 @@ func new(source *models.RTBSource, opts ...interface{}) (_ *platformDriver, err 
 			eventer = o
 		case eventstream.Stream:
 			eventStream = o
-		case *log.Entry:
+		case *zap.Logger:
 			logger = o
 		}
 	}
@@ -619,21 +619,24 @@ func (p *platformDriver) logWinURL(ctx context.Context, url string) {
 }
 
 func (p *platformDriver) logInfo(block string, params ...interface{}) {
-	p.logger.WithField("block", block).Infoln(
+	p.logger.Info(
 		strings.TrimRight(fmt.Sprintln(params...), " \n\t"),
+		zap.String("block", block),
 	)
 }
 
 func (p *platformDriver) logDebug(block string, params ...interface{}) {
-	p.logger.WithField("block", block).Debugln(
+	p.logger.Debug(
 		strings.TrimRight(fmt.Sprintln(params...), " \n\t"),
+		zap.String("block", block),
 	)
 }
 
 func (p *platformDriver) logError(block string, params ...interface{}) {
 	if len(params) > 0 && params[0] != nil {
-		p.logger.WithField("block", block).Error(
+		p.logger.Error(
 			strings.TrimRight(fmt.Sprintln(params...), " \n\t"),
+			zap.String("block", block),
 		)
 	}
 }

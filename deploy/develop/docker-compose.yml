@@ -6,8 +6,6 @@ services:
     image: jaegertracing/all-in-one:latest
     ports:
       - "16686:16686"
-    labels:
-      - service.name=jaeger
   
   nats:
     image: nats
@@ -18,25 +16,16 @@ services:
       - service.name=nats
 
   sspserver:
-    build: .
+    image: rtb/sspserver
     ports:
       - "7077:8080"
-    command: >
-      go run -tags="fs allplatform"
-      /project/sspserver/cmd/sspserver/main.go --debug=1
-      --config=/project/sspserver/cmd/sspserver/configs/main.yml
-    environment:
-      DEBUG: "true"
-      GOPATH: /project/.cache
-      ADSTORAGE_CONNECTION: fs:/project/sspserver/cmd/sspserver/configs/
-      EVENTSTREAM_EVENT_QUEUE_CONNECTION: nats://nats:4222
-      EVENTSTREAM_USERINFO_QUEUE_CONNECTION: nats://nats:4222
-      EVENTSTREAM_WINS_QUEUE_CONNECTION: nats://nats:4222
-      JAEGER_AGENT_HOST: tracer
+      - "7079:8082"
+    env_file:
+      - ../../.env
     depends_on:
       - nats
       - tracer
     volumes:
       - ../../:/project
-    labels:
-      - service.name=sspserver
+    environment:
+      ADSTORAGE_CONNECTION: fs:/data/

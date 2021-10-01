@@ -151,7 +151,14 @@ type personConfig struct {
 	//  grpc://hostname:1234
 	// or UNIX socket + GRPC
 	//  grpc+unix://hostname:1234
-	Connect string `field:"connect" json:"connect" yaml:"connect" env:"PERSON_CONNECT"`
+	Connect          string        `field:"connect" json:"connect" yaml:"connect" env:"PERSON_CONNECT"`
+	MaxConn          int           `field:"max_conn" json:"max_conn" yaml:"max_conn" env:"PERSON_MAX_CONN" default:"10"`
+	RequestTimeout   time.Duration `field:"request_timeout" json:"request_timeout" yaml:"request_timeout" env:"PERSON_REQUEST_TIMEOUT" default:"1s"`
+	KeepAliveTimeout time.Duration `field:"keepalive_timeout" json:"keepalive_timeout" yaml:"keepalive_timeout" env:"PERSON_KEEPALIVE_TIMEOUT" default:"300s"`
+
+	UUIDCookieName   string        `field:"uuid_cookie_name" json:"uuid_cookie_name" yaml:"uuid_cookie_name" env:"PERSON_UUID_COOKIE_NAME"`
+	SessiCookiedName string        `field:"session_cookie_name" json:"session_cookie_name" yaml:"session_cookie_name" env:"PERSON_SESSION_COOKIE_NAME"`
+	SessionLifetime  time.Duration `field:"session_lifetime" json:"session_lifetime" yaml:"session_lifetime" env:"PERSON_SESSION_LIFETIME" default:"72h"`
 }
 
 // Config contains all configurations of the application

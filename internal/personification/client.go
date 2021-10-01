@@ -15,3 +15,10 @@ type Client interface {
 func Connect(tr udetect.Transport) Client {
 	return udetect.NewClient(tr)
 }
+
+type DummyClient struct {
+}
+
+func (DummyClient) Detect(ctx context.Context, req *udetect.Request) (*udetect.Response, error) {
+	return nil, nil
+}

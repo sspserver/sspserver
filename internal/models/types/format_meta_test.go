@@ -2,19 +2,17 @@ package types
 
 import (
 	"encoding/json"
-	"os"
 	"testing"
 )
 
 func TestMeta(t *testing.T) {
-	f, err := os.Open("../assets/format.config.json")
+	data, err := fileData("../assets/format.native.json")
 	if err != nil {
 		t.Error(err)
 	}
-	defer f.Close()
 
 	var config FormatConfig
-	if err = json.NewDecoder(f).Decode(&config); err != nil {
+	if err = json.Unmarshal(data, &config); err != nil {
 		t.Error(err)
 	}
 
@@ -22,7 +20,7 @@ func TestMeta(t *testing.T) {
 		t.Errorf("Invalid count of assets: %d", len(config.Assets))
 	}
 
-	if len(config.Fields) != 3 {
+	if len(config.Fields) != 5 {
 		t.Errorf("Invalid count of fields: %d", len(config.Fields))
 	}
 }

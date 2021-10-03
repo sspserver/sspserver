@@ -42,6 +42,16 @@ func (accessor *Accessor) Iterator(request *adsource.BidRequest) adsource.Source
 	return NewPriorityIterator(request, accessor.sourceList)
 }
 
+// SourceByID returns source instance
+func (accessor *Accessor) SourceByID(id uint64) adsource.Source {
+	for _, s := range accessor.sourceList {
+		if s.ID() == id {
+			return s
+		}
+	}
+	return nil
+}
+
 // SetTimeout for sourcer
 func (accessor *Accessor) SetTimeout(timeout time.Duration) {
 	for _, src := range accessor.sourceList {

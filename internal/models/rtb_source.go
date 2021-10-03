@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/geniusrabbit/gosql"
+	"github.com/geniusrabbit/gosql/pgtype"
 
 	"geniusrabbit.dev/sspserver/internal/data/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
@@ -43,7 +44,7 @@ type RTBSource struct {
 	URL         string         // RTB client request URL
 	Method      string         // HTTP method GET, POST, ect; Default POST
 	RequestType RTBRequestType // 1 - json, 2 - xml, 3 - ProtoBUFF, 4 - MultipleFormaData, 5 - PLAINTEXT
-	Headers     gosql.Hstore
+	Headers     pgtype.Hstore
 
 	AuctionType int              // default: 0 – first price type, 1 – second price type
 	RPS         int              // 0 – unlimit
@@ -55,7 +56,7 @@ type RTBSource struct {
 	RevenueShareReduce float64 // % 100, 80%, 65.5%
 	MinimalWeight      float64
 
-	Flags  gosql.Hstore
+	Flags  pgtype.Hstore
 	Config gosql.NullableJSON
 }
 

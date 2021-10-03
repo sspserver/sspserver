@@ -6,14 +6,12 @@
 package adsource
 
 import (
-	"fmt"
-
 	openrtbnreq "github.com/bsm/openrtb/native/request"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
-	"geniusrabbit.dev/sspserver/internal/searchtypes"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
+	"geniusrabbit.dev/sspserver/internal/searchtypes"
 )
 
 // Impression target
@@ -62,7 +60,6 @@ func (i *Impression) Init(formats types.FormatsAccessor) {
 
 	i.formatBitset = searchtypes.NewUIntBitset()
 	for _, f := range i.formats {
-		fmt.Println(">>>> FORMATS", f.ID, f)
 		i.formatBitset.Set(uint(f.ID))
 	}
 

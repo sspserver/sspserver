@@ -55,7 +55,13 @@ func FSSourceReloader(logger *zap.Logger, filename string, companyGetter company
 		if err != nil {
 			return
 		}
-		return reload(sourceList, logger, companyGetter, eventStream, winNotify)
+		newSourceList := make([]*imodels.RTBSource, 0, len(sourceList))
+		for _, src := range sourceList {
+			if src.Active == 1 && src.Status == 1 {
+				newSourceList = append(newSourceList, src)
+			}
+		}
+		return reload(newSourceList, logger, companyGetter, eventStream, winNotify)
 	}
 }
 

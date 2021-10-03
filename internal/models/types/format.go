@@ -186,13 +186,6 @@ func prepSize(v int) float64 {
 	return float64(v)
 }
 
-func absI(v int) int {
-	if v > 0 {
-		return v
-	}
-	return 0
-}
-
 func compareAspect(v, mv, targetV, targetMV int) int {
 	if v == 0 && mv <= 0 {
 		return 0

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/geniusrabbit/gosql"
+	"github.com/geniusrabbit/gosql/pgtype"
 	"github.com/guregu/null"
 )
 
@@ -45,16 +46,16 @@ type RTBSource struct {
 	CompanyID uint64   `json:"company_id,omitempty"`
 	Title     string   `json:"title,omitempty"`
 
-	Status int          `json:"status,omitempty"`
-	Active int          `json:"active,omitempty"`
-	Flags  gosql.Hstore `json:"flags,omitempty"`
+	Status int           `json:"status,omitempty"`
+	Active int           `json:"active,omitempty"`
+	Flags  pgtype.Hstore `json:"flags,omitempty"`
 
 	Protocol      string         `json:"protocol"`          // rtb as default
 	MinimalWeight float64        `json:"minimal_weight"`    //
 	URL           string         `json:"url"`               // RTB client request URL
 	Method        string         `json:"method"`            // HTTP method GET, POST, ect; Default POST
 	RequestType   RTBRequestType `json:"request_type"`      // 1 - json, 2 - xml, 3 - ProtoBUFF, 4 - PLAINTEXT
-	Headers       gosql.Hstore   `json:"headers,omitempty"` //
+	Headers       pgtype.Hstore  `json:"headers,omitempty"` //
 	RPS           int            `json:"rps"`               // 0 – unlimit
 	Timeout       int            `json:"timeout"`           // In milliseconds
 

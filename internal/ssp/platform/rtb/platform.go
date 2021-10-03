@@ -32,10 +32,11 @@ import (
 )
 
 var (
-	errInvalidRTBSource      = errors.New("SSP base platform: invalid RTB source model")
-	errInvalidWinEventStream = errors.New("SSP base platform: invalid win event stream")
-	errInvalidEventStream    = errors.New("SSP base platform: invalid event stream")
-	errInvalidLogger         = errors.New("SSP base platform: invalid logger object")
+	errInvalidRTBSource      = errors.New("RTB invalid RTB source model")
+	errInvalidWinEventStream = errors.New("RTB invalid win event stream")
+	errInvalidEventStream    = errors.New("RTB invalid event stream")
+	errInvalidLogger         = errors.New("RTB invalid logger object")
+	errUndefinedError        = errors.New("RTB undefined error")
 )
 
 const (
@@ -247,25 +248,27 @@ func (p *Platform) Bid(request *adsource.BidRequest) (response adsource.Response
 		p.logDebug("bid", p.source.URL, err)
 		return adsource.NewErrorResponse(request, err)
 	}
-
-	if http.StatusNoContent == resp.StatusCode {
+	if resp.StatusCode == http.StatusNoContent {
 		return adsource.NewErrorResponse(request, platform.ErrNoCampaignsStatus)
 	}
-
-	if http.StatusOK != resp.StatusCode {
+	if resp.StatusCode != http.StatusOK {
 		p.processHTTPReponse(resp, nil)
 		p.logDebug("bid", p.source.URL, http.StatusText(resp.StatusCode), resp.StatusCode)
 		return adsource.NewErrorResponse(request, ErrInvalidResponseStatus)
 	}
 
 	defer resp.Body.Close()
-	if response, err = p.unmarshal(request, resp.Body); p.source.Options.Trace && err != nil {
-		response = adsource.NewErrorResponse(request, err)
+	if response, err = p.unmarshal(request, resp.Body); err != nil {
+		if p.source.Options.Trace {
+			response = adsource.NewErrorResponse(request, err)
+		} else {
+			response = adsource.NewErrorResponse(request, err)
+		}
 		p.logError("bid", err)
 	}
 
 	p.processHTTPReponse(resp, err)
-	return
+	return response
 }
 
 // ProcessResponseItem result
@@ -356,7 +359,7 @@ func (p *Platform) getClient() *http.Client {
 func (p *Platform) request(request *adsource.BidRequest) (req *http.Request, err error) {
 	var (
 		bidRequest *adsource.RTBRequest
-		data       io.Reader
+		data       *bytes.Buffer
 	)
 
 	if bidRequest = request.RTBBidRequest(p.getRequestOptions()...); bidRequest == nil {
@@ -371,6 +374,7 @@ func (p *Platform) request(request *adsource.BidRequest) (req *http.Request, err
 	}
 
 	// Create new request
+	fmt.Println(">>>>! REQUEST", p.source.Method, p.source.URL, data.String())
 	if req, err = http.NewRequest(p.source.Method, p.source.URL, data); err != nil {
 		return nil, err
 	}
@@ -379,10 +383,10 @@ func (p *Platform) request(request *adsource.BidRequest) (req *http.Request, err
 	return req, err
 }
 
-func (p *Platform) marshal(request *adsource.RTBRequest) (_ io.Reader, err error) {
+func (p *Platform) marshal(request *adsource.RTBRequest) (_ *bytes.Buffer, err error) {
 	var data []byte
 	if data, err = p.marshalel.Marshal(request.RTBRequest); err != nil {
-		return
+		return nil, err
 	}
 	return bytes.NewBuffer(data), err
 }
@@ -392,7 +396,7 @@ func (p *Platform) unmarshal(request *adsource.BidRequest, r io.Reader) (respons
 
 	switch p.source.RequestType {
 	case RequestTypeJSON:
-		if p.source.Options.Trace {
+		if p.source.Options.Trace || true {
 			var data []byte
 			if data, err = ioutil.ReadAll(r); err == nil {
 				p.logError("unmarshal", p.source.URL, string(data))

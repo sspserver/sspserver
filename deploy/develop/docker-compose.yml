@@ -2,18 +2,20 @@ version: '3.7'
 
 services:
   # docker run --rm -it --label=service.name=jaeger -p 6831:6831/udp -p 16686:16686 jaegertracing/all-in-one:latest
-  tracer:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - "16686:16686"
+  # tracer:
+  #   image: jaegertracing/all-in-one:latest
+  #   ports:
+  #     - "16686:16686"
   
-  nats:
-    image: nats
+  # nats:
+  #   image: nats
+  #   restart: always
+  #   expose:
+  #     - "4222"
+
+  redis:
     restart: always
-    expose:
-      - "4222"
-    labels:
-      - service.name=nats
+    image: redis:latest
 
   sspserver:
     image: rtb/sspserver
@@ -23,8 +25,9 @@ services:
     env_file:
       - ../../.env
     depends_on:
-      - nats
-      - tracer
+      # - nats
+      - redis
+      # - tracer
     volumes:
       - ../../:/project
     environment:

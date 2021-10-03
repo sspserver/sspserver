@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/buaazp/fasthttprouter"
+	"github.com/demdxx/gocast"
 	fastp "github.com/flf2ko/fasthttp-prometheus"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -30,6 +31,7 @@ import (
 	"geniusrabbit.dev/sspserver/internal/middleware"
 	"geniusrabbit.dev/sspserver/internal/models/types"
 	"geniusrabbit.dev/sspserver/internal/personification"
+	"geniusrabbit.dev/sspserver/internal/ssp/openlatency"
 	"geniusrabbit.dev/sspserver/internal/ssp/platform"
 )
 
@@ -46,6 +48,14 @@ var (
 	ErrInvalidEventstream           = errors.New("[HTTPServer] invalid event stream")
 	ErrInvalidSpyWrapper            = errors.New("[HTTPServer] invalid spy wrapper")
 )
+
+type sourceAccessor interface {
+	Sources() adsource.SourceAccessor
+}
+
+type metricsAccessor interface {
+	Metrics() *openlatency.MetricsInfo
+}
 
 // Server implements basic HTTP infostructure and routing
 type Server struct {
@@ -213,6 +223,34 @@ func (srv *Server) newRouter(ctx context.Context) *fasthttprouter.Router {
 		)
 	})
 
+	// Get source status
+	router.GET("/dsp/:id/status",
+		srv.metricsWrapper("dsp.status", func(p personification.Person, ctx *fasthttp.RequestCtx) {
+			var (
+				id                 = gocast.ToUint64(ctx.UserValue("id"))
+				source interface{} = srv.source
+			)
+			if id > 0 {
+				if srcacc := srv.source.(sourceAccessor); srcacc != nil {
+					source = srcacc.Sources().SourceByID(id)
+				}
+			}
+			if source == nil {
+				ctx.Response.SetStatusCode(http.StatusNotFound)
+				ctx.Response.Header.SetContentType("text/json")
+				ctx.Response.BodyWriter().Write([]byte(`{"status":"not_found"}`))
+			} else if metrics := source.(metricsAccessor); metrics != nil {
+				ctx.Response.SetStatusCode(http.StatusServiceUnavailable)
+				ctx.Response.Header.SetContentType("text/json")
+				json.NewEncoder(ctx.Response.BodyWriter()).Encode(metrics.Metrics())
+			} else {
+				ctx.Response.SetStatusCode(http.StatusServiceUnavailable)
+				ctx.Response.Header.SetContentType("text/json")
+				ctx.Response.BodyWriter().Write([]byte(`{"status":"unsupported"}`))
+			}
+		}),
+	)
+
 	// Click/Direct links
 	router.GET(srv.urlGenerator.ClickRouterURL(),
 		srv.metricsWrapper("ssp.click", srv.eventHandler(ctx, events.Click)),
@@ -291,8 +329,11 @@ func (srv *Server) handlerEndpoint(ctx context.Context, endpointName string, end
 		}
 
 		if response = endpoint.Handle(request); response == nil {
+			fmt.Println(">>>> EMPTY RESPONSE")
 			response = adsource.NewEmptyResponse(request, nil)
 		}
+
+		fmt.Println(">>>> RESPONSE", response)
 
 		srv.logError(endpoint.Render(req, response))
 		srv.source.ProcessResponse(response)

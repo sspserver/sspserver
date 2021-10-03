@@ -60,6 +60,9 @@ type SourceAccessor interface {
 	// Iterator returns the configured queue accessor
 	Iterator(request *BidRequest) SourceIterator
 
+	// SourceByID returns source instance
+	SourceByID(id uint64) Source
+
 	// SetTimeout for sourcer
 	SetTimeout(timeout time.Duration)
 }

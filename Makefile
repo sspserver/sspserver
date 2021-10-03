@@ -1,8 +1,9 @@
 include .env
 export
 
-BUILD_GOOS ?= linux
-BUILD_GOARCH ?= amd64
+BUILD_GOOS ?= $(or ${DOCKER_DEFAULT_GOOS},linux)
+BUILD_GOARCH ?= $(or ${DOCKER_DEFAULT_GOARCH},amd64)
+BUILD_GOARM ?= 7
 BUILD_CGO_ENABLED ?= 0
 
 COMMIT_NUMBER ?= $(shell git log -1 --pretty=format:%h)
@@ -21,7 +22,7 @@ TMP_LIB := $(TMP)/lib
 TMP_VERSIONS := $(TMP)/versions
 TMP_FOSSA_GOPATH := $(TMP)/fossa/go
 
-APP_TAGS := "nats allplatform"
+APP_TAGS := "nats redisps allplatform"
 
 unexport GOPATH
 export GOPATH=$(abspath $(TMP))
@@ -124,7 +125,7 @@ generate-code: ## Run codegeneration procedure
 build: ## Build application
 	@echo "Build application"
 	@rm -rf .build/sspserver
-	GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} CGO_ENABLED=${BUILD_CGO_ENABLED} \
+	GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} CGO_ENABLED=${BUILD_CGO_ENABLED} GOARM=${BUILD_GOARM} \
 		go build -ldflags "-X main.buildDate=`date -u +%Y%m%d.%H%M%S` -X main.buildCommit=${COMMIT_NUMBER}" \
 			-tags ${APP_TAGS} -o ".build/sspserver" cmd/sspserver/main.go
 

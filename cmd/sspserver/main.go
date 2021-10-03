@@ -69,9 +69,9 @@ func init() {
 
 	zap.ReplaceGlobals(loggerObj)
 
-	if config.IsDebug() {
-		fmt.Println(config.String())
-	}
+	// if config.IsDebug() {
+	fmt.Println(config.String())
+	// }
 }
 
 func main() {

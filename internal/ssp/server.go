@@ -145,9 +145,10 @@ func (srv *Server) Bid(request *adsource.BidRequest) (response adsource.Response
 		for ; count < srv.maxParallelRequest; count++ {
 			select {
 			case resp := <-tube:
-				if e := resp.Error(); e != nil {
-					err = e
+				if respErr := resp.Error(); respErr != nil {
+					err = respErr
 				} else {
+					fmt.Println(">>>! ADS", resp.Ads())
 					referee.Push(resp.Ads()...)
 				}
 			case <-timer.C:
@@ -201,6 +202,14 @@ func (srv *Server) SetRequestTimeout(timeout time.Duration) {
 		srv.requestTimeout = timeout
 		srv.sources.SetTimeout(timeout)
 	}
+}
+
+// Sources of the ads
+func (srv *Server) Sources() adsource.SourceAccessor {
+	if srv == nil {
+		return nil
+	}
+	return srv.sources
 }
 
 ///////////////////////////////////////////////////////////////////////////////

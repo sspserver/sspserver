@@ -26,10 +26,11 @@ func NewSimpleTargetAccessor(loader SimpleTargetAccessorLoader) *SimpleTargetAcc
 func (ta *SimpleTargetAccessor) Reload() error {
 	list, err := ta.loader()
 	if err != nil {
-		sort.Slice(list, func(i, j int) bool { return list[i].ID() < list[j].ID() })
-		ta.list = list
+		return err
 	}
-	return err
+	sort.Slice(list, func(i, j int) bool { return list[i].ID() < list[j].ID() })
+	ta.list = list
+	return nil
 }
 
 // TargetByID returns target object

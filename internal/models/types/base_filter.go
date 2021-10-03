@@ -57,18 +57,18 @@ func (fl *BaseFilter) Set(field uint64, data interface{}) {
 	case FieldCategories:
 		fl.Categories, positive = IDArrayFilter(data.(gosql.NullableOrderedIntArray))
 	case FieldCountries:
-		switch data.(type) {
+		switch vl := data.(type) {
 		case gosql.NullableOrderedIntArray:
-			fl.Countries, positive = IDArrayFilter(data.(gosql.NullableOrderedIntArray))
+			fl.Countries, positive = IDArrayFilter(vl)
 		case gosql.StringArray:
-			fl.Countries, positive = CountryFilter(data.(gosql.StringArray))
+			fl.Countries, positive = CountryFilter(vl)
 		}
 	case FieldLanguages:
-		switch data.(type) {
+		switch vl := data.(type) {
 		case gosql.NullableOrderedIntArray:
-			fl.Languages, positive = IDArrayFilter(data.(gosql.NullableOrderedIntArray))
+			fl.Languages, positive = IDArrayFilter(vl)
 		case gosql.StringArray:
-			fl.Languages, positive = LanguageFilter(data.(gosql.StringArray))
+			fl.Languages, positive = LanguageFilter(vl)
 		}
 	case FieldZones:
 		fl.Zones, positive = IDArrayFilter(data.(gosql.NullableOrderedIntArray))

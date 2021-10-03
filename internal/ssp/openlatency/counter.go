@@ -7,6 +7,7 @@ import (
 
 // MetricsCounter implements several counters of request metrics
 type MetricsCounter struct {
+	startingTime int64
 	minLatency   int64 // In Milliseconds
 	maxLatency   int64 // In Milliseconds
 	avgLatency   int64 // In Milliseconds
@@ -15,12 +16,12 @@ type MetricsCounter struct {
 	timeouts     int32
 	noBids       int32
 	errors       int32
-	startingTime int64
 }
 
 // NewMetricsCounter object
 func NewMetricsCounter() *MetricsCounter {
 	counter := &MetricsCounter{}
+	counter.setStartingTime(time.Now())
 	counter.refresh()
 	return counter
 }
@@ -67,7 +68,7 @@ func (cnt *MetricsCounter) IncError(etype MetricErrorType, code string) {
 
 // FillMetrics info object
 func (cnt *MetricsCounter) FillMetrics(info *MetricsInfo) {
-	seconds := float64(time.Now().Sub(cnt.getStartingTime())) / float64(time.Second)
+	seconds := float64(time.Since(cnt.getStartingTime())) / float64(time.Second)
 	if seconds <= 0 {
 		seconds = 1
 	}

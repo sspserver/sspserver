@@ -53,6 +53,7 @@ func (r *BidResponse) Source() Sourcer {
 
 // Prepare bid response
 func (r *BidResponse) Prepare() {
+	fmt.Println(">> PREPARE", r.BidResponse.SeatBid)
 	for i, seat := range r.BidResponse.SeatBid {
 		for i, bid := range seat.Bid {
 			replacer := strings.NewReplacer(
@@ -63,6 +64,8 @@ func (r *BidResponse) Prepare() {
 				"${AUCTION_PRICE}", fmt.Sprintf("%.6f", bid.Price),
 				"${AUCTION_CURRENCY}", "USD",
 			)
+
+			fmt.Println(">> BID", bid)
 
 			// Custom direct detect
 			if len(bid.AdMarkup) < 1 {
@@ -92,7 +95,11 @@ func (r *BidResponse) Prepare() {
 				}
 			}
 
-			if imp := r.Req.ImpressionByIDvariation(bid.ImpID); imp != nil {
+			impID := bid.ImpID
+			for _, imp := range r.Req.Imps {
+				impID = imp.ID
+			}
+			if imp := r.Req.ImpressionByIDvariation(impID); imp != nil {
 				// Prepare date for bid W/H
 				if bid.W == 0 && bid.H == 0 {
 					bid.W, bid.H = imp.W, imp.H
@@ -147,9 +154,9 @@ func (r *BidResponse) Prepare() {
 			continue
 		}
 		for _, format := range imp.Formats() {
-			if bid.ImpID != imp.IDByFormat(format) {
-				continue
-			}
+			// if bid.ImpID != imp.IDByFormat(format) {
+			// 	continue
+			// }
 			switch {
 			case format.IsNative():
 				native, err := decodeNativeMarkup([]byte(bid.AdMarkup))

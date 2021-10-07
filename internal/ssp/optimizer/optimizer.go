@@ -75,7 +75,9 @@ func (opt *Optimizer) MarshalJSON() ([]byte, error) {
 		buff.WriteByte('"')
 		buff.WriteByte(':')
 
-		json.NewEncoder(&buff).Encode(item)
+		if err := json.NewEncoder(&buff).Encode(item); err != nil {
+			return nil, err
+		}
 	}
 	buff.WriteByte('}')
 

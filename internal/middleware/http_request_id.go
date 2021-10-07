@@ -8,7 +8,7 @@ import (
 func HTTPRequestID(handler fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		var (
-			headers   = ctx.Request.Header
+			headers   = &ctx.Request.Header
 			requestID = string(headers.Peek("X-Request-Id"))
 		)
 		if requestID == "" {

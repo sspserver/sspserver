@@ -29,7 +29,7 @@ func (optItem *optimizerItem) getOrCreate(countryID byte, languageID, deviceID, 
 	}
 
 	optItem.mx.RLock()
-	if item, _ := optItem.Data[key]; item != nil {
+	if item := optItem.Data[key]; item != nil {
 		optItem.mx.RUnlock()
 		return item
 	}

@@ -1,6 +1,6 @@
 module geniusrabbit.dev/sspserver
 
-go 1.15
+go 1.16
 
 require (
 	bitbucket.org/geniusrabbit/billing v0.0.0-20190705141600-dce6fad3b5a3
@@ -35,9 +35,10 @@ require (
 	github.com/lib/pq v1.10.3 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
 	github.com/myesui/uuid v1.0.0 // indirect
-	github.com/nats-io/nats.go v1.12.3 // indirect
+	github.com/nats-io/nats.go v1.12.3
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pierrec/lz4 v2.6.1+incompatible
+	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/prometheus/common v0.31.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect

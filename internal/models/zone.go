@@ -32,7 +32,7 @@ type Zone struct {
 // ZoneFromModel convert database model to specified model
 func ZoneFromModel(zone models.Zone) *Zone {
 	var code map[string]string
-	zone.DefaultCode.UnmarshalTo(&code)
+	_ = zone.DefaultCode.UnmarshalTo(&code)
 
 	return &Zone{
 		id:                zone.ID,

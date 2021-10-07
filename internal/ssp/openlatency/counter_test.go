@@ -24,7 +24,7 @@ func BenchmarkCounter(b *testing.B) {
 			default:
 				counter.IncSuccess()
 			}
-			counter.UpdateQueryLatency(time.Now().Sub(now))
+			counter.UpdateQueryLatency(time.Since(now))
 		}
 	})
 

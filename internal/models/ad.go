@@ -11,7 +11,6 @@ import (
 	"math/rand"
 
 	"github.com/demdxx/gocast"
-	"github.com/geniusrabbit/gosql"
 
 	"geniusrabbit.dev/sspserver/internal/billing"
 	"geniusrabbit.dev/sspserver/internal/models/types"
@@ -77,11 +76,11 @@ func (a *Ad) GetID() uint64 {
 }
 
 // ContentItem by name
-func (a *Ad) ContentItem(name string) (v interface{}) {
+func (a *Ad) ContentItem(name string) interface{} {
 	if a.Content != nil {
-		v, _ = a.Content[name]
+		return a.Content[name]
 	}
-	return
+	return nil
 }
 
 // ContentItemString by name
@@ -448,9 +447,9 @@ func (a *Ad) ecpm(pointer types.TargetPointer, price billing.Money) billing.Mone
 // 	return
 // }
 
-func unmarshalMeta(id uint64, jsn *gosql.NullableJSON, meta interface{}) (err error) {
-	if err = jsn.UnmarshalTo(meta); err != nil {
-		err = fmt.Errorf("Invalid Ad[%d] context: %s", id, jsn.String())
-	}
-	return
-}
+// func unmarshalMeta(id uint64, jsn *gosql.NullableJSON, meta interface{}) (err error) {
+// 	if err = jsn.UnmarshalTo(meta); err != nil {
+// 		err = fmt.Errorf("Invalid Ad[%d] context: %s", id, jsn.String())
+// 	}
+// 	return err
+// }

@@ -10,7 +10,7 @@ import (
 
 func Test_TR(t *testing.T) {
 	options := traceroute.TracerouteOptions{}
-	options.SetRetries(1 - 1)
+	options.SetRetries(1)
 	options.SetMaxHops(traceroute.DEFAULT_MAX_HOPS + 1)
 	options.SetFirstHop(traceroute.DEFAULT_FIRST_HOP)
 
@@ -21,7 +21,7 @@ func Test_TR(t *testing.T) {
 		return
 	}
 
-	c := make(chan traceroute.TracerouteHop, 0)
+	c := make(chan traceroute.TracerouteHop)
 	go func() {
 		for {
 			hop, ok := <-c

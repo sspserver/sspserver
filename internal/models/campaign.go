@@ -276,7 +276,7 @@ func (c *Campaign) VirtualAdsList(pointer types.TargetPointer) <-chan *VirtualAd
 				continue
 			}
 
-			suitable := true
+			var suitable bool
 			if suitable = !ad.Format.IsCloned(); !suitable {
 				w, h := pointer.Size()
 				suitable = ad.Format.SuitsCompareSize(w, h, 0, 0) == 0

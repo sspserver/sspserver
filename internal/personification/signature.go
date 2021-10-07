@@ -31,11 +31,11 @@ func (sign *Signeture) Whois(ctx context.Context, req *fasthttp.RequestCtx) (Per
 		defer span.Finish()
 	}
 
-	uuidCookie.ParseBytes(
+	_ = uuidCookie.ParseBytes(
 		req.Request.Header.Cookie(sign.UUIDName),
 	)
 
-	sessidCookie.ParseBytes(
+	_ = sessidCookie.ParseBytes(
 		req.Request.Header.Cookie(sign.SessidName),
 	)
 

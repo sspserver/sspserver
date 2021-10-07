@@ -27,7 +27,7 @@ func NewSimpleFormatAccessorWithLoader(formatLoader formatLoaderFnk) *SimpleForm
 	accessor := &SimpleFormatAccessor{
 		formatLoader: formatLoader,
 	}
-	accessor.Reload()
+	_ = accessor.Reload()
 	return accessor
 }
 

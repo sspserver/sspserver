@@ -34,10 +34,10 @@ import (
 	"geniusrabbit.dev/sspserver/internal/middleware"
 	"geniusrabbit.dev/sspserver/internal/models"
 	"geniusrabbit.dev/sspserver/internal/models/types"
-	"geniusrabbit.dev/sspserver/internal/notifications"
 	"geniusrabbit.dev/sspserver/internal/personification"
 	"geniusrabbit.dev/sspserver/internal/ssp"
 	_ "geniusrabbit.dev/sspserver/internal/ssp/platform/init"
+	"geniusrabbit.dev/sspserver/internal/stream"
 	"geniusrabbit.dev/sspserver/internal/urlgenerator"
 	"geniusrabbit.dev/sspserver/private/templates"
 )
@@ -69,9 +69,9 @@ func init() {
 
 	zap.ReplaceGlobals(loggerObj)
 
-	// if config.IsDebug() {
-	fmt.Println(config.String())
-	// }
+	if config.IsDebug() {
+		fmt.Println(config.String())
+	}
 }
 
 func main() {
@@ -101,22 +101,25 @@ func main() {
 		// Register events logger
 		eventQueue := adServerConf.EventPipeline.EventQueue
 		{
-			err = notifications.Connection(ctx, eventsStreamName, eventQueue.Connection)
+			pub, err := stream.ConnectPublisher(ctx, eventQueue.Connection)
 			fatalError(err, "connect to '"+eventQueue.Connection+"' topics")
+			nc.Register(eventsStreamName, pub)
 		}
 
 		// Register user info loop
 		userQueue := adServerConf.EventPipeline.UserInfoQueue
 		{
-			err = notifications.Connection(ctx, userInfoStreamName, userQueue.Connection)
+			pub, err := stream.ConnectPublisher(ctx, userQueue.Connection)
 			fatalError(err, "connect to '"+userQueue.Connection+"' topics")
+			nc.Register(userInfoStreamName, pub)
 		}
 
 		// Register wins info loop
 		winQueue := adServerConf.EventPipeline.WinQueue
 		{
-			err = notifications.Connection(ctx, winStreamName, winQueue.Connection)
+			pub, err := stream.ConnectPublisher(ctx, winQueue.Connection)
 			fatalError(err, "connect to '"+winQueue.Connection+"' topics")
+			nc.Register(winStreamName, pub)
 		}
 	}
 

@@ -103,13 +103,13 @@ func (s *Source) testFilter(tags []string, targeting map[string]string) (result 
 	}
 
 	// Compare targeting
-	if nil != s.Targeting && len(s.Targeting) > 0 {
-		if nil == targeting || len(targeting) < 1 {
+	if s.Targeting != nil && len(s.Targeting) > 0 {
+		if targeting == nil || len(targeting) < 1 {
 			return false
 		}
 
 		for key, val := range targeting {
-			if trg, _ := s.Targeting[key]; len(trg) > 0 {
+			if trg := s.Targeting[key]; len(trg) > 0 {
 				if i := sort.SearchStrings(trg, val); i < 0 || i >= len(trg) || trg[i] != val {
 					result = false
 					break
@@ -122,7 +122,7 @@ func (s *Source) testFilter(tags []string, targeting map[string]string) (result 
 
 // GetClient of http
 func (s *Source) GetClient() *http.Client {
-	if nil == s.Client {
+	if s.Client == nil {
 		s.updateClient(100 * time.Millisecond)
 	}
 	return s.Client

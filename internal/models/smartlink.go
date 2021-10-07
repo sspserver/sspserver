@@ -31,7 +31,7 @@ type Smartlink struct {
 // SmartlinkFromModel convert database model to specified model
 func SmartlinkFromModel(zone models.Zone) *Smartlink {
 	var code map[string]string
-	zone.DefaultCode.UnmarshalTo(&code)
+	_ = zone.DefaultCode.UnmarshalTo(&code)
 
 	return &Smartlink{
 		id:                zone.ID,

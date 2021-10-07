@@ -5,10 +5,6 @@
 
 package models
 
-import (
-	"strings"
-)
-
 // AdFileThumb of the file
 type AdFileThumb struct {
 	Path        string // Path to image or video
@@ -95,9 +91,9 @@ func (f *AdFile) IsVideo() bool {
 	return f.Type.IsVideo()
 }
 
-func urlPathJoin(urlBase, name string) string {
-	if strings.HasSuffix(urlBase, "/") != strings.HasPrefix(name, "/") {
-		return urlBase + name
-	}
-	return strings.TrimRight(urlBase, "/") + "/" + strings.TrimLeft(name, "/")
-}
+// func urlPathJoin(urlBase, name string) string {
+// 	if strings.HasSuffix(urlBase, "/") != strings.HasPrefix(name, "/") {
+// 		return urlBase + name
+// 	}
+// 	return strings.TrimRight(urlBase, "/") + "/" + strings.TrimLeft(name, "/")
+// }

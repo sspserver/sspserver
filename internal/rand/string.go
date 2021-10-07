@@ -6,34 +6,34 @@
 package rand
 
 import (
-  "crypto/rand"
+	"crypto/rand"
 )
 
 func Str(strSize int) string {
-  return StrFromDict(strSize, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*_+-=~")
+	return StrFromDict(strSize, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*_+-=~")
 }
 
 func StrUrlSafe(strSize int) string {
-  return StrFromDict(strSize, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$_")
+	return StrFromDict(strSize, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$_")
 }
 
 func StrAlphaNum(strSize int) string {
-  return StrFromDict(strSize, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+	return StrFromDict(strSize, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 }
 
 func StrAlpha(strSize int) string {
-  return StrFromDict(strSize, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+	return StrFromDict(strSize, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 }
 
 func StrNum(strSize int) string {
-  return StrFromDict(strSize, "0123456789")
+	return StrFromDict(strSize, "0123456789")
 }
 
 func StrFromDict(strSize int, dict string) string {
-  var bytes = make([]byte, strSize)
-  rand.Read(bytes)
-  for k, v := range bytes {
-    bytes[k] = dict[v%byte(len(dict))]
-  }
-  return string(bytes)
+	var bytes = make([]byte, strSize)
+	_, _ = rand.Read(bytes)
+	for k, v := range bytes {
+		bytes[k] = dict[v%byte(len(dict))]
+	}
+	return string(bytes)
 }

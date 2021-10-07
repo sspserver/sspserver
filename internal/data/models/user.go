@@ -56,7 +56,7 @@ func (u *User) IsAuth() bool {
 // PasswordHash code
 func PasswordHash(password string) string {
 	h := sha1.New()
-	io.WriteString(h, userPasswordSalt)
-	io.WriteString(h, password)
+	_, _ = io.WriteString(h, userPasswordSalt)
+	_, _ = io.WriteString(h, password)
 	return fmt.Sprintf("%x", h.Sum(nil))
 }

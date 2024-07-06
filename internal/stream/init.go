@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/url"
 
-	"github.com/geniusrabbit/notificationcenter"
+	nc "github.com/geniusrabbit/notificationcenter/v2"
 	"github.com/pkg/errors"
 )
 
@@ -12,8 +12,8 @@ import (
 var ErrUnsupportedScheme = errors.New(`unsupported scheme`)
 
 type (
-	subscribeConnector func(ctx context.Context, url string) (notificationcenter.Subscriber, error)
-	publisherConnector func(ctx context.Context, url string) (notificationcenter.Publisher, error)
+	subscribeConnector func(ctx context.Context, url string) (nc.Subscriber, error)
+	publisherConnector func(ctx context.Context, url string) (nc.Publisher, error)
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 )
 
 // ConnectSubscriber from URL
-func ConnectSubscriber(ctx context.Context, urlStr string) (notificationcenter.Subscriber, error) {
+func ConnectSubscriber(ctx context.Context, urlStr string) (nc.Subscriber, error) {
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func ConnectSubscriber(ctx context.Context, urlStr string) (notificationcenter.S
 }
 
 // ConnectPublisher from URL
-func ConnectPublisher(ctx context.Context, urlStr string) (notificationcenter.Publisher, error) {
+func ConnectPublisher(ctx context.Context, urlStr string) (nc.Publisher, error) {
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -44,5 +44,6 @@ func ConnectPublisher(ctx context.Context, urlStr string) (notificationcenter.Pu
 	if conn == nil {
 		return nil, errors.Wrap(ErrUnsupportedScheme, parsedURL.Scheme)
 	}
-	return conn(ctx, urlStr)
+	pub, err := conn(ctx, urlStr)
+	return pub, err
 }

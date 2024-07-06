@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en-US" class="mdl-js">
+  <head>
+    <style type="text/css">html, body {padding: 0;margin: 0;height: 100%;box-sizing: border-box;}.banner {font-family: Arial,Helvetica,sans-serif;background: #fff;overflow: hidden;height: 100%;position: relative;padding-bottom: 83px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;}.banner .label {padding: 2px 5px;box-sizing: border-box;height: 83px;position: absolute;bottom: 0;left: 0;right: 0;}.banner .label a {text-decoration: none!important;word-wrap: break-word;overflow: hidden;background-image: none;-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;display: block;}.banner .label a:hover {color: #35327b;}.banner .label .title,.banner .label .description {font-size: 14px;font-weight: 400;line-height: 1.3em;max-height: 65px;color: #000;}.banner .label .brand {font-size: 11px;font-weight: 700;line-height: 1em;max-height: 22px;color: #999;padding: 3px 0 0;}.banner .brandname {font-size: 11px;font-weight: 700;line-height: 1em;max-height: 22px;color: #999;padding: 3px 0 0;}.banner .phone {font-size: 11px;font-weight: 700;line-height: 1em;max-height: 22px;color: #699;padding: 3px 0 0;}.banner .image {border-style: none;-moz-border-radius: 0;-webkit-border-radius: 0;border-radius: 0;border-width: 0;background-color: #eee;height: 100%;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;background-size: cover;background-position: center center;background-repeat: no-repeat;display: block;margin: 0;}@media screen and (min-aspect-ratio: 10/7) {.banner .image{width: 40%;float: left;}.banner .label{width: 60%;float: left;position: static;}.banner {padding: 0;}}/* === horizontal orientation === */.banner.horizontal {padding: 0;}.banner.horizontal .image{width: 40%;float: left;}.banner.horizontal .label{width: 60%;float: left;position: static;}</style>
+  </head>
+  <body>
+    <div style="width: 300px; height: 300px;">
+      <ins id="element_1"></ins>
+    </div>
+    <script type="text/javascript" src="http://localhost:7078/embedded.js"></script>
+    <script type="text/javascript">!(function(){
+      (new EmbeddedAd({JSONPLink: 'http://localhost:7077/b/dynamic/{<id>}?format=jsonp&', element: "element_1", zone_id: 1}))
+        .on('error', function(err) {console.log(err);})
+        .on('loading', function(data) {console.log(data);})
+        .render();
+    })();
+    </script>
+  </body>
+</html>

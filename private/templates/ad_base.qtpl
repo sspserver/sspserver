@@ -2,15 +2,15 @@ Advertisement base elements
 
 {% 
   import (
-    "geniusrabbit.dev/sspserver/internal/adsource"
-    "geniusrabbit.dev/sspserver/internal/eventtraking/events"
+    "geniusrabbit.dev/adcorelib/adtype"
+    "geniusrabbit.dev/adcorelib/eventtraking/events"
   )
 %}
 
 {%code
   var Debug bool
   var ServiceDomain string
-  var URLGen adsource.URLGenerator
+  var URLGen adtype.URLGenerator
 %}
 
 {% func adActionScript() %}{% collapsespace %}{% stripspace %}
@@ -58,7 +58,7 @@ Generate pixel base code
 
 
 Generate pixel base code for adresult item
-{% func adPixelItem(ad adsource.ResponserItem, resp adsource.Responser) %}{% collapsespace %}{% stripspace %}
+{% func adPixelItem(ad adtype.ResponserItem, resp adtype.Responser) %}{% collapsespace %}{% stripspace %}
   {% if ad != nil && resp != nil %}
   <script type="text/javascript">
     {%code var u, _ = URLGen.PixelURL(events.Impression, events.StatusSuccess, ad, resp, false)  %}

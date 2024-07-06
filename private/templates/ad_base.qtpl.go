@@ -9,8 +9,8 @@ package templates
 
 //line private/templates/ad_base.qtpl:4
 import (
-	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
+	"geniusrabbit.dev/adcorelib/adtype"
+	"geniusrabbit.dev/adcorelib/eventtraking/events"
 )
 
 //line private/templates/ad_base.qtpl:10
@@ -29,7 +29,7 @@ var (
 //line private/templates/ad_base.qtpl:11
 var Debug bool
 var ServiceDomain string
-var URLGen adsource.URLGenerator
+var URLGen adtype.URLGenerator
 
 //line private/templates/ad_base.qtpl:16
 func streamadActionScript(qw422016 *qt422016.Writer) {
@@ -174,7 +174,7 @@ func adPixel(adID, spotID, campID int, tag string) string {
 // Generate pixel base code for adresult item
 
 //line private/templates/ad_base.qtpl:61
-func streamadPixelItem(qw422016 *qt422016.Writer, ad adsource.ResponserItem, resp adsource.Responser) {
+func streamadPixelItem(qw422016 *qt422016.Writer, ad adtype.ResponserItem, resp adtype.Responser) {
 //line private/templates/ad_base.qtpl:62
 	if ad != nil && resp != nil {
 //line private/templates/ad_base.qtpl:62
@@ -209,7 +209,7 @@ func streamadPixelItem(qw422016 *qt422016.Writer, ad adsource.ResponserItem, res
 }
 
 //line private/templates/ad_base.qtpl:70
-func writeadPixelItem(qq422016 qtio422016.Writer, ad adsource.ResponserItem, resp adsource.Responser) {
+func writeadPixelItem(qq422016 qtio422016.Writer, ad adtype.ResponserItem, resp adtype.Responser) {
 //line private/templates/ad_base.qtpl:70
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_base.qtpl:70
@@ -220,7 +220,7 @@ func writeadPixelItem(qq422016 qtio422016.Writer, ad adsource.ResponserItem, res
 }
 
 //line private/templates/ad_base.qtpl:70
-func adPixelItem(ad adsource.ResponserItem, resp adsource.Responser) string {
+func adPixelItem(ad adtype.ResponserItem, resp adtype.Responser) string {
 //line private/templates/ad_base.qtpl:70
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_base.qtpl:70

@@ -8,8 +8,8 @@ package templates
 import (
 	"strings"
 
-	"geniusrabbit.dev/sspserver/internal/adsource"
-	"geniusrabbit.dev/sspserver/internal/models/types"
+	"geniusrabbit.dev/adcorelib/admodels/types"
+	"geniusrabbit.dev/adcorelib/adtype"
 )
 
 //line private/templates/ad_html.qtpl:10
@@ -26,13 +26,13 @@ var (
 )
 
 //line private/templates/ad_html.qtpl:10
-func StreamAdRenderRTBIFrame(qw422016 *qt422016.Writer, bidResponse adsource.Responser) {
+func StreamAdRenderRTBIFrame(qw422016 *qt422016.Writer, bidResponse adtype.Responser) {
 //line private/templates/ad_html.qtpl:11
 	streamadHeader(qw422016)
 //line private/templates/ad_html.qtpl:12
 	for _, bid := range bidResponse.Ads() {
 //line private/templates/ad_html.qtpl:13
-		StreamAdRenderRTBBid(qw422016, bidResponse, bid.(*adsource.ResponseBidItem))
+		StreamAdRenderRTBBid(qw422016, bidResponse, bid.(*adtype.ResponseBidItem))
 //line private/templates/ad_html.qtpl:14
 	}
 //line private/templates/ad_html.qtpl:15
@@ -41,7 +41,7 @@ func StreamAdRenderRTBIFrame(qw422016 *qt422016.Writer, bidResponse adsource.Res
 }
 
 //line private/templates/ad_html.qtpl:16
-func WriteAdRenderRTBIFrame(qq422016 qtio422016.Writer, bidResponse adsource.Responser) {
+func WriteAdRenderRTBIFrame(qq422016 qtio422016.Writer, bidResponse adtype.Responser) {
 //line private/templates/ad_html.qtpl:16
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:16
@@ -52,7 +52,7 @@ func WriteAdRenderRTBIFrame(qq422016 qtio422016.Writer, bidResponse adsource.Res
 }
 
 //line private/templates/ad_html.qtpl:16
-func AdRenderRTBIFrame(bidResponse adsource.Responser) string {
+func AdRenderRTBIFrame(bidResponse adtype.Responser) string {
 //line private/templates/ad_html.qtpl:16
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:16
@@ -67,7 +67,7 @@ func AdRenderRTBIFrame(bidResponse adsource.Responser) string {
 }
 
 //line private/templates/ad_html.qtpl:19
-func StreamAdRenderRTBBid(qw422016 *qt422016.Writer, bidResponse adsource.Responser, bid *adsource.ResponseBidItem) {
+func StreamAdRenderRTBBid(qw422016 *qt422016.Writer, bidResponse adtype.Responser, bid *adtype.ResponseBidItem) {
 //line private/templates/ad_html.qtpl:20
 	streamadPixelItem(qw422016, bid, bidResponse)
 //line private/templates/ad_html.qtpl:21
@@ -106,7 +106,7 @@ func StreamAdRenderRTBBid(qw422016 *qt422016.Writer, bidResponse adsource.Respon
 }
 
 //line private/templates/ad_html.qtpl:40
-func WriteAdRenderRTBBid(qq422016 qtio422016.Writer, bidResponse adsource.Responser, bid *adsource.ResponseBidItem) {
+func WriteAdRenderRTBBid(qq422016 qtio422016.Writer, bidResponse adtype.Responser, bid *adtype.ResponseBidItem) {
 //line private/templates/ad_html.qtpl:40
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:40
@@ -117,7 +117,7 @@ func WriteAdRenderRTBBid(qq422016 qtio422016.Writer, bidResponse adsource.Respon
 }
 
 //line private/templates/ad_html.qtpl:40
-func AdRenderRTBBid(bidResponse adsource.Responser, bid *adsource.ResponseBidItem) string {
+func AdRenderRTBBid(bidResponse adtype.Responser, bid *adtype.ResponseBidItem) string {
 //line private/templates/ad_html.qtpl:40
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:40
@@ -132,7 +132,7 @@ func AdRenderRTBBid(bidResponse adsource.Responser, bid *adsource.ResponseBidIte
 }
 
 //line private/templates/ad_html.qtpl:43
-func StreamAdRenderComplexIFrame(qw422016 *qt422016.Writer, resp adsource.Responser) {
+func StreamAdRenderComplexIFrame(qw422016 *qt422016.Writer, resp adtype.Responser) {
 //line private/templates/ad_html.qtpl:44
 	streamadHeader(qw422016)
 //line private/templates/ad_html.qtpl:45
@@ -140,11 +140,11 @@ func StreamAdRenderComplexIFrame(qw422016 *qt422016.Writer, resp adsource.Respon
 //line private/templates/ad_html.qtpl:46
 		switch it := ad.(type) {
 //line private/templates/ad_html.qtpl:47
-		case adsource.ResponserItem:
+		case adtype.ResponserItem:
 //line private/templates/ad_html.qtpl:48
 			streamadRenderOne(qw422016, resp, it)
 //line private/templates/ad_html.qtpl:49
-		case adsource.ResponserMultipleItem:
+		case adtype.ResponserMultipleItem:
 //line private/templates/ad_html.qtpl:50
 			streamadRenderMulty(qw422016, resp, it)
 //line private/templates/ad_html.qtpl:51
@@ -161,7 +161,7 @@ func StreamAdRenderComplexIFrame(qw422016 *qt422016.Writer, resp adsource.Respon
 }
 
 //line private/templates/ad_html.qtpl:56
-func WriteAdRenderComplexIFrame(qq422016 qtio422016.Writer, resp adsource.Responser) {
+func WriteAdRenderComplexIFrame(qq422016 qtio422016.Writer, resp adtype.Responser) {
 //line private/templates/ad_html.qtpl:56
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:56
@@ -172,7 +172,7 @@ func WriteAdRenderComplexIFrame(qq422016 qtio422016.Writer, resp adsource.Respon
 }
 
 //line private/templates/ad_html.qtpl:56
-func AdRenderComplexIFrame(resp adsource.Responser) string {
+func AdRenderComplexIFrame(resp adtype.Responser) string {
 //line private/templates/ad_html.qtpl:56
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:56
@@ -187,7 +187,7 @@ func AdRenderComplexIFrame(resp adsource.Responser) string {
 }
 
 //line private/templates/ad_html.qtpl:59
-func StreamAdRenderIFrame(qw422016 *qt422016.Writer, resp adsource.Responser, ad adsource.ResponserItem) {
+func StreamAdRenderIFrame(qw422016 *qt422016.Writer, resp adtype.Responser, ad adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:60
 	streamadHeader(qw422016)
 //line private/templates/ad_html.qtpl:61
@@ -198,7 +198,7 @@ func StreamAdRenderIFrame(qw422016 *qt422016.Writer, resp adsource.Responser, ad
 }
 
 //line private/templates/ad_html.qtpl:63
-func WriteAdRenderIFrame(qq422016 qtio422016.Writer, resp adsource.Responser, ad adsource.ResponserItem) {
+func WriteAdRenderIFrame(qq422016 qtio422016.Writer, resp adtype.Responser, ad adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:63
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:63
@@ -209,7 +209,7 @@ func WriteAdRenderIFrame(qq422016 qtio422016.Writer, resp adsource.Responser, ad
 }
 
 //line private/templates/ad_html.qtpl:63
-func AdRenderIFrame(resp adsource.Responser, ad adsource.ResponserItem) string {
+func AdRenderIFrame(resp adtype.Responser, ad adtype.ResponserItem) string {
 //line private/templates/ad_html.qtpl:63
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:63
@@ -224,7 +224,7 @@ func AdRenderIFrame(resp adsource.Responser, ad adsource.ResponserItem) string {
 }
 
 //line private/templates/ad_html.qtpl:66
-func StreamAdRenderOne(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func StreamAdRenderOne(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:67
 	streamadActionScript(qw422016)
 //line private/templates/ad_html.qtpl:68
@@ -233,7 +233,7 @@ func StreamAdRenderOne(qw422016 *qt422016.Writer, resp adsource.Responser, it ad
 }
 
 //line private/templates/ad_html.qtpl:69
-func WriteAdRenderOne(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func WriteAdRenderOne(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:69
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:69
@@ -244,7 +244,7 @@ func WriteAdRenderOne(qq422016 qtio422016.Writer, resp adsource.Responser, it ad
 }
 
 //line private/templates/ad_html.qtpl:69
-func AdRenderOne(resp adsource.Responser, it adsource.ResponserItem) string {
+func AdRenderOne(resp adtype.Responser, it adtype.ResponserItem) string {
 //line private/templates/ad_html.qtpl:69
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:69
@@ -259,7 +259,7 @@ func AdRenderOne(resp adsource.Responser, it adsource.ResponserItem) string {
 }
 
 //line private/templates/ad_html.qtpl:72
-func StreamAdRenderMulty(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserMultipleItem) {
+func StreamAdRenderMulty(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserMultipleItem) {
 //line private/templates/ad_html.qtpl:73
 	streamadActionScript(qw422016)
 //line private/templates/ad_html.qtpl:74
@@ -268,7 +268,7 @@ func StreamAdRenderMulty(qw422016 *qt422016.Writer, resp adsource.Responser, it 
 }
 
 //line private/templates/ad_html.qtpl:75
-func WriteAdRenderMulty(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserMultipleItem) {
+func WriteAdRenderMulty(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserMultipleItem) {
 //line private/templates/ad_html.qtpl:75
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:75
@@ -279,7 +279,7 @@ func WriteAdRenderMulty(qq422016 qtio422016.Writer, resp adsource.Responser, it 
 }
 
 //line private/templates/ad_html.qtpl:75
-func AdRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) string {
+func AdRenderMulty(resp adtype.Responser, it adtype.ResponserMultipleItem) string {
 //line private/templates/ad_html.qtpl:75
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:75
@@ -294,7 +294,7 @@ func AdRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) s
 }
 
 //line private/templates/ad_html.qtpl:78
-func streamadRenderMulty(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserMultipleItem) {
+func streamadRenderMulty(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserMultipleItem) {
 //line private/templates/ad_html.qtpl:79
 	for _, ad := range it.Ads() {
 //line private/templates/ad_html.qtpl:80
@@ -305,7 +305,7 @@ func streamadRenderMulty(qw422016 *qt422016.Writer, resp adsource.Responser, it 
 }
 
 //line private/templates/ad_html.qtpl:82
-func writeadRenderMulty(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserMultipleItem) {
+func writeadRenderMulty(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserMultipleItem) {
 //line private/templates/ad_html.qtpl:82
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:82
@@ -316,7 +316,7 @@ func writeadRenderMulty(qq422016 qtio422016.Writer, resp adsource.Responser, it 
 }
 
 //line private/templates/ad_html.qtpl:82
-func adRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) string {
+func adRenderMulty(resp adtype.Responser, it adtype.ResponserMultipleItem) string {
 //line private/templates/ad_html.qtpl:82
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:82
@@ -331,7 +331,7 @@ func adRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) s
 }
 
 //line private/templates/ad_html.qtpl:85
-func streamadRenderOne(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func streamadRenderOne(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:86
 	streamadPixelItem(qw422016, it, resp)
 //line private/templates/ad_html.qtpl:87
@@ -363,7 +363,7 @@ func streamadRenderOne(qw422016 *qt422016.Writer, resp adsource.Responser, it ad
 }
 
 //line private/templates/ad_html.qtpl:98
-func writeadRenderOne(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func writeadRenderOne(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:98
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:98
@@ -374,7 +374,7 @@ func writeadRenderOne(qq422016 qtio422016.Writer, resp adsource.Responser, it ad
 }
 
 //line private/templates/ad_html.qtpl:98
-func adRenderOne(resp adsource.Responser, it adsource.ResponserItem) string {
+func adRenderOne(resp adtype.Responser, it adtype.ResponserItem) string {
 //line private/templates/ad_html.qtpl:98
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:98
@@ -389,14 +389,14 @@ func adRenderOne(resp adsource.Responser, it adsource.ResponserItem) string {
 }
 
 //line private/templates/ad_html.qtpl:101
-func streamadRenderCustom(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func streamadRenderCustom(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:101
 	qw422016.N().S(`CUSTOM`)
 //line private/templates/ad_html.qtpl:103
 }
 
 //line private/templates/ad_html.qtpl:103
-func writeadRenderCustom(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func writeadRenderCustom(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_html.qtpl:103
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_html.qtpl:103
@@ -407,7 +407,7 @@ func writeadRenderCustom(qq422016 qtio422016.Writer, resp adsource.Responser, it
 }
 
 //line private/templates/ad_html.qtpl:103
-func adRenderCustom(resp adsource.Responser, it adsource.ResponserItem) string {
+func adRenderCustom(resp adtype.Responser, it adtype.ResponserItem) string {
 //line private/templates/ad_html.qtpl:103
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_html.qtpl:103

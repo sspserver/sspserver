@@ -1,0 +1,5 @@
+zones:
+  - id: 1
+    company_id: 1
+    title: "Test zone 1"
+    allowed_formats: [4]

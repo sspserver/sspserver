@@ -6,7 +6,7 @@ package templates
 
 //line private/templates/ad_proxy.qtpl:2
 import (
-	"geniusrabbit.dev/sspserver/internal/adsource"
+	"geniusrabbit.dev/adcorelib/adtype"
 )
 
 //line private/templates/ad_proxy.qtpl:7
@@ -23,7 +23,7 @@ var (
 )
 
 //line private/templates/ad_proxy.qtpl:7
-func streamadRenderProxy(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func streamadRenderProxy(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_proxy.qtpl:8
 	if url := it.ContentItemString("iframe_url"); len(url) > 0 {
 //line private/templates/ad_proxy.qtpl:8
@@ -68,7 +68,7 @@ func streamadRenderProxy(qw422016 *qt422016.Writer, resp adsource.Responser, it 
 }
 
 //line private/templates/ad_proxy.qtpl:26
-func writeadRenderProxy(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func writeadRenderProxy(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_proxy.qtpl:26
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_proxy.qtpl:26
@@ -79,7 +79,7 @@ func writeadRenderProxy(qq422016 qtio422016.Writer, resp adsource.Responser, it 
 }
 
 //line private/templates/ad_proxy.qtpl:26
-func adRenderProxy(resp adsource.Responser, it adsource.ResponserItem) string {
+func adRenderProxy(resp adtype.Responser, it adtype.ResponserItem) string {
 //line private/templates/ad_proxy.qtpl:26
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_proxy.qtpl:26

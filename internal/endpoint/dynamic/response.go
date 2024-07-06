@@ -7,24 +7,34 @@ type tracker struct {
 	Views       []string `json:"views"`
 }
 
+type assetThumb struct {
+	Path   string `json:"path"`
+	Type   string `json:"type,omitempty"`
+	Width  int    `json:"width,omitempty"`
+	Height int    `json:"height,omitempty"`
+}
+
 //easyjson:json
 type asset struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
-	Type string `json:"type"`
+	Name   string       `json:"name,omitempty"`
+	Path   string       `json:"path"`
+	Type   string       `json:"type,omitempty"`
+	Width  int          `json:"width,omitempty"`
+	Height int          `json:"height,omitempty"`
+	Thumbs []assetThumb `json:"thumbs,omitempty"`
 }
 
 //easyjson:json
 type item struct {
-	ID         interface{}            `json:"id"`
-	Type       string                 `json:"type"`
-	URL        string                 `json:"url,omitempty"`
-	Content    string                 `json:"content,omitempty"`
-	ContentURL string                 `json:"content_url,omitempty"`
-	Fields     map[string]interface{} `json:"fields,omitempty"`
-	Assets     []asset                `json:"assets,omitempty"`
-	Tracker    tracker                `json:"tracker"`
-	Debug      interface{}            `json:"debug,omitempty"`
+	ID         any            `json:"id"`
+	Type       string         `json:"type"`
+	URL        string         `json:"url,omitempty"`
+	Content    string         `json:"content,omitempty"`
+	ContentURL string         `json:"content_url,omitempty"`
+	Fields     map[string]any `json:"fields,omitempty"`
+	Assets     []asset        `json:"assets,omitempty"`
+	Tracker    tracker        `json:"tracker"`
+	Debug      any            `json:"debug,omitempty"`
 }
 
 //easyjson:json

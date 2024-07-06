@@ -6,8 +6,8 @@ package stream
 import (
 	"context"
 
-	nc "github.com/geniusrabbit/notificationcenter"
-	"github.com/geniusrabbit/notificationcenter/kafka"
+	nc "github.com/geniusrabbit/notificationcenter/v2"
+	"github.com/geniusrabbit/notificationcenter/v2/kafka"
 )
 
 func init() {

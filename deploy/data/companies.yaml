@@ -1,0 +1,4 @@
+companies:
+  - id: 1
+    name: "default"
+    title: "Default"

@@ -6,7 +6,7 @@ package templates
 
 //line private/templates/ad_context.qtpl:2
 import (
-	"geniusrabbit.dev/sspserver/internal/adsource"
+	"geniusrabbit.dev/adcorelib/adtype"
 )
 
 //line private/templates/ad_context.qtpl:7
@@ -23,7 +23,7 @@ var (
 )
 
 //line private/templates/ad_context.qtpl:7
-func streamadRenderContext(qw422016 *qt422016.Writer, resp adsource.Responser, ad *adsource.ResponseAdItem) {
+func streamadRenderContext(qw422016 *qt422016.Writer, resp adtype.Responser, ad *adtype.ResponseAdItem) {
 //line private/templates/ad_context.qtpl:7
 	qw422016.N().S(`<h1>`)
 //line private/templates/ad_context.qtpl:8
@@ -38,7 +38,7 @@ func streamadRenderContext(qw422016 *qt422016.Writer, resp adsource.Responser, a
 }
 
 //line private/templates/ad_context.qtpl:10
-func writeadRenderContext(qq422016 qtio422016.Writer, resp adsource.Responser, ad *adsource.ResponseAdItem) {
+func writeadRenderContext(qq422016 qtio422016.Writer, resp adtype.Responser, ad *adtype.ResponseAdItem) {
 //line private/templates/ad_context.qtpl:10
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_context.qtpl:10
@@ -49,7 +49,7 @@ func writeadRenderContext(qq422016 qtio422016.Writer, resp adsource.Responser, a
 }
 
 //line private/templates/ad_context.qtpl:10
-func adRenderContext(resp adsource.Responser, ad *adsource.ResponseAdItem) string {
+func adRenderContext(resp adtype.Responser, ad *adtype.ResponseAdItem) string {
 //line private/templates/ad_context.qtpl:10
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_context.qtpl:10

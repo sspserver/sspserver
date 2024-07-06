@@ -2,21 +2,21 @@
   import (
     "strings"
 
-    "geniusrabbit.dev/sspserver/internal/adsource"
-    "geniusrabbit.dev/sspserver/internal/models/types"
+    "geniusrabbit.dev/adcorelib/adtype"
+    "geniusrabbit.dev/adcorelib/admodels/types"
   )
 %}
 
-{% func AdRenderRTBIFrame(bidResponse adsource.Responser) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderRTBIFrame(bidResponse adtype.Responser) %}{% collapsespace %}{% stripspace %}
   {%= adHeader() %}
   {% for _, bid := range bidResponse.Ads() %}
-    {%= AdRenderRTBBid(bidResponse, bid.(*adsource.ResponseBidItem)) %}
+    {%= AdRenderRTBBid(bidResponse, bid.(*adtype.ResponseBidItem)) %}
   {% endfor %}
   {%= adFooter() %}
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func AdRenderRTBBid(bidResponse adsource.Responser, bid *adsource.ResponseBidItem) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderRTBBid(bidResponse adtype.Responser, bid *adtype.ResponseBidItem) %}{% collapsespace %}{% stripspace %}
   {%= adPixelItem(bid, bidResponse) %}
   {% if strings.HasPrefix(bid.Bid.AdMarkup, "http://") ||
         strings.HasPrefix(bid.Bid.AdMarkup, "https://") ||
@@ -40,13 +40,13 @@
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func AdRenderComplexIFrame(resp adsource.Responser) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderComplexIFrame(resp adtype.Responser) %}{% collapsespace %}{% stripspace %}
   {%= adHeader() %}
   {% for _, ad := range resp.Ads() %}
     {% switch it := ad.(type) %}
-      {% case adsource.ResponserItem %}
+      {% case adtype.ResponserItem %}
         {%= adRenderOne(resp, it) %}
-      {% case adsource.ResponserMultipleItem %}
+      {% case adtype.ResponserMultipleItem %}
         {%= adRenderMulty(resp, it) %}
       {% default %}
         Unsupported type response type
@@ -56,33 +56,33 @@
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func AdRenderIFrame(resp adsource.Responser, ad adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderIFrame(resp adtype.Responser, ad adtype.ResponserItem) %}{% collapsespace %}{% stripspace %}
   {%= adHeader() %}
   {%= adRenderOne(resp, ad) %}
   {%= adFooter() %}
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func AdRenderOne(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderOne(resp adtype.Responser, it adtype.ResponserItem) %}{% collapsespace %}{% stripspace %}
   {%= adActionScript() %}
   {%= adRenderOne(resp, it) %}
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func AdRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderMulty(resp adtype.Responser, it adtype.ResponserMultipleItem) %}{% collapsespace %}{% stripspace %}
   {%= adActionScript() %}
   {%= adRenderMulty(resp, it) %}
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func adRenderMulty(resp adsource.Responser, it adsource.ResponserMultipleItem) %}{% collapsespace %}{% stripspace %}
+{% func adRenderMulty(resp adtype.Responser, it adtype.ResponserMultipleItem) %}{% collapsespace %}{% stripspace %}
   {% for _, ad := range it.Ads() %}
     {%= adRenderOne(resp, ad) %}
   {% endfor %}
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func adRenderOne(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+{% func adRenderOne(resp adtype.Responser, it adtype.ResponserItem) %}{% collapsespace %}{% stripspace %}
   {%= adPixelItem(it, resp) %}
   {%code /* Extract more preority AD format */ %}
   {% switch it.PriorityFormatType() %}
@@ -98,6 +98,6 @@
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}
 
 
-{% func adRenderCustom(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+{% func adRenderCustom(resp adtype.Responser, it adtype.ResponserItem) %}{% collapsespace %}{% stripspace %}
   CUSTOM
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}

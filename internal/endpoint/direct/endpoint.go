@@ -12,18 +12,21 @@ import (
 
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/valyala/fasthttp"
+	"go.uber.org/zap"
 
-	"geniusrabbit.dev/sspserver/internal/adsource"
+	"geniusrabbit.dev/adcorelib/admodels/types"
+	"geniusrabbit.dev/adcorelib/adtype"
+	"geniusrabbit.dev/adcorelib/context/ctxlogger"
+	"geniusrabbit.dev/adcorelib/eventtraking/events"
+	"geniusrabbit.dev/adcorelib/eventtraking/eventstream"
+	"geniusrabbit.dev/adcorelib/gtracing"
 	"geniusrabbit.dev/sspserver/internal/endpoint"
-	"geniusrabbit.dev/sspserver/internal/gtracing"
-	"geniusrabbit.dev/sspserver/internal/models/types"
 )
 
 // Error list...
 var (
 	ErrMultipleDirectNotSupported = errors.New("direct: multiple direct responses not supported")
 	ErrInvalidResponseType        = errors.New("direct: invalid response type")
-	ErrInvalidFormatsAccessor     = errors.New("direct: FormatsAccessor object is not inited")
 )
 
 type debugResponse struct {
@@ -39,26 +42,38 @@ type debugResponse struct {
 }
 
 type _endpoint struct {
-	superFailoverURL string
-	source           endpoint.Sourcer
 	formats          types.FormatsAccessor
+	superFailoverURL string
 }
 
-func (e _endpoint) Version() string {
-	return "v1"
+func New(formats types.FormatsAccessor, superFailoverURL string) *_endpoint {
+	return &_endpoint{
+		formats:          formats,
+		superFailoverURL: superFailoverURL,
+	}
 }
 
-func (e _endpoint) Handle(request *adsource.BidRequest) adsource.Responser {
-	request.ImpressionUpdate(func(imp *adsource.Impression) bool {
+func (e *_endpoint) Codename() string {
+	return "direct"
+}
+
+func (e *_endpoint) Handle(source endpoint.Source, request *adtype.BidRequest) adtype.Responser {
+	request.ImpressionUpdate(func(imp *adtype.Impression) bool {
 		imp.W, imp.H = -1, -1
 		imp.FormatTypes.Reset().Set(types.FormatDirectType)
 		return true
 	})
 	request.Init(e.formats)
-	return e.source.Bid(request)
+	response := source.Bid(request)
+	if err := e.execDirect(request.RequestCtx, response); err != nil {
+		ctxlogger.Get(request.Ctx).Error("exec direct", zap.Error(err))
+	} else {
+		e.sendViewEvent(response)
+	}
+	return response
 }
 
-func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser) (err error) {
+func (e *_endpoint) execDirect(req *fasthttp.RequestCtx, response adtype.Responser) (err error) {
 	var (
 		id              uint64
 		zoneID          uint64
@@ -67,12 +82,12 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 		alternativeLink = false
 	)
 
-	if span, _ := gtracing.StartSpanFromContext(response.Request().Context, "render"); span != nil {
+	if span, _ := gtracing.StartSpanFromFastContext(req, "render"); span != nil {
 		ext.Component.Set(span, "endpoint.direct")
 		defer span.Finish()
 	}
 
-	if response == nil || response.Count() < 1 {
+	if response == nil || response.Count() == 0 {
 		if response != nil {
 			if imps := response.Request().Imps; len(imps) > 0 {
 				impID = imps[0].ID
@@ -94,14 +109,14 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 			}
 
 			switch ad := adv.(type) {
-			case adsource.ResponserItem:
+			case adtype.ResponserItem:
 				id = ad.AdID()
 				if !ad.IsDirect() {
 					err = ErrInvalidResponseType
 				} else {
-					link = ad.ActionURL()
+					link = adtype.PrepareURL(ad.ActionURL(), response, ad)
 				}
-			case adsource.ResponserMultipleItem:
+			case adtype.ResponserMultipleItem:
 				err = ErrMultipleDirectNotSupported
 			default:
 				// ...
@@ -110,10 +125,10 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 	}
 
 	switch {
-	case response != nil && response.Request().Debug && ctx.QueryArgs().Has("noredirect"):
-		ctx.SetStatusCode(http.StatusOK)
-		ctx.SetContentType("application/json")
-		json.NewEncoder(ctx).Encode(debugResponse{
+	case response != nil && response.Request().Debug && req.QueryArgs().Has("noredirect"):
+		req.SetStatusCode(http.StatusOK)
+		req.SetContentType("application/json")
+		json.NewEncoder(req).Encode(debugResponse{
 			ID:                id,
 			ZoneID:            zoneID,
 			ImpressionID:      impID,
@@ -125,17 +140,41 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 			IsEmpty:           response.Count() < 1,
 		})
 	case link != "":
-		ctx.Response.Header.Set("X-Status-Alternative", "1")
-		ctx.Redirect(link, http.StatusFound)
+		req.Response.Header.Set("X-Status-Alternative", "1")
+		req.Redirect(link, http.StatusFound)
 	case e.superFailoverURL == "":
-		ctx.Success("text/plain", []byte("Please add superfailover link"))
+		req.Success("text/plain", []byte("Please add superfailover link"))
 	default:
-		ctx.Response.Header.Set("X-Status-Failover", "1")
-		ctx.Redirect(e.superFailoverURL, http.StatusFound)
+		req.Response.Header.Set("X-Status-Failover", "1")
+		req.Redirect(e.superFailoverURL, http.StatusFound)
 	}
-	return
+	return err
 }
 
-func (e _endpoint) PrepareRequest(ctx *fasthttp.RequestCtx) (err error) {
-	return
+func (e *_endpoint) sendViewEvent(response adtype.Responser) {
+	if response == nil || response.Error() != nil || len(response.Ads()) == 0 {
+		return
+	}
+	if response.Request().Debug && response.Request().RequestCtx.QueryArgs().Has("noredirect") {
+		ctxlogger.Get(response.Context()).Info("skip event log", zap.String("request_id", response.Request().ID))
+		return
+	}
+	var (
+		err    error
+		stream = eventstream.StreamFromContext(response.Context())
+	)
+
+	switch ad := response.Ads()[0].(type) {
+	case adtype.ResponserItem:
+		err = stream.Send(events.Direct, events.StatusSuccess, response, ad)
+	case adtype.ResponserMultipleItem:
+		if len(ad.Ads()) > 0 {
+			err = stream.Send(events.Direct, events.StatusSuccess, response, ad.Ads()[0])
+		}
+	default:
+		// Invalid ad type
+	}
+	if err != nil {
+		ctxlogger.Get(response.Context()).Error("send direct event", zap.Error(err))
+	}
 }

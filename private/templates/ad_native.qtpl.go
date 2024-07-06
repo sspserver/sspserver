@@ -6,9 +6,9 @@ package templates
 
 //line private/templates/ad_native.qtpl:2
 import (
-	"github.com/demdxx/gocast"
+	"github.com/demdxx/gocast/v2"
 
-	"geniusrabbit.dev/sspserver/internal/adsource"
+	"geniusrabbit.dev/adcorelib/adtype"
 )
 
 //line private/templates/ad_native.qtpl:9
@@ -25,7 +25,7 @@ var (
 )
 
 //line private/templates/ad_native.qtpl:9
-func streamadRenderNative(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func streamadRenderNative(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_native.qtpl:11
 	urlStr := URLGen.MustClickURL(it, resp)
 	asset := it.MainAsset()
@@ -172,7 +172,7 @@ func streamadRenderNative(qw422016 *qt422016.Writer, resp adsource.Responser, it
 }
 
 //line private/templates/ad_native.qtpl:53
-func writeadRenderNative(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func writeadRenderNative(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_native.qtpl:53
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_native.qtpl:53
@@ -183,7 +183,7 @@ func writeadRenderNative(qq422016 qtio422016.Writer, resp adsource.Responser, it
 }
 
 //line private/templates/ad_native.qtpl:53
-func adRenderNative(resp adsource.Responser, it adsource.ResponserItem) string {
+func adRenderNative(resp adtype.Responser, it adtype.ResponserItem) string {
 //line private/templates/ad_native.qtpl:53
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_native.qtpl:53

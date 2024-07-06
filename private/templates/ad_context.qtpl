@@ -1,10 +1,10 @@
 {% 
   import (
-    "geniusrabbit.dev/sspserver/internal/adsource"
+    "geniusrabbit.dev/adcorelib/adtype"
   )
 %}
 
-{% func adRenderContext(resp adsource.Responser, ad *adsource.ResponseAdItem) %}{% collapsespace %}{% stripspace %}
+{% func adRenderContext(resp adtype.Responser, ad *adtype.ResponseAdItem) %}{% collapsespace %}{% stripspace %}
   <h1>{%s= ad.Ad.ContentItemString("title") %}</h1>
   <p>{%s= ad.Ad.ContentItemString("content") %}</p>
 {% endstripspace %}{% endcollapsespace %}{% endfunc %}

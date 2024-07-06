@@ -2,6 +2,8 @@ FROM golang:latest
 
 EXPOSE 8080
 
+ARG TARGETPLATFORM
+
 LABEL maintainer="Dmitry Ponomarev <demdxx@gmail.com>"
 LABEL service.name=rtb.sspserver
 LABEL service.weight=1
@@ -15,9 +17,10 @@ ENV SERVER_HTTP_LISTEN=:8080
 ENV SERVER_GRPC_LISTEN=tcp://:8081
 ENV SERVER_PROFILE_MODE=net
 ENV SERVER_PROFILE_LISTEN=8082
-ENV ADSTORAGE_CONNECTION=fs:/data/
+ENV ADSTORAGE_CONNECTION=fs:///data/
 
-COPY .build/sspserver /sspserver
+COPY .build/${TARGETPLATFORM}/sspserver /sspserver
 COPY deploy/data /data
+COPY public /public
 
 ENTRYPOINT [ "/sspserver"]

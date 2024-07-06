@@ -1,10 +1,10 @@
 {% 
   import (
-    "geniusrabbit.dev/sspserver/internal/adsource"
+    "geniusrabbit.dev/adcorelib/adtype"
   )
 %}
 
-{% func AdRenderDinamicProxyBanner(request *adsource.BidRequest) %}{% collapsespace %}{% stripspace %}
+{% func AdRenderDinamicProxyBanner(request *adtype.BidRequest) %}{% collapsespace %}{% stripspace %}
   {%= adHeader() %}
   {%= preloader() %}
   {%= adRenderNativeCSS() %}

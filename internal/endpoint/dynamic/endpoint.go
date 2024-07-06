@@ -1,43 +1,49 @@
 //
-// @project GeniusRabbit rotator 2018 - 2019
-// @author Dmitry Ponomarev <demdxx@gmail.com> 2018 - 2019
+// @project GeniusRabbit rotator 2018 - 2024
+// @author Dmitry Ponomarev <demdxx@gmail.com> 2018 - 2024
 //
 
 package dynamic
 
 import (
 	"encoding/json"
+	"math/rand"
 
 	"github.com/valyala/fasthttp"
 
-	"geniusrabbit.dev/sspserver/internal/adsource"
+	"geniusrabbit.dev/adcorelib/admodels"
+	"geniusrabbit.dev/adcorelib/adtype"
+	"geniusrabbit.dev/adcorelib/eventtraking/events"
 	"geniusrabbit.dev/sspserver/internal/endpoint"
-	"geniusrabbit.dev/sspserver/internal/eventtraking/events"
 )
 
 type _endpoint struct {
-	// Data source
-	source endpoint.Sourcer
-
-	// URL generator
-	urlGen adsource.URLGenerator
+	urlGen adtype.URLGenerator
 }
 
-func (e _endpoint) Version() string {
-	return "v1"
+func New(urlGen adtype.URLGenerator) *_endpoint {
+	return &_endpoint{urlGen: urlGen}
 }
 
-func (e _endpoint) Handle(request *adsource.BidRequest) adsource.Responser {
-	return e.source.Bid(request)
+func (e *_endpoint) Codename() string {
+	return "dynamic"
 }
 
-func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser) error {
+func (e _endpoint) Handle(source endpoint.Source, request *adtype.BidRequest) adtype.Responser {
+	response := source.Bid(request)
+	if err := e.render(request.RequestCtx, response); err != nil {
+		response = adtype.NewErrorResponse(request, err)
+	}
+	return response
+}
+
+func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) error {
 	resp := Response{Version: "1"}
 
 	for _, ad := range response.Ads() {
 		var (
 			assets       []asset
-			aditm        = ad.(adsource.ResponserItem)
+			aditm        = ad.(adtype.ResponserItem)
 			url          string
 			impPixel, _  = e.urlGen.PixelURL(events.Impression, events.StatusSuccess, aditm, response, false)
 			viewPixel, _ = e.urlGen.PixelURL(events.View, events.StatusSuccess, aditm, response, false)
@@ -53,19 +59,34 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 			Views:       []string{viewPixel},
 		}
 
-		if item, _ := ad.(adsource.ResponserItem); item != nil {
+		if item, _ := ad.(adtype.ResponserItem); item != nil {
 			trackerBlock.Clicks = item.ClickTrackerLinks()
 			if links := item.ViewTrackerLinks(); len(links) > 0 {
 				trackerBlock.Views = append(trackerBlock.Views, links...)
 			}
 		}
 
-		for _, as := range aditm.Assets() {
-			assets = append(assets, asset{
-				Name: as.Name,
-				Path: as.Path,
-				Type: as.Type.String(),
-			})
+		if baseAssets := aditm.Assets(); len(baseAssets) > 0 {
+			assets = make([]asset, 0, len(baseAssets))
+			processed := map[string]int{}
+			for _, as := range baseAssets {
+				if idx, ok := processed[as.Name]; !ok || rand.Float64() > 0.5 {
+					nas := asset{
+						Name:   as.Name,
+						Path:   e.urlGen.CDNURL(as.Path),
+						Type:   as.Type.Code(),
+						Width:  as.Width,
+						Height: as.Height,
+						Thumbs: e.thumbsPrepare(as.Thumbs),
+					}
+					if !ok {
+						processed[as.Name] = len(assets)
+						assets = append(assets, nas)
+					} else {
+						assets[idx] = nas
+					}
+				}
+			}
 		}
 
 		group := resp.getGroupOrCreate(ad.ImpressionID())
@@ -73,8 +94,8 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 			ID:         ad.ID(),
 			Type:       ad.PriorityFormatType().Name(),
 			URL:        url,
-			Content:    aditm.ContentItemString(adsource.ContentItemContent),
-			ContentURL: aditm.ContentItemString(adsource.ContentItemIFrameURL),
+			Content:    aditm.ContentItemString(adtype.ContentItemContent),
+			ContentURL: aditm.ContentItemString(adtype.ContentItemIFrameURL),
 			Fields:     aditm.ContentFields(),
 			Assets:     assets,
 			Tracker:    trackerBlock,
@@ -92,22 +113,28 @@ func (e _endpoint) Render(ctx *fasthttp.RequestCtx, response adsource.Responser)
 		if callback == "" {
 			callback = "callback"
 		}
-		ctx.Write([]byte(callback + "("))
-		json.NewEncoder(ctx).Encode(resp)
-		ctx.Write([]byte(")"))
+		ctx.SetStatusCode(fasthttp.StatusOK)
+		ctx.SetContentType("application/javascript")
+		_, _ = ctx.Write([]byte(callback + "("))
+		_ = json.NewEncoder(ctx).Encode(resp)
+		_, _ = ctx.Write([]byte(")"))
 		return nil
 	}
 
+	ctx.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetContentType("application/json")
 	return json.NewEncoder(ctx).Encode(resp)
 }
 
-func (e _endpoint) PrepareRequest(ctx *fasthttp.RequestCtx) (err error) {
-	return
-}
-
-func defString(s, def string) string {
-	if s == "" {
-		return def
+func (e _endpoint) thumbsPrepare(thumbs []admodels.AdAssetThumb) []assetThumb {
+	nthumbs := make([]assetThumb, 0, len(thumbs))
+	for _, th := range thumbs {
+		nthumbs = append(nthumbs, assetThumb{
+			Path:   e.urlGen.CDNURL(th.Path),
+			Type:   th.Type.Code(),
+			Width:  th.Width,
+			Height: th.Height,
+		})
 	}
-	return s
+	return nthumbs
 }

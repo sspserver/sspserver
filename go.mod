@@ -1,66 +1,114 @@
 module geniusrabbit.dev/sspserver
 
-go 1.16
+go 1.22
 
 require (
-	bitbucket.org/geniusrabbit/billing v0.0.0-20190705141600-dce6fad3b5a3
-	bitbucket.org/geniusrabbit/corelib v0.0.0-20190724141535-5024e843f8b3
-	bitbucket.org/geniusrabbit/disk v0.1.0 // indirect
-	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
-	github.com/Shopify/sarama v1.30.0 // indirect
-	github.com/aeden/traceroute v0.0.0-20210211061815-03f5f7cb7908
-	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a // indirect
-	github.com/bkaradzic/go-lz4 v1.0.0
-	github.com/bsm/openrtb v2.1.2+incompatible
-	github.com/buaazp/fasthttprouter v0.1.1
-	github.com/caarlos0/env/v6 v6.7.1 // indirect
-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/cznic/sortutil v0.0.0-20181122101858-f5f958428db8
-	github.com/demdxx/gocast v1.0.1
-	github.com/demdxx/goconfig v0.0.0-20191123141255-c40c2d9e90f5
-	github.com/flf2ko/fasthttp-prometheus v0.0.0-20190919043550-19a35482dac4
-	github.com/geniusrabbit/gogeo v0.0.0-20190430153311-59b5dca35b92
-	github.com/geniusrabbit/gosql v0.1.0
-	github.com/geniusrabbit/hourstable v0.0.0-20190430155716-2ecc19b9622f
-	github.com/geniusrabbit/notificationcenter v1.5.0
-	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/google/uuid v1.3.0
-	github.com/gravitational/log v0.0.0-20200127200505-fdffa14162b0 // indirect
-	github.com/gravitational/trace v1.1.15 // indirect
-	github.com/guregu/null v4.0.0+incompatible
-	github.com/jinzhu/gorm v1.9.16
-	github.com/jinzhu/now v1.1.1 // indirect
-	github.com/jonboulle/clockwork v0.2.2 // indirect
-	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/lib/pq v1.10.3 // indirect
-	github.com/mcuadros/go-defaults v1.2.0 // indirect
-	github.com/myesui/uuid v1.0.0 // indirect
-	github.com/nats-io/nats.go v1.12.3
+	geniusrabbit.dev/adcorelib v0.0.0-00010101000000-000000000000
+	github.com/demdxx/gocast/v2 v2.9.0
+	github.com/demdxx/goconfig v1.0.0
+	github.com/fasthttp/router v1.5.2
+	github.com/geniusrabbit/notificationcenter/v2 v2.3.4
+	github.com/nats-io/nats.go v1.36.0
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/pierrec/lz4 v2.6.1+incompatible
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.11.0
-	github.com/prometheus/common v0.31.1 // indirect
-	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/sspserver/udetect v0.0.0-20211001130742-4b256d514f6d
-	github.com/stretchr/testify v1.7.0
-	github.com/thrift-iterator/go v0.0.0-20190402154806-9b5a67519118
-	github.com/twinj/uuid v1.0.0
-	github.com/uber/jaeger-client-go v2.29.1+incompatible
-	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	github.com/v2pro/plz v0.0.0-20200805122259-422184e41b6e // indirect
-	github.com/v2pro/quokka v0.0.0-20171201153428-382cb39c6ee6 // indirect
-	github.com/v2pro/wombat v0.0.0-20180402055224-a56dbdcddef2 // indirect
-	github.com/valyala/fasthttp v1.30.0
-	github.com/valyala/quicktemplate v1.7.0
-	go.uber.org/atomic v1.9.0 // indirect
-	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6
-	golang.org/x/sys v0.0.0-20211003122950-b1ebd4e1001c // indirect
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	google.golang.org/genproto v0.0.0-20211001223012-bfb93cce50d9 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.31.0
-	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
+	github.com/valyala/fasthttp v1.55.0
+	github.com/valyala/quicktemplate v1.8.0
+	go.uber.org/zap v1.27.0
+	gorm.io/driver/mysql v1.5.7
+	gorm.io/driver/postgres v1.5.9
+	gorm.io/driver/sqlite v1.5.6
+	gorm.io/driver/sqlserver v1.5.3
+	gorm.io/gorm v1.25.10
 )
+
+require (
+	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/IBM/sarama v1.43.2 // indirect
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
+	github.com/alecthomas/units v0.0.0-20240626203959-61d1e3462e30 // indirect
+	github.com/andybalholm/brotli v1.1.0 // indirect
+	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/bkaradzic/go-lz4 v1.0.0 // indirect
+	github.com/bsm/openrtb v2.1.2+incompatible // indirect
+	github.com/bsm/openrtb/v3 v3.2.1 // indirect
+	github.com/caarlos0/env/v6 v6.10.1 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/cznic/sortutil v0.0.0-20181122101858-f5f958428db8 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/demdxx/rpool/v2 v2.0.1 // indirect
+	github.com/demdxx/xtypes v0.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/eapache/go-resiliency v1.6.0 // indirect
+	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
+	github.com/eapache/queue v1.1.0 // indirect
+	github.com/flf2ko/fasthttp-prometheus v0.1.0 // indirect
+	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/geniusrabbit/gogeo v0.0.0-20190430153311-59b5dca35b92 // indirect
+	github.com/geniusrabbit/gosql/v2 v2.2.1 // indirect
+	github.com/geniusrabbit/hourstable v0.0.0-20190430155716-2ecc19b9622f // indirect
+	github.com/go-sql-driver/mysql v1.8.1 // indirect
+	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
+	github.com/golang-sql/sqlexp v0.1.0 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/gravitational/configure v0.0.0-20221215172404-91e9092a0318 // indirect
+	github.com/gravitational/trace v1.4.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
+	github.com/guregu/null v4.0.0+incompatible // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/hashicorp/go-uuid v1.0.3 // indirect
+	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/pgx/v5 v5.6.0 // indirect
+	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
+	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
+	github.com/jcmturner/gofork v1.7.6 // indirect
+	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
+	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+	github.com/mcuadros/go-defaults v1.2.0 // indirect
+	github.com/microsoft/go-mssqldb v1.7.2 // indirect
+	github.com/mileusna/useragent v1.3.4 // indirect
+	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/nats-io/nkeys v0.4.7 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
+	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
+	github.com/pierrec/lz4/v4 v4.1.21 // indirect
+	github.com/prometheus/client_golang v1.19.1 // indirect
+	github.com/prometheus/client_model v0.6.1 // indirect
+	github.com/prometheus/common v0.55.0 // indirect
+	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
+	github.com/redis/go-redis/v9 v9.5.3 // indirect
+	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
+	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
+	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	go.elastic.co/ecszap v1.0.2 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+	golang.org/x/crypto v0.25.0 // indirect
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
+	golang.org/x/net v0.27.0 // indirect
+	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
+	google.golang.org/genproto v0.0.0-20240701130421-f6361c86f094 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240701130421-f6361c86f094 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240701130421-f6361c86f094 // indirect
+	google.golang.org/grpc v1.65.0 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+
+replace geniusrabbit.dev/adcorelib => ../corelib

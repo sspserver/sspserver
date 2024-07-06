@@ -6,7 +6,7 @@ package templates
 
 //line private/templates/ad_banner.qtpl:2
 import (
-	"geniusrabbit.dev/sspserver/internal/adsource"
+	"geniusrabbit.dev/adcorelib/adtype"
 )
 
 //line private/templates/ad_banner.qtpl:7
@@ -23,7 +23,7 @@ var (
 )
 
 //line private/templates/ad_banner.qtpl:7
-func streamadRenderBanner(qw422016 *qt422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func streamadRenderBanner(qw422016 *qt422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_banner.qtpl:9
 	urlStr := URLGen.MustClickURL(it, resp)
 	asset := it.MainAsset()
@@ -133,7 +133,7 @@ func streamadRenderBanner(qw422016 *qt422016.Writer, resp adsource.Responser, it
 }
 
 //line private/templates/ad_banner.qtpl:35
-func writeadRenderBanner(qq422016 qtio422016.Writer, resp adsource.Responser, it adsource.ResponserItem) {
+func writeadRenderBanner(qq422016 qtio422016.Writer, resp adtype.Responser, it adtype.ResponserItem) {
 //line private/templates/ad_banner.qtpl:35
 	qw422016 := qt422016.AcquireWriter(qq422016)
 //line private/templates/ad_banner.qtpl:35
@@ -144,7 +144,7 @@ func writeadRenderBanner(qq422016 qtio422016.Writer, resp adsource.Responser, it
 }
 
 //line private/templates/ad_banner.qtpl:35
-func adRenderBanner(resp adsource.Responser, it adsource.ResponserItem) string {
+func adRenderBanner(resp adtype.Responser, it adtype.ResponserItem) string {
 //line private/templates/ad_banner.qtpl:35
 	qb422016 := qt422016.AcquireByteBuffer()
 //line private/templates/ad_banner.qtpl:35

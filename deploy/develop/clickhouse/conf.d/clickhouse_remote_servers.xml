@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<yandex>
+    <remote_servers>
+        <stats>
+            <shard>
+                <!-- Optional. Shard weight when writing data. By default, 1. -->
+                <weight>1</weight>
+                <!-- Optional. Whether to write data to just one of the replicas. By default, false - write data to all of the replicas. -->
+                <internal_replication>false</internal_replication>
+                <replica>
+                    <host>localhost</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
+        </stats>
+        <all_nodes>
+            <shard>
+                <replica>
+                    <host>localhost</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
+        </all_nodes>
+    </remote_servers>
+</yandex>

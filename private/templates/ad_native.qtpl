@@ -1,12 +1,12 @@
 {% 
   import (
-    "github.com/demdxx/gocast"
+    "github.com/demdxx/gocast/v2"
 
-    "geniusrabbit.dev/sspserver/internal/adsource"
+    "geniusrabbit.dev/adcorelib/adtype"
   )
 %}
 
-{% func adRenderNative(resp adsource.Responser, it adsource.ResponserItem) %}{% collapsespace %}{% stripspace %}
+{% func adRenderNative(resp adtype.Responser, it adtype.ResponserItem) %}{% collapsespace %}{% stripspace %}
   {%code
     urlStr := URLGen.MustClickURL(it, resp)
     asset  := it.MainAsset()

@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   # docker run --rm -it --label=service.name=jaeger -p 6831:6831/udp -p 16686:16686 jaegertracing/all-in-one:latest
   # tracer:
@@ -17,18 +15,69 @@ services:
     restart: always
     image: redis:latest
 
-  sspserver:
-    image: rtb/sspserver
+  jssdk:
+    image: adnet-project/jssdk
     ports:
-      - "7077:8080"
-      - "7079:8082"
+      - "${DOCKER_JSSDK_HTTP_PORT}:8080"
+
+  zookeeper:
+    restart: always
+    image: zookeeper
+    hostname: zoo1
+    volumes:
+      - ".data/zookeeper:/data"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
+
+  clickhouse-server:
+    user: root
+    restart: on-failure
+    image: yandex/clickhouse-server
+    hostname: clickhouse-server
+    links:
+      - zookeeper
+    depends_on:
+      - zookeeper
+    volumes:
+      - "./deploy/develop/clickhouse/config.xml:/etc/clickhouse-server/config.xml:ro"
+      - "./deploy/develop/clickhouse/conf.d:/etc/clickhouse-server/conf.d:ro"
+      - ".data/clickhouse:/clickhouse/"
+    # ulimit:
+    #   nofile:
+    #     soft: 262144
+    #     hard: 262144
+
+  eventstream:
+    image: adnet-project/eventstream:latest
+    restart: always
+    ports:
+      - 9060:6060
+    depends_on: [redis, clickhouse-server]
+    healthcheck:
+      test: ["CMD", "/curl", "-f", "http://127.0.0.1:6060/health-check"]
+      interval: 3s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    env_file: ../../.env
+    environment:
+      - SERVER_PROFILE_MODE=net
+      - SERVER_PROFILE_LISTEN=:6060
+
+  sspserver:
+    image: adnet-project/sspserver
+    ports:
+      - "${DOCKER_SERVER_HTTP_PORT}:8080"
+      - "${DOCKER_SERVER_PROFILE_PORT}:8082"
     env_file:
       - ../../.env
     depends_on:
       # - nats
       - redis
       # - tracer
+      - jssdk
     volumes:
       - ../../:/project
     environment:
-      ADSTORAGE_CONNECTION: fs:/data/
+      ADSTORAGE_CONNECTION: fs:///data/

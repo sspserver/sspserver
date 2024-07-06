@@ -1,80 +1,15 @@
 include .env
 export
 
-BUILD_GOOS ?= $(or ${DOCKER_DEFAULT_GOOS},linux)
-BUILD_GOARCH ?= $(or ${DOCKER_DEFAULT_GOARCH},amd64)
-BUILD_GOARM ?= 7
-BUILD_CGO_ENABLED ?= 0
+APP_TAGS  ?= $(or ${APP_BUILD_TAGS},nats redisps allplatform fsloader jaeger migrate)
 
-COMMIT_NUMBER ?= $(shell git log -1 --pretty=format:%h)
+include deploy/build.mk
 
 PROJECT_WORKSPACE := adnet-project
-
-SHELL := /bin/bash -o pipefail
-UNAME_OS := $(shell uname -s)
-UNAME_ARCH := $(shell uname -m)
-
-TMP_BASE := .tmp
-TMP := $(TMP_BASE)/$(UNAME_OS)/$(UNAME_ARCH)
-TMP_BIN = $(TMP)/bin
-TMP_ETC := $(TMP)/etc
-TMP_LIB := $(TMP)/lib
-TMP_VERSIONS := $(TMP)/versions
-TMP_FOSSA_GOPATH := $(TMP)/fossa/go
-
-APP_TAGS := "nats redisps allplatform"
-
-unexport GOPATH
-export GOPATH=$(abspath $(TMP))
-export GO111MODULE := on
-export GOBIN := $(abspath $(TMP_BIN))
-export PATH := $(GOBIN):$(PATH)
-export GOSUMDB := off
-export GOFLAGS=-mod=mod
-# Go 1.13 defaults to TLS 1.3 and requires an opt-out.  Opting out for now until certs can be regenerated before 1.14
-# https://golang.org/doc/go1.12#tls_1_3
-export GODEBUG := tls13=0
-
-CONTAINER_IMAGE ?= rtb/sspserver
-
+PROJECT_NAME ?= sspserver
 DOCKER_COMPOSE := docker-compose -p $(PROJECT_WORKSPACE) -f deploy/develop/docker-compose.yml
-DOCKER_BUILDKIT := 1
-
-GOLANGLINTCI_VERSION := latest
-GOLANGLINTCI := $(TMP_VERSIONS)/golangci-lint/$(GOLANGLINTCI_VERSION)
-$(GOLANGLINTCI):
-	$(eval GOLANGLINTCI_TMP := $(shell mktemp -d))
-	cd $(GOLANGLINTCI_TMP); go get github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGLINTCI_VERSION)
-	@rm -rf $(GOLANGLINTCI_TMP)
-	@rm -rf $(dir $(GOLANGLINTCI))
-	@mkdir -p $(dir $(GOLANGLINTCI))
-	@touch $(GOLANGLINTCI)
-
-
-GOMOCK_VERSION := v1.4.4
-GOMOCK := $(TMP_VERSIONS)/mockgen/$(GOMOCK_VERSION)
-$(GOMOCK):
-	$(eval GOMOCK_TMP := $(shell mktemp -d))
-	cd $(GOMOCK_TMP); go get github.com/golang/mock/mockgen@$(GOMOCK_VERSION)
-	@rm -rf $(GOMOCK_TMP)
-	@rm -rf $(dir $(GOMOCK))
-	@mkdir -p $(dir $(GOMOCK))
-	@touch $(GOMOCK)
-
-
-QTC_VERSION := latest
-QTC := $(TMP_VERSIONS)/qtc/$(QTC_VERSION)
-$(QTC):
-	$(eval QTC_TMP := $(shell mktemp -d))
-	cd $(QTC_TMP); go get github.com/valyala/quicktemplate/qtc@$(QTC_VERSION)
-	@rm -rf $(QTC_TMP)
-	@rm -rf $(dir $(QTC))
-	@mkdir -p $(dir $(QTC))
-	@touch $(QTC)
-
-
-.PHONY: deps
-deps: $(GOLANGLINTCI) $(GOMOCK) $(QTC)
+DOCKER_CONTAINER_IMAGE := ${PROJECT_WORKSPACE}/${PROJECT_NAME}
+DOCKER_CONTAINER_MUGRATE_IMAGE := ${DOCKER_CONTAINER_IMAGE}:migrate-latest
 
 .PHONY: all
 all: lint cover
@@ -83,7 +18,7 @@ all: lint cover
 lint: golint
 
 .PHONY: golint
-golint: $(GOLANGLINTCI)
+golint:
 	# golint -set_exit_status ./...
 	golangci-lint run -v ./...
 
@@ -98,7 +33,7 @@ test: ## Run unit tests
 
 .PHONY: qtc
 qtc: ## Build templates
-	qtc -dir=private/templates
+	go run github.com/valyala/quicktemplate/qtc -dir=private/templates
 
 .PHONY: tidy
 tidy:
@@ -124,18 +59,16 @@ generate-code: ## Run codegeneration procedure
 .PHONY: build
 build: ## Build application
 	@echo "Build application"
-	@rm -rf .build/sspserver
-	GOOS=${BUILD_GOOS} GOARCH=${BUILD_GOARCH} CGO_ENABLED=${BUILD_CGO_ENABLED} GOARM=${BUILD_GOARM} \
-		go build -ldflags "-X main.buildDate=`date -u +%Y%m%d.%H%M%S` -X main.buildCommit=${COMMIT_NUMBER}" \
-			-tags ${APP_TAGS} -o ".build/sspserver" cmd/sspserver/main.go
+	@rm -rf .build
+	@$(call do_build,"cmd/sspserver/main.go",sspserver)
 
-.PHONY: docker-dev-build
-docker-dev-build: build
+.PHONY: build-docker-dev
+build-docker-dev: build ## Build docker image for development
 	echo "Build develop docker image"
-	DOCKER_BUILDKIT=${DOCKER_BUILDKIT} docker build -t ${CONTAINER_IMAGE} -f deploy/develop/Dockerfile .
+	DOCKER_BUILDKIT=${DOCKER_BUILDKIT} docker build -t ${DOCKER_CONTAINER_IMAGE} -f deploy/develop/Dockerfile .
 
 .PHONY: run
-run: docker-dev-build ## Run service by docker-compose
+run: build-docker-dev ## Run service by docker-compose
 	@echo "Run sspserver service"
 	$(DOCKER_COMPOSE) up sspserver
 
@@ -144,8 +77,12 @@ stop: ## Stop all services
 	@echo "Stop all services"
 	$(DOCKER_COMPOSE) stop
 
+.PHONY: chi
+chi:
+	${K8C} -n adlab-statistic exec -it chi-statistic-statistic-0-0-0 -- clickhouse-client
+
 .PHONY: help
 help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .DEFAULT_GOAL := help

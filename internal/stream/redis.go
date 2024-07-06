@@ -6,8 +6,8 @@ package stream
 import (
 	"context"
 
-	nc "github.com/geniusrabbit/notificationcenter"
-	"github.com/geniusrabbit/notificationcenter/redis"
+	nc "github.com/geniusrabbit/notificationcenter/v2"
+	"github.com/geniusrabbit/notificationcenter/v2/redis"
 )
 
 func init() {

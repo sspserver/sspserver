@@ -80,8 +80,15 @@ type adeventer struct {
 	} `yaml:"user_info_queue" json:"user_info_queue"`
 
 	WinQueue struct {
-		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_WIN_QUEUE_CONNECTION"`
+		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_WINS_QUEUE_CONNECTION"`
 	} `yaml:"wins_queue" json:"wins_queue"`
+
+	// AdInfoQueue collects some additiona information about Advertisement processing.
+	// If advertisement was found for ad request or no, etc.
+	// OPTIONAL
+	AdInfoQueue struct {
+		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_ADINFO_QUEUE_CONNECTION"`
+	} `yaml:"ad_info_queue" json:"ad_info_queue"`
 }
 
 type adstorage struct {
@@ -104,7 +111,7 @@ type adLogic struct {
 	} `field:"direct" yaml:"direct" json:"direct"`
 }
 
-type adserver struct {
+type AdServerConfig struct {
 	// Storage of the advertisement
 	Storage adstorage `field:"storage" yaml:"storage" json:"storage"`
 
@@ -116,6 +123,9 @@ type adserver struct {
 
 	// Default CDN domain name
 	CDNDomain string `field:"cdn" yaml:"cdn" json:"cdn" env:"ADSERVER_CDN_DOMAIN" default:"localhost:8090"`
+
+	// Lib CDN domain name
+	LibDomain string `field:"libcdn" yaml:"libcdn" json:"libcdn" env:"ADSERVER_CDN_LIB_DOMAIN" default:"localhost:8090"`
 
 	// Configuration of SSP
 	SSP sspConfig `field:"ssp" yaml:"ssp" json:"ssp"`
@@ -168,14 +178,15 @@ type Config struct {
 	Hostname       string `json:"hostname" yaml:"hostname" env:"HOSTNAME" default:""`
 	Hostcode       string `json:"hostcode" yaml:"hostcode" env:"HOSTCODE" default:""`
 
-	LogAddr  string `default:"" env:"LOG_ADDR"`
-	LogLevel string `default:"error" env:"LOG_LEVEL"`
+	LogAddr    string `default:"" env:"LOG_ADDR"`
+	LogLevel   string `default:"error" env:"LOG_LEVEL"`
+	LogEncoder string `json:"log_encoder" env:"LOG_ENCODER"`
 
 	// Server config
 	Server serverConfig `field:"server" json:"server" yaml:"server"`
 
 	// Configuration of Advertisement server
-	AdServer adserver `field:"adserver" yaml:"adserver" json:"adserver"`
+	AdServer AdServerConfig `field:"adserver" yaml:"adserver" json:"adserver"`
 
 	Person personConfig `field:"person" yaml:"person" json:"person"`
 }

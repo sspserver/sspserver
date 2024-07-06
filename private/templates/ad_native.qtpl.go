@@ -8,7 +8,7 @@ package templates
 import (
 	"github.com/demdxx/gocast/v2"
 
-	"geniusrabbit.dev/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/adtype"
 )
 
 //line private/templates/ad_native.qtpl:9

@@ -3,6 +3,6 @@
 
 package proxy
 
-import "geniusrabbit.dev/adcorelib/httpserver/extensions/endpoint"
+import "github.com/geniusrabbit/adcorelib/httpserver/extensions/endpoint"
 
 func New() endpoint.Endpoint { return nil }

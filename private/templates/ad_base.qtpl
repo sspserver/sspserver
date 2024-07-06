@@ -2,8 +2,8 @@ Advertisement base elements
 
 {% 
   import (
-    "geniusrabbit.dev/adcorelib/adtype"
-    "geniusrabbit.dev/adcorelib/eventtraking/events"
+    "github.com/geniusrabbit/adcorelib/adtype"
+    "github.com/geniusrabbit/adcorelib/eventtraking/events"
   )
 %}
 

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/fasthttp/router"
@@ -12,33 +11,33 @@ import (
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
-	"geniusrabbit.dev/adcorelib/admodels/types"
-	"geniusrabbit.dev/adcorelib/adsource"
-	"geniusrabbit.dev/adcorelib/adsource/openrtb"
-	"geniusrabbit.dev/adcorelib/eventtraking/eventgenerator"
-	"geniusrabbit.dev/adcorelib/eventtraking/eventstream"
-	"geniusrabbit.dev/adcorelib/eventtraking/pixelgenerator"
-	"geniusrabbit.dev/adcorelib/httpserver"
-	"geniusrabbit.dev/adcorelib/httpserver/extensions/endpoint"
-	"geniusrabbit.dev/adcorelib/httpserver/extensions/pixel"
-	"geniusrabbit.dev/adcorelib/httpserver/extensions/trakeraction"
-	"geniusrabbit.dev/adcorelib/httpserver/wrappers/httphandler"
-	"geniusrabbit.dev/adcorelib/net/fasthttp/middleware"
-	"geniusrabbit.dev/adcorelib/personification"
-	"geniusrabbit.dev/adcorelib/simplepersondetector"
-	"geniusrabbit.dev/adcorelib/storage/accessors/adsourceaccessor"
-	"geniusrabbit.dev/adcorelib/storage/accessors/companyaccessor"
-	"geniusrabbit.dev/adcorelib/storage/accessors/formataccessor"
-	"geniusrabbit.dev/adcorelib/storage/accessors/zoneaccessor"
-	"geniusrabbit.dev/adcorelib/urlgenerator"
-	"geniusrabbit.dev/adcorelib/zlogger"
+	"github.com/geniusrabbit/adcorelib/admodels/types"
+	"github.com/geniusrabbit/adcorelib/adsource"
+	"github.com/geniusrabbit/adcorelib/adsource/openrtb"
+	"github.com/geniusrabbit/adcorelib/eventtraking/eventgenerator"
+	"github.com/geniusrabbit/adcorelib/eventtraking/eventstream"
+	"github.com/geniusrabbit/adcorelib/eventtraking/pixelgenerator"
+	"github.com/geniusrabbit/adcorelib/httpserver"
+	"github.com/geniusrabbit/adcorelib/httpserver/extensions/endpoint"
+	"github.com/geniusrabbit/adcorelib/httpserver/extensions/pixel"
+	"github.com/geniusrabbit/adcorelib/httpserver/extensions/trakeraction"
+	"github.com/geniusrabbit/adcorelib/httpserver/wrappers/httphandler"
+	"github.com/geniusrabbit/adcorelib/net/fasthttp/middleware"
+	"github.com/geniusrabbit/adcorelib/personification"
+	"github.com/geniusrabbit/adcorelib/simplepersondetector"
+	"github.com/geniusrabbit/adcorelib/storage/accessors/adsourceaccessor"
+	"github.com/geniusrabbit/adcorelib/storage/accessors/companyaccessor"
+	"github.com/geniusrabbit/adcorelib/storage/accessors/formataccessor"
+	"github.com/geniusrabbit/adcorelib/storage/accessors/zoneaccessor"
+	"github.com/geniusrabbit/adcorelib/urlgenerator"
+	"github.com/geniusrabbit/adcorelib/zlogger"
 
-	"geniusrabbit.dev/sspserver/cmd/sspserver/appcontext"
-	"geniusrabbit.dev/sspserver/cmd/sspserver/datainit"
-	"geniusrabbit.dev/sspserver/internal/endpoint/direct"
-	"geniusrabbit.dev/sspserver/internal/endpoint/dynamic"
-	"geniusrabbit.dev/sspserver/internal/endpoint/proxy"
-	"geniusrabbit.dev/sspserver/internal/stream"
+	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
+	"github.com/sspserver/sspserver/cmd/sspserver/datainit"
+	"github.com/sspserver/sspserver/internal/endpoint/direct"
+	"github.com/sspserver/sspserver/internal/endpoint/dynamic"
+	"github.com/sspserver/sspserver/internal/endpoint/proxy"
+	"github.com/sspserver/sspserver/internal/stream"
 )
 
 const (
@@ -52,11 +51,10 @@ var (
 	config       appcontext.Config
 	buildCommit  = ""
 	buildVersion = "develop"
+	buildDate    = "unknown"
 )
 
 func init() {
-	// Init random
-	rand.Seed(time.Now().UnixNano())
 	fatalError(config.Load(), "config loading")
 
 	// Init new logger object
@@ -64,6 +62,7 @@ func init() {
 		config.LogLevel, config.LogAddr, zap.Fields(
 			zap.String("commit", buildCommit),
 			zap.String("version", buildVersion),
+			zap.String("build_date", buildDate),
 		))
 	fatalError(err, "configure logger")
 
@@ -92,7 +91,11 @@ func main() {
 		configureEventPipeline(ctx, adServerConf)
 
 		// Run notification listener
-		go nc.Listen(ctx)
+		go func() {
+			if err := nc.Listen(ctx); err != nil {
+				logger.Error("notification listener", zap.Error(err))
+			}
+		}()
 
 		// Close notification processors
 		defer nc.Close()
@@ -125,32 +128,32 @@ func main() {
 	// Init side modules
 	datainit.Initialize(config.IsDebug(), urlGenerator)
 
-	// Init format accessor
+	// Init format accessor (format types of advertisement)
 	formatAccessor := mustFormatAccessor(ctx, dataAccessor)
 	ctx = formataccessor.WithContext(ctx, formatAccessor)
 
-	// Init company data accessor
+	// Init company (similar to client account) data accessor
 	companyDataAccessor, err := dataAccessor(ctx, "company")
 	fatalError(err, "company data accessor")
 
 	companyAccessor := companyaccessor.NewCompanyAccessor(companyDataAccessor)
 
-	// Init source data accessor
+	// Init source data accessor (ad sources like: RTB, direct, etc)
 	sourceDataAccessor, err := dataAccessor(ctx, "source")
 	fatalError(err, "RTB source data accessor")
 
-	// Init advertisement source accessor
+	// Init advertisement source accessor (provides multiple sources of advertisement access as container)
 	sourceAccessor, err := adsourceaccessor.NewAccessor(ctx,
 		sourceDataAccessor, companyAccessor, openrtb.NewFactory())
 	fatalError(err, "RTB source accessor")
 
-	// Init target data accessor
+	// Init target data accessor (targeting zones where advertisement will be shown)
 	targetDataAccessor, err := dataAccessor(ctx, "zone")
 	fatalError(err, "target(zone) data accessor")
 
 	targetAccessor := zoneaccessor.NewZoneAccessor(targetDataAccessor, companyAccessor)
 
-	// Configure advertisement source accessor
+	// Configure advertisement source accessor (provides multiple sources of advertisement access as one source)
 	adsourceWrapper, err := adsource.NewMultisourceWrapper(
 		adsource.WithSourceAccessor(sourceAccessor),
 		adsource.WithTimeout(time.Duration(adSSPConf.RequestTimeout)*time.Millisecond),
@@ -231,53 +234,44 @@ func main() {
 
 func configureEventPipeline(ctx context.Context, adServerConf *appcontext.AdServerConfig) {
 	// Register events data stream
-	if eventQueue := adServerConf.EventPipeline.EventQueue; eventQueue.Connection != "" {
-		pub, err := stream.ConnectPublisher(ctx, eventQueue.Connection)
-		fatalError(err, "connect to '"+eventQueue.Connection+"' topics")
-		if config.IsDebug() {
-			pub = stream.WrapPublisherWithLog(eventsStreamName, pub)
-		}
-		nc.Register(eventsStreamName, pub)
-	} else {
-		zap.L().Info("register new events dummy publisher")
-		nc.Register(eventsStreamName, notificationMessageLog("events"))
-	}
+	fatalError(nc.Register(
+		eventsStreamName,
+		connectPublisherOrLog(ctx,
+			eventsStreamName,
+			adServerConf.EventPipeline.EventQueue.Connection,
+			config.IsDebug(),
+		),
+	), "register events stream")
 
 	// Register user info data stream
-	if userQueue := adServerConf.EventPipeline.UserInfoQueue; userQueue.Connection != "" {
-		pub, err := stream.ConnectPublisher(ctx, userQueue.Connection)
-		fatalError(err, "connect to '"+userQueue.Connection+"' topics")
-		if config.IsDebug() {
-			pub = stream.WrapPublisherWithLog(userInfoStreamName, pub)
-		}
-		nc.Register(userInfoStreamName, pub)
-	} else {
-		zap.L().Info("register new userInfo dummy publisher")
-		nc.Register(userInfoStreamName, notificationMessageLog("user_info"))
-	}
+	fatalError(nc.Register(
+		userInfoStreamName,
+		connectPublisherOrLog(ctx,
+			userInfoStreamName,
+			adServerConf.EventPipeline.UserInfoQueue.Connection,
+			config.IsDebug(),
+		),
+	), "register user info stream")
 
 	// Register wins info data stream
-	if winQueue := adServerConf.EventPipeline.WinQueue; winQueue.Connection != "" {
-		pub, err := stream.ConnectPublisher(ctx, winQueue.Connection)
-		fatalError(err, "connect to '"+winQueue.Connection+"' topics")
-		if config.IsDebug() {
-			pub = stream.WrapPublisherWithLog(winStreamName, pub)
-		}
-		nc.Register(winStreamName, pub)
-	} else {
-		zap.L().Info("register new wins dummy publisher")
-		nc.Register(winStreamName, notificationMessageLog("win"))
-	}
+	fatalError(nc.Register(
+		winStreamName,
+		connectPublisherOrLog(ctx,
+			winStreamName,
+			adServerConf.EventPipeline.WinQueue.Connection,
+			config.IsDebug(),
+		),
+	), "register win stream")
 
 	// Register adinfo data stream
-	if adInfoQueue := adServerConf.EventPipeline.AdInfoQueue; adInfoQueue.Connection != "" {
-		pub, err := stream.ConnectPublisher(ctx, adInfoQueue.Connection)
-		fatalError(err, "connect to '"+adInfoQueue.Connection+"' topics")
-		nc.Register(adInfoStreamName, pub)
-	} else {
-		zap.L().Info("register new adInfo dummy publisher")
-		nc.Register(adInfoStreamName, notificationMessageLog("adinfo"))
-	}
+	fatalError(nc.Register(
+		adInfoStreamName,
+		connectPublisherOrLog(ctx,
+			adInfoStreamName,
+			adServerConf.EventPipeline.AdInfoQueue.Connection,
+			config.IsDebug(),
+		),
+	), "register ad info stream")
 }
 
 func notificationMessageLog(streamName string) nc.FuncPublisher {
@@ -290,6 +284,19 @@ func notificationMessageLog(streamName string) nc.FuncPublisher {
 		}
 		return nil
 	}
+}
+
+func connectPublisherOrLog(ctx context.Context, name, connection string, debug bool) nc.Publisher {
+	if connection != "" {
+		pub, err := stream.ConnectPublisher(ctx, connection)
+		fatalError(err, "connect to '"+connection+"' topics")
+		if debug {
+			pub = stream.WrapPublisherWithLog(name, pub)
+		}
+		return pub
+	}
+	zap.L().Info("register new dummy publisher", zap.String("name", name))
+	return notificationMessageLog(name)
 }
 
 func mustFormatAccessor(ctx context.Context, dataAccessor datainit.DataLoaderAccessorFnk) types.FormatsAccessor {

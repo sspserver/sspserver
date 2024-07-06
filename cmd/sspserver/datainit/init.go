@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"geniusrabbit.dev/adcorelib/adtype"
-	"geniusrabbit.dev/adcorelib/storage/loader"
+	"github.com/geniusrabbit/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/storage/loader"
 )
 
 // ErrUnsupportedDataType in case of data type not supported by paticular loader

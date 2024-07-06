@@ -6,7 +6,7 @@ package templates
 
 //line private/templates/ad_dinamic_proxy.qtpl:2
 import (
-	"geniusrabbit.dev/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/adtype"
 )
 
 //line private/templates/ad_dinamic_proxy.qtpl:7

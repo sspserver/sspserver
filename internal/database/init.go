@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"geniusrabbit.dev/adcorelib/context/ctxdatabase"
+	"github.com/geniusrabbit/adcorelib/context/ctxdatabase"
 )
 
 type openFnk func(dsn string) gorm.Dialector

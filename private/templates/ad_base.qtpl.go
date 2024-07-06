@@ -9,8 +9,8 @@ package templates
 
 //line private/templates/ad_base.qtpl:4
 import (
-	"geniusrabbit.dev/adcorelib/adtype"
-	"geniusrabbit.dev/adcorelib/eventtraking/events"
+	"github.com/geniusrabbit/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/eventtraking/events"
 )
 
 //line private/templates/ad_base.qtpl:10

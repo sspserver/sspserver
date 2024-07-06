@@ -2,8 +2,8 @@
   import (
     "strings"
 
-    "geniusrabbit.dev/adcorelib/adtype"
-    "geniusrabbit.dev/adcorelib/admodels/types"
+    "github.com/geniusrabbit/adcorelib/adtype"
+    "github.com/geniusrabbit/adcorelib/admodels/types"
   )
 %}
 

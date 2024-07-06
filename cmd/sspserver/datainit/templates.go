@@ -4,8 +4,8 @@
 package datainit
 
 import (
-	"geniusrabbit.dev/adcorelib/adtype"
-	"geniusrabbit.dev/sspserver/private/templates"
+	"github.com/geniusrabbit/adcorelib/adtype"
+	"github.com/sspserver/sspserver/private/templates"
 )
 
 func init() {

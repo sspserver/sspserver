@@ -11,9 +11,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"geniusrabbit.dev/adcorelib/storage/loader"
-	"geniusrabbit.dev/adcorelib/storage/loader/fsloader"
-	"geniusrabbit.dev/adcorelib/storage/types/fstypes"
+	"github.com/geniusrabbit/adcorelib/storage/loader"
+	"github.com/geniusrabbit/adcorelib/storage/loader/fsloader"
+	"github.com/geniusrabbit/adcorelib/storage/types/fstypes"
 )
 
 func init() {

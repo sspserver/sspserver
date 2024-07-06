@@ -4,7 +4,6 @@
 package database
 
 import (
-	// _ "gorm.io/gorm/dialects/mssql"
 	"gorm.io/driver/sqlserver"
 )
 

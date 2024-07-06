@@ -1,5 +1,5 @@
 //
-// @project GeniusRabbit rotator 2018 - 2024
+// @project GeniusRabbit sspserver 2018 - 2024
 // @author Dmitry Ponomarev <demdxx@gmail.com> 2018 - 2024
 //
 
@@ -11,10 +11,10 @@ import (
 
 	"github.com/valyala/fasthttp"
 
-	"geniusrabbit.dev/adcorelib/admodels"
-	"geniusrabbit.dev/adcorelib/adtype"
-	"geniusrabbit.dev/adcorelib/eventtraking/events"
-	"geniusrabbit.dev/sspserver/internal/endpoint"
+	"github.com/geniusrabbit/adcorelib/admodels"
+	"github.com/geniusrabbit/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/eventtraking/events"
+	"github.com/sspserver/sspserver/internal/endpoint"
 )
 
 type _endpoint struct {

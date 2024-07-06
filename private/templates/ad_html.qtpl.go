@@ -8,8 +8,8 @@ package templates
 import (
 	"strings"
 
-	"geniusrabbit.dev/adcorelib/admodels/types"
-	"geniusrabbit.dev/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/admodels/types"
+	"github.com/geniusrabbit/adcorelib/adtype"
 )
 
 //line private/templates/ad_html.qtpl:10

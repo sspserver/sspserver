@@ -11,12 +11,12 @@ import (
 	"github.com/demdxx/gocast/v2"
 	"github.com/pkg/errors"
 
-	"geniusrabbit.dev/adcorelib/models"
-	"geniusrabbit.dev/adcorelib/storage/loader"
-	"geniusrabbit.dev/adcorelib/storage/loader/dbloader"
-	"geniusrabbit.dev/adcorelib/storage/types/dbtypes"
+	"github.com/geniusrabbit/adcorelib/models"
+	"github.com/geniusrabbit/adcorelib/storage/loader"
+	"github.com/geniusrabbit/adcorelib/storage/loader/dbloader"
+	"github.com/geniusrabbit/adcorelib/storage/types/dbtypes"
 
-	"geniusrabbit.dev/sspserver/internal/database"
+	"github.com/sspserver/sspserver/internal/database"
 )
 
 func init() {

@@ -1,12 +1,12 @@
-module geniusrabbit.dev/sspserver
+module github.com/sspserver/sspserver
 
 go 1.22
 
 require (
-	geniusrabbit.dev/adcorelib v0.0.0-00010101000000-000000000000
 	github.com/demdxx/gocast/v2 v2.9.0
 	github.com/demdxx/goconfig v1.0.0
 	github.com/fasthttp/router v1.5.2
+	github.com/geniusrabbit/adcorelib v0.0.0-20240706111825-3fede46c9d6f
 	github.com/geniusrabbit/notificationcenter/v2 v2.3.4
 	github.com/nats-io/nats.go v1.36.0
 	github.com/opentracing/opentracing-go v1.2.0
@@ -110,5 +110,3 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace geniusrabbit.dev/adcorelib => ../corelib

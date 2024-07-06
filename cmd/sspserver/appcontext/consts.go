@@ -1,5 +1,5 @@
 //
-// @project GeniusRabbit rotator 2019
+// @project GeniusRabbit sspserver 2019
 // @author Dmitry Ponomarev <demdxx@gmail.com> 2019
 //
 

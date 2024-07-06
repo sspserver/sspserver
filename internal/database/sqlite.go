@@ -4,8 +4,6 @@
 package database
 
 import (
-	// _ "gorm.io/gorm/dialects/sqlite"
-	// _ "github.com/mattn/go-sqlite3"
 	"gorm.io/driver/sqlite"
 )
 

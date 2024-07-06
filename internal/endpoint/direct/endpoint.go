@@ -1,5 +1,5 @@
 //
-// @project GeniusRabbit rotator 2018 - 2019
+// @project GeniusRabbit sspserver 2018 - 2019
 // @author Dmitry Ponomarev <demdxx@gmail.com> 2018 - 2019
 //
 
@@ -14,13 +14,14 @@ import (
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
-	"geniusrabbit.dev/adcorelib/admodels/types"
-	"geniusrabbit.dev/adcorelib/adtype"
-	"geniusrabbit.dev/adcorelib/context/ctxlogger"
-	"geniusrabbit.dev/adcorelib/eventtraking/events"
-	"geniusrabbit.dev/adcorelib/eventtraking/eventstream"
-	"geniusrabbit.dev/adcorelib/gtracing"
-	"geniusrabbit.dev/sspserver/internal/endpoint"
+	"github.com/geniusrabbit/adcorelib/admodels/types"
+	"github.com/geniusrabbit/adcorelib/adtype"
+	"github.com/geniusrabbit/adcorelib/context/ctxlogger"
+	"github.com/geniusrabbit/adcorelib/eventtraking/events"
+	"github.com/geniusrabbit/adcorelib/eventtraking/eventstream"
+	"github.com/geniusrabbit/adcorelib/gtracing"
+
+	"github.com/sspserver/sspserver/internal/endpoint"
 )
 
 // Error list...
@@ -28,18 +29,6 @@ var (
 	ErrMultipleDirectNotSupported = errors.New("direct: multiple direct responses not supported")
 	ErrInvalidResponseType        = errors.New("direct: invalid response type")
 )
-
-type debugResponse struct {
-	ID                uint64 `json:"id,omitempty"`
-	ZoneID            uint64 `json:"zone_id,omitempty"`
-	AuctionID         string `json:"auction_id,omitempty"`
-	ImpressionID      string `json:"impression_id,omitempty"`
-	IsAlternativeLink bool   `json:"is_alternative_link,omitempty"`
-	Link              string `json:"link,omitempty"`
-	Superfailover     string `json:"superfailover,omitempty"`
-	Error             error  `json:"error,omitempty"`
-	IsEmpty           bool   `json:"is_empty,omitempty"`
-}
 
 type _endpoint struct {
 	formats          types.FormatsAccessor
@@ -128,7 +117,7 @@ func (e *_endpoint) execDirect(req *fasthttp.RequestCtx, response adtype.Respons
 	case response != nil && response.Request().Debug && req.QueryArgs().Has("noredirect"):
 		req.SetStatusCode(http.StatusOK)
 		req.SetContentType("application/json")
-		json.NewEncoder(req).Encode(debugResponse{
+		_ = json.NewEncoder(req).Encode(debugResponse{
 			ID:                id,
 			ZoneID:            zoneID,
 			ImpressionID:      impID,

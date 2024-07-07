@@ -6,7 +6,7 @@ require (
 	github.com/demdxx/gocast/v2 v2.9.0
 	github.com/demdxx/goconfig v1.0.0
 	github.com/fasthttp/router v1.5.2
-	github.com/geniusrabbit/adcorelib v0.0.0-20240706111825-3fede46c9d6f
+	github.com/geniusrabbit/adcorelib v0.0.0-20240707113809-3b4a62a0f1e3
 	github.com/geniusrabbit/notificationcenter/v2 v2.3.4
 	github.com/nats-io/nats.go v1.36.0
 	github.com/opentracing/opentracing-go v1.2.0

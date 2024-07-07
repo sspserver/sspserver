@@ -7,7 +7,7 @@ include deploy/build.mk
 
 PROJECT_WORKSPACE := adnet-project
 PROJECT_NAME ?= sspserver
-DOCKER_COMPOSE := docker-compose -p $(PROJECT_WORKSPACE) -f deploy/develop/docker-compose.yml
+DOCKER_COMPOSE := docker compose -p $(PROJECT_WORKSPACE) -f deploy/develop/docker-compose.yml
 DOCKER_CONTAINER_IMAGE := ${PROJECT_WORKSPACE}/${PROJECT_NAME}
 DOCKER_CONTAINER_MUGRATE_IMAGE := ${DOCKER_CONTAINER_IMAGE}:migrate-latest
 
@@ -69,7 +69,7 @@ build-docker-dev: build ## Build docker image for development
 
 .PHONY: run
 run: build-docker-dev ## Run service by docker-compose
-	@echo "Run sspserver service"
+	@echo "Run sspserver service on http://localhost:${DOCKER_SERVER_HTTP_PORT}"
 	$(DOCKER_COMPOSE) up sspserver
 
 .PHONY: stop

@@ -43,7 +43,13 @@ type group struct {
 	Items []*item `json:"items"`
 }
 
+func (g *group) addItem(i *item) *group {
+	g.Items = append(g.Items, i)
+	return g
+}
+
 // Response object description
+//
 //easyjson:json
 type Response struct {
 	Version string   `json:"version"`

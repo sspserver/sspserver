@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"math/rand"
 
+	"github.com/demdxx/gocast/v2"
 	"github.com/valyala/fasthttp"
 
 	"github.com/geniusrabbit/adcorelib/admodels"
@@ -40,6 +41,7 @@ func (e _endpoint) Handle(source endpoint.Source, request *adtype.BidRequest) ad
 func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) error {
 	resp := Response{Version: "1"}
 
+	// Process response ad items
 	for _, ad := range response.Ads() {
 		var (
 			assets       []asset
@@ -50,6 +52,7 @@ func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) e
 			trackerBlock tracker
 		)
 
+		// Generate click URL
 		if !aditm.Format().IsProxy() {
 			url, _ = e.urlGen.ClickURL(aditm, response)
 		}
@@ -59,6 +62,7 @@ func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) e
 			Views:       []string{viewPixel},
 		}
 
+		// Third-party trackers pixels
 		if item, _ := ad.(adtype.ResponserItem); item != nil {
 			trackerBlock.Clicks = item.ClickTrackerLinks()
 			if links := item.ViewTrackerLinks(); len(links) > 0 {
@@ -66,6 +70,7 @@ func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) e
 			}
 		}
 
+		// Process assets if provided
 		if baseAssets := aditm.Assets(); len(baseAssets) > 0 {
 			assets = make([]asset, 0, len(baseAssets))
 			processed := map[string]int{}
@@ -89,8 +94,8 @@ func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) e
 			}
 		}
 
-		group := resp.getGroupOrCreate(ad.ImpressionID())
-		item := &item{
+		// Add item to response group by impression ID
+		resp.getGroupOrCreate(ad.ImpressionID()).addItem(&item{
 			ID:         ad.ID(),
 			Type:       ad.PriorityFormatType().Name(),
 			URL:        url,
@@ -99,14 +104,11 @@ func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) e
 			Fields:     aditm.ContentFields(),
 			Assets:     assets,
 			Tracker:    trackerBlock,
-		}
-		group.Items = append(group.Items, item)
-
-		if response.Request().Debug {
-			item.Debug = ad
-		}
+			Debug:      gocast.IfThen(response.Request().Debug, ad, nil),
+		})
 	}
 
+	// Render response to the client as JSONP
 	format := string(ctx.QueryArgs().Peek("format"))
 	if format == "jsonp" {
 		callback := string(ctx.QueryArgs().Peek("callback"))
@@ -121,6 +123,7 @@ func (e _endpoint) render(ctx *fasthttp.RequestCtx, response adtype.Responser) e
 		return nil
 	}
 
+	// Default JSON response
 	ctx.SetStatusCode(fasthttp.StatusOK)
 	ctx.SetContentType("application/json")
 	return json.NewEncoder(ctx).Encode(resp)

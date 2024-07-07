@@ -1,77 +1,16 @@
-rtb_sources:
-  - id: 1
-    company_id: 1
-    title: TS source
-    status: 1
-    active: 1
-    protocol: openrtb
-    minimal_weight: 1
-    rps: 2
-    url: https://revolvesyndicate.net/dsp/bidrequest/openrtb/trafficstars
-    method: POST
-    request_type: "json"
-    flags1: trace=>1,errors_ignore=>1
-    headers:
-      X-Openrtb-Version: "2.5"
-    timeout: 1000
-  # - id: 2
-  #   company_id: 1
-  #   title: Exo source
-  #   status: 1
-  #   active: 0
-  #   protocol: openrtb
-  #   minimal_weight: 1
-  #   url: http://rtb.exoclick.com/rtb.php?idzone=3726595&fid=a0b6a86474f363991b924c5d7719c62141d44122
-  #   method: POST
-  #   request_type: 1
-  #   flags:
-  #     trace: 1
-  #   rps: 10
-  #   timeout: 1000
-  #   accuracy: 100
-  #   auction_type: 1
-  #   formats: 
-  #     - native
-  #     - video
-  #     - proxy
-  #     - direct
-  #     - banner_250x250
-  # - id: 3
-  #   company_id: 1
-  #   title: Mock source
-  #   status: 1
-  #   active: 1
-  #   protocol: openrtb
-  #   minimal_weight: 1
-  #   url: https://7c23c470-458c-4702-83dc-f4a001349652.mock.pstmn.io/bidrequest/banner
-  #   method: POST
-  #   request_type: 1
-  #   flags:
-  #     trace: 1
-  #   rps: 10
-  #   timeout: 1000
-  #   accuracy: 100
-  #   auction_type: 1
-  #   formats: 
-  #     - proxy
-  #     - proxy_250x250
-  #     - banner_250x250
-  # - id: 4
-  #   company_id: 1
-  #   title: Superhub source
-  #   status: 1
-  #   active: 1
-  #   protocol: openrtb
-  #   minimal_weight: 1
-  #   url: http://trafficstars.fra.eu.rtbsuperhub.com/?network=trafficstars-native&account=trafficpartner_rtb&adformat=native
-  #   method: POST
-  #   request_type: 1
-  #   flags:
-  #     trace: 1
-  #   rps: 10
-  #   timeout: 1000
-  #   accuracy: 100
-  #   auction_type: 1
-  #   formats: 
-  #     - video
-  #     - native
+# rtb_sources:
+#   - id: 1
+#     company_id: 1
+#     title: Source name
+#     status: 1
+#     active: 1
+#     protocol: openrtb
+#     minimal_weight: 1
+#     rps: 2
+#     url: https://url
+#     method: POST
+#     request_type: "json"
+#     flags1: trace=>1,errors_ignore=>1
+#     headers:
+#       X-Openrtb-Version: "2.5"
+#     timeout: 1000

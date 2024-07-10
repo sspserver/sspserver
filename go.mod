@@ -6,12 +6,12 @@ require (
 	github.com/demdxx/gocast/v2 v2.9.0
 	github.com/demdxx/goconfig v1.0.0
 	github.com/fasthttp/router v1.5.2
-	github.com/geniusrabbit/adcorelib v0.0.0-20240707113809-3b4a62a0f1e3
+	github.com/geniusrabbit/adcorelib v0.0.0-20240710112800-b99e6393d00e
 	github.com/geniusrabbit/notificationcenter/v2 v2.3.4
+	github.com/geniusrabbit/udetect v0.0.0-20240710103341-5e63c8ba09d5
 	github.com/nats-io/nats.go v1.36.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/sspserver/udetect v0.0.0-20211001130742-4b256d514f6d
 	github.com/valyala/fasthttp v1.55.0
 	github.com/valyala/quicktemplate v1.8.0
 	go.uber.org/zap v1.27.0
@@ -43,9 +43,8 @@ require (
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/flf2ko/fasthttp-prometheus v0.1.0 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/geniusrabbit/gogeo v0.0.0-20190430153311-59b5dca35b92 // indirect
-	github.com/geniusrabbit/gosql/v2 v2.2.1 // indirect
+	github.com/geniusrabbit/gosql/v2 v2.2.2 // indirect
 	github.com/geniusrabbit/hourstable v0.0.0-20190430155716-2ecc19b9622f // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
@@ -96,17 +95,18 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.25.0 // indirect
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
+	golang.org/x/exp v0.0.0-20240707233637-46b078467d37 // indirect
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
-	google.golang.org/genproto v0.0.0-20240701130421-f6361c86f094 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240701130421-f6361c86f094 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240701130421-f6361c86f094 // indirect
+	google.golang.org/genproto v0.0.0-20240709173604-40e1e62336c5 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240709173604-40e1e62336c5 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240709173604-40e1e62336c5 // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
+	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

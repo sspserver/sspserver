@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/fasthttp/router"
 	nc "github.com/geniusrabbit/notificationcenter/v2"
-	"github.com/sspserver/udetect/transport/http"
+	"github.com/geniusrabbit/udetect/transport/http"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
@@ -37,6 +39,7 @@ import (
 	"github.com/sspserver/sspserver/internal/endpoint/direct"
 	"github.com/sspserver/sspserver/internal/endpoint/dynamic"
 	"github.com/sspserver/sspserver/internal/endpoint/proxy"
+	"github.com/sspserver/sspserver/internal/netdriver"
 	"github.com/sspserver/sspserver/internal/stream"
 )
 
@@ -78,7 +81,7 @@ func main() {
 		logger       = zap.L()
 		adServerConf = &config.AdServer
 		adSSPConf    = &config.AdServer.SSP
-		ctx, cancel  = context.WithCancel(context.Background())
+		ctx, cancel  = signal.NotifyContext(context.Background(), os.Interrupt)
 	)
 	defer cancel()
 
@@ -144,7 +147,7 @@ func main() {
 
 	// Init advertisement source accessor (provides multiple sources of advertisement access as container)
 	sourceAccessor, err := adsourceaccessor.NewAccessor(ctx,
-		sourceDataAccessor, companyAccessor, openrtb.NewFactory())
+		sourceDataAccessor, companyAccessor, openrtb.NewFactory(netdriver.NewDriver))
 	fatalError(err, "RTB source accessor")
 
 	// Init target data accessor (targeting zones where advertisement will be shown)

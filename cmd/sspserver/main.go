@@ -9,7 +9,6 @@ import (
 
 	"github.com/fasthttp/router"
 	nc "github.com/geniusrabbit/notificationcenter/v2"
-	"github.com/geniusrabbit/udetect/transport/http"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
@@ -26,13 +25,14 @@ import (
 	"github.com/geniusrabbit/adcorelib/httpserver/wrappers/httphandler"
 	"github.com/geniusrabbit/adcorelib/net/fasthttp/middleware"
 	"github.com/geniusrabbit/adcorelib/personification"
-	"github.com/geniusrabbit/adcorelib/simplepersondetector"
 	"github.com/geniusrabbit/adcorelib/storage/accessors/adsourceaccessor"
 	"github.com/geniusrabbit/adcorelib/storage/accessors/companyaccessor"
 	"github.com/geniusrabbit/adcorelib/storage/accessors/formataccessor"
 	"github.com/geniusrabbit/adcorelib/storage/accessors/zoneaccessor"
 	"github.com/geniusrabbit/adcorelib/urlgenerator"
 	"github.com/geniusrabbit/adcorelib/zlogger"
+	"github.com/geniusrabbit/udetect"
+	"github.com/geniusrabbit/udetect/transport/http"
 
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
 	"github.com/sspserver/sspserver/cmd/sspserver/datainit"
@@ -172,16 +172,16 @@ func main() {
 	)
 
 	// Init personification client
-	personDetector := personification.Client(&simplepersondetector.SimpleClient{})
+	personDetector := personification.Client(&personification.SimpleClient{})
 	if config.Person.Connect != "" {
-		personDetector = personification.Connect(http.NewTransport(
+		personDetector = udetect.NewClient(http.NewTransport(
 			config.Person.Connect,
 			http.WithTimeout(config.Person.RequestTimeout, config.Person.KeepAliveTimeout),
 		))
 	}
 
 	// Init signature
-	signature := personification.Signeture{
+	signature := personification.Signature{
 		UUIDName:       config.Person.UUIDCookieName,
 		SessidName:     config.Person.SessiCookiedName,
 		SessidLifetime: config.Person.SessionLifetime,

@@ -6,9 +6,9 @@ require (
 	github.com/demdxx/gocast/v2 v2.9.0
 	github.com/demdxx/goconfig v1.0.0
 	github.com/fasthttp/router v1.5.2
-	github.com/geniusrabbit/adcorelib v0.0.0-20240710112800-b99e6393d00e
+	github.com/geniusrabbit/adcorelib v0.0.0-20240710201738-f03f48a538f5
 	github.com/geniusrabbit/notificationcenter/v2 v2.3.4
-	github.com/geniusrabbit/udetect v0.0.0-20240710103341-5e63c8ba09d5
+	github.com/geniusrabbit/udetect v0.0.0-20240710122748-8fc28f40dfc7
 	github.com/nats-io/nats.go v1.36.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
@@ -19,7 +19,7 @@ require (
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/driver/sqlserver v1.5.3
-	gorm.io/gorm v1.25.10
+	gorm.io/gorm v1.25.11
 )
 
 require (

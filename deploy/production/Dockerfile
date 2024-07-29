@@ -21,6 +21,5 @@ ENV ADSTORAGE_CONNECTION=fs:///data/
 
 COPY .build/${TARGETPLATFORM}/sspserver /sspserver
 COPY deploy/data /data
-COPY public /public
 
 ENTRYPOINT [ "/sspserver"]

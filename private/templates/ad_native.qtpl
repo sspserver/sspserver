@@ -43,7 +43,7 @@
         {% if val := it.ContentItem(field.Name); val != nil %}
           {% if vl, _ := field.Prepare(it.ContentItem(field.Name)); vl != nil %}
             <a target="_blank" href="{%s= urlStr %}" class="{%s= field.Name %}">
-              {%s= gocast.ToString(vl) %}
+              {%s= gocast.Str(vl) %}
             </a>
           {% endif %}
         {% endif %}

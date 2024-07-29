@@ -1,10 +1,10 @@
-FROM golang:latest
+FROM alpine:latest
 
 EXPOSE 8080
 
 ARG TARGETPLATFORM
 
-LABEL maintainer="Dmitry Ponomarev <demdxx@gmail.com>"
+LABEL maintainer="Dmitry Ponomarev <demdxx@gmail.com> / SSP server"
 LABEL service.name=rtb.sspserver
 LABEL service.weight=1
 LABEL service.port=8080

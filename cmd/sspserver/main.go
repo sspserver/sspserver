@@ -12,7 +12,6 @@ import (
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
-	"github.com/geniusrabbit/adcorelib/admodels/types"
 	"github.com/geniusrabbit/adcorelib/adsource"
 	"github.com/geniusrabbit/adcorelib/adsource/openrtb"
 	"github.com/geniusrabbit/adcorelib/eventtraking/eventgenerator"
@@ -25,20 +24,18 @@ import (
 	"github.com/geniusrabbit/adcorelib/httpserver/wrappers/httphandler"
 	"github.com/geniusrabbit/adcorelib/net/fasthttp/middleware"
 	"github.com/geniusrabbit/adcorelib/personification"
-	"github.com/geniusrabbit/adcorelib/storage/accessors/adsourceaccessor"
-	"github.com/geniusrabbit/adcorelib/storage/accessors/companyaccessor"
-	"github.com/geniusrabbit/adcorelib/storage/accessors/formataccessor"
-	"github.com/geniusrabbit/adcorelib/storage/accessors/zoneaccessor"
 	"github.com/geniusrabbit/adcorelib/urlgenerator"
 	"github.com/geniusrabbit/adcorelib/zlogger"
+	"github.com/geniusrabbit/adstdendpoints/direct"
+	"github.com/geniusrabbit/adstdendpoints/dynamic"
+	"github.com/geniusrabbit/adstdendpoints/proxy"
+	"github.com/geniusrabbit/adstorage"
+	"github.com/geniusrabbit/adstorage/accessors/formataccessor"
 	"github.com/geniusrabbit/udetect"
 	"github.com/geniusrabbit/udetect/transport/http"
 
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
 	"github.com/sspserver/sspserver/cmd/sspserver/datainit"
-	"github.com/sspserver/sspserver/internal/endpoint/direct"
-	"github.com/sspserver/sspserver/internal/endpoint/dynamic"
-	"github.com/sspserver/sspserver/internal/endpoint/proxy"
 	"github.com/sspserver/sspserver/internal/netdriver"
 	"github.com/sspserver/sspserver/internal/stream"
 )
@@ -85,8 +82,14 @@ func main() {
 	)
 	defer cancel()
 
+	// Register advertisement data accessor
+	adstorage.Register("fs", adstorage.FSDataAccessor[datainit.Account])
+	adstorage.RegisterAllSchemas[datainit.Account]() // Register all supported database schemas for all supported dialects
+
 	// Connect to advertisement data source
-	dataAccessor, err := datainit.Connect(ctx, config.AdServer.Storage.Connection)
+	storageDataAccessor, err := adstorage.ConnectAllAccessors(ctx,
+		config.AdServer.Storage.Connection,
+		datainit.AdModelAccount)
 	fatalError(err, "advertisement data")
 
 	// Register event streams
@@ -132,29 +135,21 @@ func main() {
 	datainit.Initialize(config.IsDebug(), urlGenerator)
 
 	// Init format accessor (format types of advertisement)
-	formatAccessor := mustFormatAccessor(ctx, dataAccessor)
+	formatAccessor, err := storageDataAccessor.Formats()
+	fatalError(err, "format accessor")
 	ctx = formataccessor.WithContext(ctx, formatAccessor)
 
-	// Init company (similar to client account) data accessor
-	companyDataAccessor, err := dataAccessor(ctx, "company")
-	fatalError(err, "company data accessor")
-
-	companyAccessor := companyaccessor.NewCompanyAccessor(companyDataAccessor)
-
 	// Init source data accessor (ad sources like: RTB, direct, etc)
-	sourceDataAccessor, err := dataAccessor(ctx, "source")
-	fatalError(err, "RTB source data accessor")
+	sourceAccessor, err := storageDataAccessor.Sources(openrtb.NewFactory(netdriver.NewDriver))
+	fatalError(err, "source accessor")
 
-	// Init advertisement source accessor (provides multiple sources of advertisement access as container)
-	sourceAccessor, err := adsourceaccessor.NewAccessor(ctx,
-		sourceDataAccessor, companyAccessor, openrtb.NewFactory(netdriver.NewDriver))
-	fatalError(err, "RTB source accessor")
+	// Init applicaion data accessor (sites/mobile apps/desktop apps/console/etc)
+	appAccessor, err := storageDataAccessor.Apps()
+	fatalError(err, "app accessor")
 
 	// Init target data accessor (targeting zones where advertisement will be shown)
-	targetDataAccessor, err := dataAccessor(ctx, "zone")
-	fatalError(err, "target(zone) data accessor")
-
-	targetAccessor := zoneaccessor.NewZoneAccessor(targetDataAccessor, companyAccessor)
+	targetAccessor, err := storageDataAccessor.Zones()
+	fatalError(err, "target accessor")
 
 	// Configure advertisement source accessor (provides multiple sources of advertisement access as one source)
 	adsourceWrapper, err := adsource.NewMultisourceWrapper(
@@ -219,6 +214,7 @@ func main() {
 				endpoint.WithAdvertisementSource(adsourceWrapper),
 				endpoint.WithHTTPHandlerWrapper(httpHandlerWrapper),
 				endpoint.WithFormatAccessor(formatAccessor),
+				endpoint.WithAppAccessor(appAccessor),
 				endpoint.WithZoneAccessor(targetAccessor),
 				endpoint.WithSpy(spyMiddleware),
 				endpoint.WithSendpoints(
@@ -300,12 +296,6 @@ func connectPublisherOrLog(ctx context.Context, name, connection string, debug b
 	}
 	zap.L().Info("register new dummy publisher", zap.String("name", name))
 	return notificationMessageLog(name)
-}
-
-func mustFormatAccessor(ctx context.Context, dataAccessor datainit.DataLoaderAccessorFnk) types.FormatsAccessor {
-	formatDataAccessor, err := dataAccessor(ctx, "format")
-	fatalError(err, "format data accessor")
-	return formataccessor.NewFormatAccessor(formatDataAccessor)
 }
 
 func fatalError(err error, message ...any) {

@@ -1,4 +1,5 @@
-companies:
+accounts:
   - id: 1
     name: "default"
     title: "Default"
+    revenue_share: 0.8

@@ -1,6 +1,6 @@
 # rtb_sources:
 #   - id: 1
-#     company_id: 1
+#     account_id: 1
 #     title: Source name
 #     status: 1
 #     active: 1

@@ -10,3 +10,6 @@ dump.rdb
 
 ## Exclude all local config files
 deploy/data/*.local.yaml
+
+go.work
+go.work.sum

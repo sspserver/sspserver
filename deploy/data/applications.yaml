@@ -1,0 +1,5 @@
+applications:
+  - id: 1
+    uri: example.com
+    status: approved
+    active: active

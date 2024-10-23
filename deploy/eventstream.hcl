@@ -4,25 +4,30 @@ variable "fmt" {
 
 stores {
   statistic {
-    connect = "@env:ES_STORE_STATISTIC_DB_CONNECT"
+    connect = "{{@env:ES_STORE_STATISTIC_DB_CONNECT}}"
     // buffer  = 1000
+  }
+  ping {
+    driver  = "ping"
+    connect = "http://fakehost/ping"
+    method  = "GET"
   }
 }
 
 // Source could be any supported stream service like kafka, nats, etc...
 sources {
   events {
-    connect = "@env:ES_SOURCE_EVENTS_CONNECT"
+    connect = "{{@env:ES_SOURCE_EVENTS_CONNECT}}"
     format  = "json"
   }
 
   rtb_wins {
-    connect = "@env:ES_SOURCE_WINS_CONNECT"
+    connect = "{{@env:ES_SOURCE_WINS_CONNECT}}"
     format  = "json"
   }
 
   user_info {
-    connect = "@env:ES_SOURCE_USERINFO_CONNECT"
+    connect = "{{@env:ES_SOURCE_USERINFO_CONNECT}}"
     format  = "json"
   }
 }
@@ -43,8 +48,8 @@ streams {
       "status=st:uint8",                    // Status: 0 - undefined, 1 - success, 2 - failed, 3 - compromised
       // Accounts link information
       "project=pr:uint",                    // UInt64
-      "pub_company=pcb:uint",               // UInt64
-      "adv_company=acv:uint",               // UInt64
+      "pub_account=pcb:uint",               // UInt64
+      "adv_account=acv:uint",               // UInt64
       // Source
       "aucid=auc:uuid",                     // FixedString(16)  -- Internal Auction ID
       "auctype=auctype:uint8",              // Aution type 1 - First price, 2 - Second price
@@ -135,32 +140,44 @@ streams {
     ]
   }
 
-  rtb_wins {
-    store   = "statistic"
+  wins {
+    store   = "ping"
     source  = "rtb_wins"
-    target  = "stats.rtb_wins"
-    fields  = [
-      "timemark=tm:unixnano",               // DateTime
-      "delay=dl:uint",                      // UInt64
-      "duration=d:uint",                    // UInt64
-      "service=srv:fix*16",                 // FixedString(16)
-      "cluster=cl:fix*2",                   // FixedString(2)
-      "aucid=auc:uuid",                     // FixedString(16)  -- Internal Auction ID
-      "source=sid:uint",                    // UInt64
-      "network=net",                        // String
-      "access_point=acp:uint",              // UInt64
-    ]
+    url     = "{{u}}"
     metrics = [
       {
-        name = "rtb_wins.counter"
+        name = "wins.counter"
         type = "counter"
-        tags {
-          network = "{{net}}"
-          source  = "{{sid}}"
-        }
       }
     ]
   }
+
+  // rtb_wins {
+  //   store   = "statistic"
+  //   source  = "rtb_wins"
+  //   target  = "stats.rtb_wins"
+  //   fields  = [
+  //     "timemark=tm:unixnano",               // DateTime
+  //     "delay=dl:uint",                      // UInt64
+  //     "duration=d:uint",                    // UInt64
+  //     "service=srv:fix*16",                 // FixedString(16)
+  //     "cluster=cl:fix*2",                   // FixedString(2)
+  //     "aucid=auc:uuid",                     // FixedString(16)  -- Internal Auction ID
+  //     "source=sid:uint",                    // UInt64
+  //     "network=net",                        // String
+  //     "access_point=acp:uint",              // UInt64
+  //   ]
+  //   metrics = [
+  //     {
+  //       name = "rtb_wins.counter"
+  //       type = "counter"
+  //       tags {
+  //         network = "{{net}}"
+  //         source  = "{{sid}}"
+  //       }
+  //     }
+  //   ]
+  // }
 
   user_info {
     store   = "statistic"

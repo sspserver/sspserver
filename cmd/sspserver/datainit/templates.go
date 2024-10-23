@@ -5,7 +5,7 @@ package datainit
 
 import (
 	"github.com/geniusrabbit/adcorelib/adtype"
-	"github.com/sspserver/sspserver/private/templates"
+	"github.com/geniusrabbit/adstdendpoints/templates"
 )
 
 func init() {

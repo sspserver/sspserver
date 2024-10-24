@@ -124,6 +124,7 @@ func main() {
 	urlGenerator := (&urlgenerator.Generator{
 		EventGenerator: eventGenerator,
 		PixelGenerator: pixelgenerator.NewPixelGenerator(adServerConf.TrackerHost),
+		ServiceDomain:  config.Server.Hostname,
 		CDNDomain:      adServerConf.CDNDomain,
 		LibDomain:      adServerConf.LibDomain,
 		ClickPattern:   "/click?c={code}",

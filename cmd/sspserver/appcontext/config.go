@@ -36,6 +36,9 @@ type serverConfig struct {
 		Listen string `json:"listen" yaml:"listen" default:"" env:"SERVER_PROFILE_LISTEN"`
 	} `json:"profile" yaml:"profile"`
 
+	// Hostname of the server
+	Hostname string `field:"hostname" json:"hostname" yaml:"hostname" env:"SERVER_HOSTNAME"`
+
 	// All IPs of this server
 	IPs []string `field:"ips" json:"ips" yaml:"ips"`
 

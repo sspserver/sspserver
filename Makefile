@@ -10,18 +10,10 @@ PROJECT_WORKSPACE := adnet-project
 PROJECT_NAME ?= sspserver
 DOCKER_COMPOSE := docker compose -p $(PROJECT_WORKSPACE) -f deploy/develop/docker-compose.yml
 DOCKER_CONTAINER_IMAGE := ${PROJECT_WORKSPACE}/${PROJECT_NAME}
-DOCKER_CONTAINER_MUGRATE_IMAGE := ${DOCKER_CONTAINER_IMAGE}:migrate-latest
-DOCKER_EVENTSTREAM_CONTAINER_IMAGE := ${PROJECT_WORKSPACE}/eventstream
 
-.PHONY: all
-all: lint cover
 
 .PHONY: lint
-lint: golint
-
-.PHONY: golint
-golint:
-	# golint -set_exit_status ./...
+lint: ## Run linters
 	golangci-lint run -v ./...
 
 .PHONY: fmt
@@ -38,7 +30,7 @@ qtc: ## Build templates
 	go run github.com/valyala/quicktemplate/qtc -dir=private/templates
 
 .PHONY: tidy
-tidy:
+tidy: ## Run go mod tidy
 	go mod tidy
 
 .PHONY: cover

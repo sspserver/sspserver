@@ -5,39 +5,24 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
-	"github.com/fasthttp/router"
-	nc "github.com/geniusrabbit/notificationcenter/v2"
-	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 
-	"github.com/geniusrabbit/adcorelib/adsource"
-	"github.com/geniusrabbit/adcorelib/adsource/openrtb"
-	"github.com/geniusrabbit/adcorelib/eventtraking/eventgenerator"
-	"github.com/geniusrabbit/adcorelib/eventtraking/eventstream"
-	"github.com/geniusrabbit/adcorelib/eventtraking/pixelgenerator"
-	"github.com/geniusrabbit/adcorelib/httpserver"
-	"github.com/geniusrabbit/adcorelib/httpserver/extensions/endpoint"
-	"github.com/geniusrabbit/adcorelib/httpserver/extensions/pixel"
-	"github.com/geniusrabbit/adcorelib/httpserver/extensions/trakeraction"
-	"github.com/geniusrabbit/adcorelib/httpserver/wrappers/httphandler"
-	"github.com/geniusrabbit/adcorelib/net/fasthttp/middleware"
-	"github.com/geniusrabbit/adcorelib/personification"
-	"github.com/geniusrabbit/adcorelib/urlgenerator"
+	"github.com/demdxx/cloudregistry"
+	"github.com/demdxx/gocast/v2"
+	"github.com/demdxx/goconfig"
+	"github.com/geniusrabbit/adcorelib/context/ctxlogger"
+	"github.com/geniusrabbit/adcorelib/context/version"
+	"github.com/geniusrabbit/adcorelib/profiler"
 	"github.com/geniusrabbit/adcorelib/zlogger"
-	"github.com/geniusrabbit/adstdendpoints/direct"
-	"github.com/geniusrabbit/adstdendpoints/dynamic"
-	"github.com/geniusrabbit/adstdendpoints/proxy"
-	"github.com/geniusrabbit/adstorage"
-	"github.com/geniusrabbit/adstorage/accessors/formataccessor"
-	"github.com/geniusrabbit/udetect"
-	"github.com/geniusrabbit/udetect/transport/http"
+	"github.com/pkg/errors"
 
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
-	"github.com/sspserver/sspserver/cmd/sspserver/datainit"
-	"github.com/sspserver/sspserver/internal/netdriver"
-	"github.com/sspserver/sspserver/internal/stream"
+	"github.com/sspserver/sspserver/cmd/sspserver/commands"
+	"github.com/sspserver/sspserver/cmd/sspserver/jobs"
+	"github.com/sspserver/sspserver/internal/cregistry"
 )
 
 const (
@@ -55,7 +40,25 @@ var (
 )
 
 func init() {
-	fatalError(config.Load(), "config loading")
+	fmt.Println()
+	fmt.Println("███████ ███████ ██████  ███████ ███████ ██████  ██    ██ ███████ ██████")
+	fmt.Println("██      ██      ██   ██ ██      ██      ██   ██ ██    ██ ██      ██   ██")
+	fmt.Println("███████ ███████ ██████  ███████ █████   ██████  ██    ██ █████   ██████")
+	fmt.Println("     ██      ██ ██           ██ ██      ██   ██  ██  ██  ██      ██   ██")
+	fmt.Println("███████ ███████ ██      ███████ ███████ ██   ██   ████   ███████ ██   ██")
+	fmt.Println()
+
+	args := os.Args
+	if len(args) > 1 {
+		args = args[2:]
+	}
+
+	fatalError(goconfig.Load(
+		&config,
+		goconfig.WithDefaults(),
+		goconfig.WithCustomArgs(args...),
+		goconfig.WithEnv(),
+	), "config loading")
 
 	// Init new logger object
 	loggerObj, err := zlogger.New(config.ServiceName, config.LogEncoder,
@@ -75,228 +78,127 @@ func init() {
 
 func main() {
 	var (
-		logger       = zap.L()
-		adServerConf = &config.AdServer
-		adSSPConf    = &config.AdServer.SSP
-		ctx, cancel  = signal.NotifyContext(context.Background(), os.Interrupt)
+		logger            = zap.L()
+		numberOfAdServers = cloudregistry.NewSyncUInt64Value(max(1, uint64(config.Server.Datacenter.ServiceCount)))
+		ctx, cancel       = signal.NotifyContext(context.Background(), os.Interrupt)
 	)
 	defer cancel()
 
-	// Register advertisement data accessor
-	adstorage.Register("fs", adstorage.FSDataAccessor[datainit.Account])
-	adstorage.RegisterAllSchemas[datainit.Account]() // Register all supported database schemas for all supported dialects
+	// Add logger to context
+	ctx = ctxlogger.WithLogger(ctx, logger)
 
-	// Connect to advertisement data source
-	storageDataAccessor, err := adstorage.ConnectAllAccessors(ctx,
-		config.AdServer.Storage.Connection,
-		datainit.AdModelAccount)
-	fatalError(err, "advertisement data")
+	// Register version information
+	ctx = version.WithContext(ctx, &version.Version{
+		Commit:  buildCommit,
+		Version: buildVersion,
+		Date:    buildDate,
+	})
 
-	// Register event streams
-	{
-		configureEventPipeline(ctx, adServerConf)
+	// Profiling server of collector
+	profiler.Run(config.Server.Profile.Mode,
+		config.Server.Profile.Listen, logger, true)
 
-		// Run notification listener
-		go func() {
-			if err := nc.Listen(ctx); err != nil {
-				logger.Error("notification listener", zap.Error(err))
-			}
-		}()
-
-		// Close notification processors
-		defer nc.Close()
+	if len(os.Args) < 2 {
+		printCommandsUsage()
+		return
 	}
 
-	// Event flow processor
-	eventGenerator := eventgenerator.New(config.ServiceName)
-	eventStream := eventstream.New(
-		nc.PublisherByName(eventsStreamName),
-		nc.PublisherByName(userInfoStreamName),
-		eventGenerator,
-	)
-	ctx = eventstream.WithStream(ctx, eventStream)
+	// Get command name
+	cmdName := os.Args[1]
 
-	// Win processor store into the context of requests
-	winStream := eventstream.WinNotifications(nc.PublisherByName(winStreamName))
-	ctx = eventstream.WithWins(ctx, winStream)
+	// Run command by name
+	icmd := commands.Commands.Get(cmdName)
 
-	// URL generator object
-	urlGenerator := (&urlgenerator.Generator{
-		EventGenerator: eventGenerator,
-		PixelGenerator: pixelgenerator.NewPixelGenerator(adServerConf.TrackerHost),
-		ServiceDomain:  config.Server.Hostname,
-		CDNDomain:      adServerConf.CDNDomain,
-		LibDomain:      adServerConf.LibDomain,
-		ClickPattern:   "/click?c={code}",
-		DirectPattern:  "/direct?c={code}",
-		WinPattern:     "/win?c={code}",
-	}).Init()
-
-	// Init side modules
-	datainit.Initialize(config.IsDebug(), urlGenerator)
-
-	// Init format accessor (format types of advertisement)
-	formatAccessor, err := storageDataAccessor.Formats()
-	fatalError(err, "format accessor")
-	ctx = formataccessor.WithContext(ctx, formatAccessor)
-
-	// Init source data accessor (ad sources like: RTB, direct, etc)
-	sourceAccessor, err := storageDataAccessor.Sources(openrtb.NewFactory(netdriver.NewDriver))
-	fatalError(err, "source accessor")
-
-	// Init applicaion data accessor (sites/mobile apps/desktop apps/console/etc)
-	appAccessor, err := storageDataAccessor.Apps()
-	fatalError(err, "app accessor")
-
-	// Init target data accessor (targeting zones where advertisement will be shown)
-	targetAccessor, err := storageDataAccessor.Zones()
-	fatalError(err, "target accessor")
-
-	// Configure advertisement source accessor (provides multiple sources of advertisement access as one source)
-	adsourceWrapper, err := adsource.NewMultisourceWrapper(
-		adsource.WithSourceAccessor(sourceAccessor),
-		adsource.WithTimeout(time.Duration(adSSPConf.RequestTimeout)*time.Millisecond),
-		adsource.WithMaxParallelRequests(adSSPConf.MaxParallelRequests),
-	)
-	fatalError(err, "create adsource accessor")
-
-	// HTTP wrapper for extended handlers
-	httpHandlerWrapper := httphandler.NewHTTPHandlerWrapper(
-		nil, // func(*fasthttp.RequestCtx) {},
-		func(*fasthttp.RequestCtx) context.Context { return ctx },
-		logger.With(zap.String("module", "httpserver")),
-	)
-
-	// Init personification client
-	personDetector := personification.Client(&personification.SimpleClient{})
-	if config.Person.Connect != "" {
-		personDetector = udetect.NewClient(http.NewTransport(
-			config.Person.Connect,
-			http.WithTimeout(config.Person.RequestTimeout, config.Person.KeepAliveTimeout),
-		))
+	// Print help if command not found
+	if cmdName == "help" || icmd == nil {
+		printCommandsUsage()
+		return
 	}
 
-	// Init signature
-	signature := personification.Signature{
-		UUIDName:       config.Person.UUIDCookieName,
-		SessidName:     config.Person.SessiCookiedName,
-		SessidLifetime: config.Person.SessionLifetime,
-		Detector:       personDetector,
+	// =========== Init cloud registry ========================
+	// Cloud registry is a main entry point for service discovery
+	// ========================================================
+
+	if config.Server.Registry.Connection != "" {
+		fatalError(
+			initCloudRegistry(ctx, &config, numberOfAdServers),
+			"cloud registry init",
+		)
 	}
 
-	// Prepare spy middleware
-	spyMiddleware := middleware.NewSpy(ctx, signature.Whois, signature.SignCookie)
+	// Run command with context
+	fmt.Println()
+	fmt.Println("░█ Run command:\x1b[31m", icmd.Cmd(), "\x1b[0m")
+	fmt.Println()
 
-	// HTTP server initialyze
-	server, err := httpserver.NewServer(
-		httpserver.WithDebugMode(config.IsDebug()),
-		httpserver.WithServiceName(config.ServiceName),
-		httpserver.WithLogger(logger.With(zap.String("module", "httpserver"))),
-		httpserver.WithCustomHTTPServer(&fasthttp.Server{
-			ReadBufferSize: 1 << 20,
-			ReadTimeout:    config.Server.HTTP.ReadTimeout,
-			WriteTimeout:   config.Server.HTTP.WriteTimeout,
-		}),
-		httpserver.WithCustomRouter(func(router *router.Router) {
-			router.ServeFiles("/public/{filepath:*}", "/public")
-		}),
-		httpserver.WithExtensions(
-			pixel.NewExtension(
-				pixel.WithEventStream(eventStream),
-				pixel.WithHTTPHandlerWrapper(httpHandlerWrapper),
-			),
-			trakeraction.NewExtension(
-				trakeraction.WithEventStream(eventStream),
-				trakeraction.WithHTTPHandlerWrapper(httpHandlerWrapper),
-				trakeraction.WithURLGenerator(urlGenerator),
-			),
-			// Register HTTP endpoints extensions
-			endpoint.NewExtension(
-				endpoint.WithAdvertisementSource(adsourceWrapper),
-				endpoint.WithHTTPHandlerWrapper(httpHandlerWrapper),
-				endpoint.WithFormatAccessor(formatAccessor),
-				endpoint.WithAppAccessor(appAccessor),
-				endpoint.WithZoneAccessor(targetAccessor),
-				endpoint.WithSpy(spyMiddleware),
-				endpoint.WithSendpoints(
-					direct.New(formatAccessor, config.AdServer.Logic.Direct.DefaultURL),
-					dynamic.New(urlGenerator),
-					proxy.New(),
-				),
-			),
-		),
-	)
-	fatalError(err, "new HTTP server")
-
-	fmt.Println("Run HTTP server", config.Server.HTTP.Listen)
-	fatalError(server.Listen(ctx, config.Server.HTTP.Listen))
+	fatalError(icmd.Run(ctx, os.Args[2:], numberOfAdServers), "command execution")
 }
 
-func configureEventPipeline(ctx context.Context, adServerConf *appcontext.AdServerConfig) {
-	// Register events data stream
-	fatalError(nc.Register(
-		eventsStreamName,
-		connectPublisherOrLog(ctx,
-			eventsStreamName,
-			adServerConf.EventPipeline.EventQueue.Connection,
-			config.IsDebug(),
-		),
-	), "register events stream")
-
-	// Register user info data stream
-	fatalError(nc.Register(
-		userInfoStreamName,
-		connectPublisherOrLog(ctx,
-			userInfoStreamName,
-			adServerConf.EventPipeline.UserInfoQueue.Connection,
-			config.IsDebug(),
-		),
-	), "register user info stream")
-
-	// Register wins info data stream
-	fatalError(nc.Register(
-		winStreamName,
-		connectPublisherOrLog(ctx,
-			winStreamName,
-			adServerConf.EventPipeline.WinQueue.Connection,
-			config.IsDebug(),
-		),
-	), "register win stream")
-
-	// Register adinfo data stream
-	fatalError(nc.Register(
-		adInfoStreamName,
-		connectPublisherOrLog(ctx,
-			adInfoStreamName,
-			adServerConf.EventPipeline.AdInfoQueue.Connection,
-			config.IsDebug(),
-		),
-	), "register ad info stream")
+func printCommandsUsage() {
+	fmt.Println("Usage: sspserver <command> [options]")
+	fmt.Println("Commands:")
+	for _, cmd := range commands.Commands {
+		fmt.Printf("  % 10s - %s\n", cmd.Cmd(), cmd.Help())
+	}
+	fmt.Println("  help - print this help")
 }
 
-func notificationMessageLog(streamName string) nc.FuncPublisher {
-	return func(ctx context.Context, msgs ...any) error {
-		for _, msg := range msgs {
-			zap.L().Debug("notification message",
-				zap.String("stream", streamName),
-				zap.Any("msg", msg),
-			)
+func initCloudRegistry(ctx context.Context, config *appcontext.Config, numberOfAdServers *cloudregistry.SyncUInt64Value) error {
+	// Connect to cloud registry and discover services
+	registry, err := cregistry.Connect(ctx, config.Server.Registry.Connection)
+	if err != nil {
+		return errors.Wrap(err, "connect to cloud registry")
+	}
+
+	// Get hostname from listen address
+	if config.Server.Registry.Hostname == "" {
+		if config.Server.Hostname != "" {
+			config.Server.Registry.Hostname = config.Server.Hostname
+		} else if !strings.HasPrefix(config.Server.HTTP.Listen, ":") {
+			config.Server.Registry.Hostname = config.Server.HTTP.Listen[:strings.IndexByte(config.Server.HTTP.Listen, ':')]
+		}
+	}
+
+	// Get port from listen address
+	if config.Server.Registry.Port == 0 {
+		config.Server.Registry.Port = gocast.Int(config.Server.HTTP.Listen[strings.LastIndexByte(config.Server.HTTP.Listen, ':')+1:])
+	}
+
+	// Register service in cloud registry
+	err = registry.Register(ctx, &cloudregistry.Service{
+		Name:       config.ServiceName,
+		InstanceID: cloudregistry.GenerateInstanceID(config.ServiceName),
+		Hostname:   config.Server.Registry.Hostname,
+		Port:       config.Server.Registry.Port,
+		Check: cloudregistry.Check{
+			ID:  "health",
+			TTL: time.Second * 20,
+			HTTP: struct {
+				URL     string
+				Method  string
+				Headers map[string][]string
+			}{
+				URL:    "/health",
+				Method: "GET",
+			},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "register service in cloud registry")
+	}
+
+	// Run service discovery
+	go jobs.RunIntervalJob(ctx, "service-discovery", time.Second*30, func(ctx context.Context) error {
+		services, err := registry.Discover(ctx,
+			&cloudregistry.ServicePrefix{Name: config.ServiceName}, time.Second*30)
+		ctxlogger.Get(ctx).Info("service discovery", zap.Int("count", len(services)), zap.Error(err))
+		if err != nil {
+			_ = numberOfAdServers.SetValue("service", len(services))
 		}
 		return nil
-	}
-}
+	})
 
-func connectPublisherOrLog(ctx context.Context, name, connection string, debug bool) nc.Publisher {
-	if connection != "" {
-		pub, err := stream.ConnectPublisher(ctx, connection)
-		fatalError(err, "connect to '"+connection+"' topics")
-		if debug {
-			pub = stream.WrapPublisherWithLog(name, pub)
-		}
-		return pub
-	}
-	zap.L().Info("register new dummy publisher", zap.String("name", name))
-	return notificationMessageLog(name)
+	return nil
 }
 
 func fatalError(err error, message ...any) {

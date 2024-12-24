@@ -24,9 +24,7 @@ type Account struct {
 func AdModelAccount(a *Account) (*admodels.Account, bool) {
 	return &admodels.Account{
 		IDval:        a.ID,
-		Balance:      a.Balance,
 		MaxDaily:     a.MaxDaily,
-		Spent:        a.Spent,
 		RevenueShare: min(a.RevenueShare, 1.0),
 	}, true
 }

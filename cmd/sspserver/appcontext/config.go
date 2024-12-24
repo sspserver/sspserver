@@ -14,12 +14,10 @@ import (
 	"encoding/json"
 	"strings"
 	"time"
-
-	"github.com/demdxx/goconfig"
 )
 
 // Webserver config
-type serverConfig struct {
+type ServerConfig struct {
 	HTTP struct {
 		// Listen the [host]:port
 		Listen string `default:":8080" field:"listen" json:"listen" yaml:"listen" cli:"http-listen" env:"SERVER_HTTP_LISTEN"`
@@ -57,6 +55,22 @@ type serverConfig struct {
 		// Count of services in this DC
 		ServiceCount int `field:"service_count" json:"service_count" yaml:"service_count" env:"DATACENTER_SERVICE_COUNT"`
 	} `field:"datacenter" yaml:"datacenter" json:"datacenter"`
+
+	// Service discovery
+	Registry struct {
+		// Connection to the registry
+		// Examples:
+		//   - consul://host:port?arg=value
+		//   - etcd://host:port?arg=value
+		//   - zookeeper://host:port?arg=value
+		Connection string `field:"connection" json:"connection" yaml:"connection" env:"REGISTRY_CONNECTION"`
+
+		// Hostname of the service in the registry
+		Hostname string `field:"hostname" json:"hostname" yaml:"hostname" env:"REGISTRY_HOSTNAME"`
+
+		// Port of the service in the registry
+		Port int `field:"port" json:"port" yaml:"port" env:"REGISTRY_PORT"`
+	} `field:"registry" yaml:"registry" json:"registry"`
 }
 
 type testmodeConfig struct {
@@ -78,24 +92,16 @@ type adeventer struct {
 		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_EVENT_QUEUE_CONNECTION"`
 	} `yaml:"event_queue" json:"event_queue"`
 
-	UserInfoQueue struct {
-		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_USERINFO_QUEUE_CONNECTION"`
-	} `yaml:"user_info_queue" json:"user_info_queue"`
-
 	WinQueue struct {
 		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_WINS_QUEUE_CONNECTION"`
 	} `yaml:"wins_queue" json:"wins_queue"`
-
-	// AdInfoQueue collects some additiona information about Advertisement processing.
-	// If advertisement was found for ad request or no, etc.
-	// OPTIONAL
-	AdInfoQueue struct {
-		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_ADINFO_QUEUE_CONNECTION"`
-	} `yaml:"ad_info_queue" json:"ad_info_queue"`
 }
 
 type adstorage struct {
-	// Connection to database of path to directory with data
+	// Connection to database of path to directory with data or DB connection
+	// Examples:
+	//   - fs://directory/path
+	//   - postgresql://login:password@hostname:port/dbname
 	Connection string `field:"connection" json:"connection" yaml:"connection" env:"ADSTORAGE_CONNECTION"`
 
 	// Formats list of format objects
@@ -130,8 +136,8 @@ type AdServerConfig struct {
 	// Lib CDN domain name
 	LibDomain string `field:"libcdn" yaml:"libcdn" json:"libcdn" env:"ADSERVER_CDN_LIB_DOMAIN" default:"localhost:8090"`
 
-	// Configuration of SSP
-	SSP sspConfig `field:"ssp" yaml:"ssp" json:"ssp"`
+	// Configuration of Source accessor
+	AdSource adsourceConfig `field:"adsource" yaml:"adsource" json:"adsource"`
 
 	// EventPipeline of the results
 	EventPipeline adeventer `field:"event_pipeline" yaml:"event_pipeline" json:"event_pipeline"`
@@ -143,15 +149,15 @@ type AdServerConfig struct {
 	Logic adLogic `field:"logic" yaml:"logic" json:"logic"`
 }
 
-type sspConfig struct {
-	// Maximum amount of requests from SSP server
-	MaxParallelRequests int `field:"max_parallel_requests" json:"max_parallel_requests" yaml:"max_parallel_requests" env:"SSP_REQUEST_MAX_PARALLEL_REQUESTS" default:"10"`
+type adsourceConfig struct {
+	// Maximum amount of requests from source accessor
+	MaxParallelRequests int `field:"max_parallel_requests" json:"max_parallel_requests" yaml:"max_parallel_requests" env:"ADSOURCE_REQUEST_MAX_PARALLEL_REQUESTS" default:"10"`
 
 	// Maximal request timeout (one for all internal requests)
-	RequestTimeout int64 `field:"request_timeout" json:"request_timeout" yaml:"request_timeout" env:"SSP_REQUEST_TIMEOUT" default:"200"`
+	RequestTimeout int64 `field:"request_timeout" json:"request_timeout" yaml:"request_timeout" env:"ADSOURCE_REQUEST_TIMEOUT" default:"500"`
 }
 
-type personConfig struct {
+type PersonConfig struct {
 	// Connect to the source of information about GEO and Device
 	//
 	// Macros:
@@ -186,12 +192,7 @@ type Config struct {
 	LogEncoder string `json:"log_encoder" env:"LOG_ENCODER"`
 
 	// Server config
-	Server serverConfig `field:"server" json:"server" yaml:"server"`
-
-	// Configuration of Advertisement server
-	AdServer AdServerConfig `field:"adserver" yaml:"adserver" json:"adserver"`
-
-	Person personConfig `field:"person" yaml:"person" json:"person"`
+	Server ServerConfig `field:"server" json:"server" yaml:"server"`
 }
 
 // String implementation of Stringer interface
@@ -202,11 +203,6 @@ func (cfg *Config) String() (res string) {
 		res = string(data)
 	}
 	return
-}
-
-// Load data from file
-func (cfg *Config) Load() error {
-	return goconfig.Load(cfg)
 }
 
 // IsDebug mode

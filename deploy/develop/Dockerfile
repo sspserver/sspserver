@@ -24,3 +24,5 @@ COPY deploy/data /data
 COPY public /public
 
 ENTRYPOINT [ "/sspserver"]
+
+CMD [ "sspserver" ]

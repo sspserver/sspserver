@@ -1,11 +1,21 @@
 # SSP Server
 
-[LICENSE](LICENSE)
+```sh
+███████ ███████ ██████  ███████ ███████ ██████  ██    ██ ███████ ██████
+██      ██      ██   ██ ██      ██      ██   ██ ██    ██ ██      ██   ██
+███████ ███████ ██████  ███████ █████   ██████  ██    ██ █████   ██████
+     ██      ██ ██           ██ ██      ██   ██  ██  ██  ██      ██   ██
+███████ ███████ ██      ███████ ███████ ██   ██   ████   ███████ ██   ██
+```
+
+[LICENSE](LICENSE.md)
 
 [![Build Status](https://github.com/sspserver/sspserver/workflows/Tests/badge.svg)](https://github.com/sspserver/sspserver/actions?workflow=Tests)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sspserver/sspserver)](https://goreportcard.com/report/github.com/sspserver/sspserver)
 [![GoDoc](https://godoc.org/github.com/sspserver/sspserver?status.svg)](https://godoc.org/github.com/sspserver/sspserver)
 [![Coverage Status](https://coveralls.io/repos/github/sspserver/sspserver/badge.svg)](https://coveralls.io/github/sspserver/sspserver)
+
+> **Attention:** Watch for us, the service in active development.
 
 SSP (Supply-Side Platform) Advertisement Service is a comprehensive platform for monetizing digital properties like websites, mobile apps, or other software. It integrates seamlessly with various demand sources through RTB (Real-Time Bidding) and direct ad campaigns. With built-in event tracking, flexible ad-source management, and analytics, SSP helps developers, content creators, and businesses maximize revenue with minimal effort.
 
@@ -76,4 +86,4 @@ We welcome contributions! Please see the CONTRIBUTING.md for more information on
 
 ## License
 
-SSP Server is licensed under the [GNU Affero General Public License](LICENSE).
+SSP Server is licensed under the [GNU Affero General Public License](LICENSE.md).

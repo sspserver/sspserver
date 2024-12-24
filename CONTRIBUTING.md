@@ -13,7 +13,7 @@ First, fork the repository to your own GitHub account.
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/sspserver.git
+git clone https://github.com/sspserver/sspserver.git
 cd sspserver
 ```
 

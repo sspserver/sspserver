@@ -20,30 +20,21 @@ var ErrInvalidMultipleItemAsSingle = errors.New("can`t convert multipleitem to s
 
 // Event representation of internal adserver event like impression, click, lead, etc.
 type Event struct {
-	Time     int64       `json:"tm,omitempty"`  // Timestamp
-	Delay    uint64      `json:"dl,omitempty"`  // Delay of preparation of Ads in Nanosecinds
-	Duration uint64      `json:"d,omitempty"`   // Duration in Nanoseconds
-	Service  string      `json:"srv,omitempty"` // Service sender
-	Cluster  string      `json:"cl,omitempty"`  // Cluster code (eu, us, as)
-	Event    events.Type `json:"e,omitempty"`   // Event code string
-	Status   uint8       `json:"st,omitempty"`  // Status: 0 - undefined, 1 - success, 2 - failed, 3 - compromised
-
-	// Accounts link information
-	ProjectID           uint64 `json:"pr,omitempty"`  // Project network ID
-	PublisherAccountID  uint64 `json:"pcb,omitempty"` // -- // --
-	AdvertiserAccountID uint64 `json:"acv,omitempty"` // -- // --
+	Time     int64       `json:"tm,omitempty"` // Timestamp
+	Delay    uint64      `json:"dl,omitempty"` // Delay of preparation of Ads in Nanosecinds
+	Duration uint64      `json:"d,omitempty"`  // Duration in Nanoseconds
+	Event    events.Type `json:"e,omitempty"`  // Event code string
+	Status   uint8       `json:"st,omitempty"` // Status: 0 - undefined, 1 - success, 2 - failed, 3 - compromised
 
 	// Source
-	AuctionID     string `json:"auc,omitempty"`     // Internal Auction ID
-	AuctionType   uint8  `json:"auctype,omitempty"` // Aution type 1 - First price, 2 - Second price
-	ImpID         string `json:"imp,omitempty"`     // Sub ID of request for paticular impression spot
-	ImpAdID       string `json:"impad,omitempty"`   // Specific ID for paticular ad impression
-	ExtAuctionID  string `json:"eauc,omitempty"`    // RTB Request/Response ID
-	ExtImpID      string `json:"eimp,omitempty"`    // RTB Imp ID
-	ExtTargetID   string `json:"extz,omitempty"`    // RTB Zone ID (tagid)
-	SourceID      uint64 `json:"sid,omitempty"`     // Advertisement Source ID
-	Network       string `json:"net,omitempty"`     // Source Network Name or Domain (Cross sails)
-	AccessPointID uint64 `json:"acp,omitempty"`     // Access Point ID to own Advertisement
+	AuctionID    string `json:"auc,omitempty"`     // Internal Auction ID
+	AuctionType  uint8  `json:"auctype,omitempty"` // Aution type 1 - First price, 2 - Second price
+	ImpID        string `json:"imp,omitempty"`     // Sub ID of request for paticular impression spot
+	ImpAdID      string `json:"impad,omitempty"`   // Specific ID for paticular ad impression
+	ExtAuctionID string `json:"eauc,omitempty"`    // RTB Request/Response ID
+	ExtImpID     string `json:"eimp,omitempty"`    // RTB Imp ID
+	ExtTargetID  string `json:"extz,omitempty"`    // RTB Zone ID (tagid)
+	SourceID     uint64 `json:"sid,omitempty"`     // Advertisement Source ID
 
 	// State Location
 	Platform      int    `json:"pl,omitempty"`  // Where displaid? 0 – undefined, 1 – web site, 2 – native app, 3 – game
@@ -71,9 +62,8 @@ type Event struct {
 	//  3) If we are buying the traffic for CPA
 	//		LeadPrice = 20$ - Have to pay advertiser
 	//		PurchaseViewPrice = 10$ - Have to pay to the source
-	PricingModel  uint    `json:"pm,omitempty"`   // Display As CPM/CPC/CPA/CPI
-	TestPriceMode bool    `json:"tpm,omitempty"`  // Test price mode
-	ECPM          float64 `json:"ecpm,omitempty"` // Effective Cost per Mille
+	PricingModel uint    `json:"pm,omitempty"`   // Display As CPM/CPC/CPA/CPI
+	ECPM         float64 `json:"ecpm,omitempty"` // Effective Cost per Mille
 	// Prurchase price from SSP or other TRAFFIC sources (menetisation of income requests)
 	// We are buying the place of advertisement display
 	PurchaseViewPrice   int64   `json:"pvpr,omitempty"`   // Price of the view of source traffic cost
@@ -98,7 +88,6 @@ type Event struct {
 	// Targeting
 	CarrierID       uint   `json:"car,omitempty"`  // -- // --
 	Country         string `json:"cc,omitempty"`   // Country Code ISO-2
-	City            string `json:"ct,omitempty"`   // City Code
 	Latitude        string `json:"lt,omitempty"`   // -- // --
 	Longitude       string `json:"lg,omitempty"`   // -- // --
 	Language        string `json:"lng,omitempty"`  // en-US
@@ -164,11 +153,10 @@ func (event *Event) SetEventPurchaseViewPrice(price int64) error {
 // Fill event object from response and Ad item objects
 func (event *Event) Fill(service string, eventType events.Type, status uint8, response adtype.Responser, it adtype.ResponserItem) error {
 	var (
-		r             = response.Request()
-		imp           = it.Impression()
-		sourceID      uint64
-		zoneID        uint64
-		accessPointID uint64
+		r        = response.Request()
+		imp      = it.Impression()
+		sourceID uint64
+		zoneID   uint64
 	)
 
 	if src := it.Source(); src != nil {
@@ -187,33 +175,21 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		return ErrInvalidMultipleItemAsSingle
 	}
 
-	if response.Request().AccessPoint != nil {
-		accessPointID = response.Request().AccessPoint.ID()
-	}
-
 	*event = Event{
 		Time:     time.Now().UnixNano(),
 		Delay:    0,
 		Duration: 0,
-		Service:  service,   // Service
 		Event:    eventType, // Action code (tech param, Do not store)
 		Status:   status,
 
-		// Accounts link information
-		ProjectID:           0,               // Project network ID
-		PublisherAccountID:  imp.AccountID(), // -- // --
-		AdvertiserAccountID: it.AccountID(),  // -- // --
-
 		// Source
-		AuctionID:     r.ID,                          // ID of last auction
-		AuctionType:   uint8(response.AuctionType()), // Aution type 1 - First price, 2 - Second price
-		ImpID:         it.ImpressionID(),             // Sub ID of request for paticular impression spot
-		ImpAdID:       it.ID(),                       // Specific ID for paticular ad impression
-		ExtAuctionID:  r.ExtID,                       // External auction ID
-		ExtImpID:      it.ExtImpressionID(),          // External auction Imp ID
-		SourceID:      sourceID,                      // Advertisement Source ID
-		Network:       it.NetworkName(),              // Source Network Name or Domain (Cross sails)
-		AccessPointID: accessPointID,                 // Access Point ID to own Advertisement
+		AuctionID:    r.ID,                          // ID of last auction
+		AuctionType:  uint8(response.AuctionType()), // Aution type 1 - First price, 2 - Second price
+		ImpID:        it.ImpressionID(),             // Sub ID of request for paticular impression spot
+		ImpAdID:      it.ID(),                       // Specific ID for paticular ad impression
+		ExtAuctionID: r.ExtID,                       // External auction ID
+		ExtImpID:     it.ExtImpressionID(),          // External auction Imp ID
+		SourceID:     sourceID,                      // Advertisement Source ID
 
 		// State Location
 		Platform:      0,                           // Where displaid? 0 – undefined, 1 – web site, 2 – native app, 3 – game
@@ -229,7 +205,6 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 
 		// Money
 		PricingModel:        it.PricingModel().UInt(),                        // Display As CPM/CPC/CPA/CPI
-		TestPriceMode:       it.PriceTestMode(),                              // Test price mode
 		ECPM:                it.ECPM().Float64(),                             // Effective Cost Per Mille (1000 views)
 		PurchaseViewPrice:   it.PurchasePrice(admodels.ActionView).Int64(),   // Price of of the view of source traffic cost
 		PurchaseClickPrice:  it.PurchasePrice(admodels.ActionClick).Int64(),  // Price of of the click of source traffic cost
@@ -253,7 +228,6 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		// Targeting
 		CarrierID:       r.CarrierInfo().ID,
 		Country:         r.GeoInfo().Country,
-		City:            r.GeoInfo().City,
 		Language:        r.BrowserInfo().PrimaryLanguage,
 		Referer:         r.BrowserInfo().Ref,
 		IPString:        r.GeoInfo().IP.String(),
@@ -313,9 +287,11 @@ func (event *Event) Unpack(data []byte, unpuckFnc ...events.EventUnpacFunc) erro
 
 // PrepareURL by event
 func (event *Event) PrepareURL(url string) string {
+	if !strings.Contains(url, "{") || !strings.Contains(url, "}") {
+		return url
+	}
 	replacer := strings.NewReplacer(
 		"{country}", event.Country,
-		"{city}", event.City,
 		"{lang}", event.Language,
 		"{domain}", event.Domain,
 		"{impid}", event.ImpID,
@@ -343,23 +319,3 @@ func (event *Event) PrepareURL(url string) string {
 
 // Release event object
 func (event *Event) Release() {}
-
-///////////////////////////////////////////////////////////////////////////////
-/// helpers
-///////////////////////////////////////////////////////////////////////////////
-
-//go:inline
-func positiveNumber(v int) int {
-	if v < 0 {
-		return 0
-	}
-	return v
-}
-
-//go:inline
-func b2u(b bool) uint {
-	if b {
-		return 1
-	}
-	return 0
-}

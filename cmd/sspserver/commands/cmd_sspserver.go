@@ -60,10 +60,6 @@ var SSPServerCommand = &Command[sspserverConfig]{
 	Exec:     sspServerCommand,
 }
 
-func init() {
-	Commands = append(Commands, SSPServerCommand)
-}
-
 func sspServerCommand(ctx context.Context, args []string, config *sspserverConfig, numberOfAdServers *cloudregistry.SyncUInt64Value) error {
 	type eventType = rtbevents.Event
 

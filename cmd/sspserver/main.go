@@ -31,6 +31,11 @@ var (
 	buildDate    = "unknown"
 )
 
+// Define command list
+var cmdList = commands.ICommands{
+	commands.SSPServerCommand,
+}
+
 func init() {
 	fmt.Println()
 	fmt.Println("███████ ███████ ██████  ███████ ███████ ██████  ██    ██ ███████ ██████")
@@ -61,8 +66,10 @@ func init() {
 		))
 	fatalError(err, "configure logger")
 
+	// Replace global logger
 	zap.ReplaceGlobals(loggerObj)
 
+	// Print configuration
 	if config.IsDebug() {
 		fmt.Println(config.String())
 	}
@@ -99,7 +106,7 @@ func main() {
 	cmdName := os.Args[1]
 
 	// Run command by name
-	icmd := commands.Commands.Get(cmdName)
+	icmd := cmdList.Get(cmdName)
 
 	// Print help if command not found
 	if cmdName == "help" || icmd == nil {
@@ -129,7 +136,7 @@ func main() {
 func printCommandsUsage() {
 	fmt.Println("Usage: sspserver <command> [options]")
 	fmt.Println("Commands:")
-	for _, cmd := range commands.Commands {
+	for _, cmd := range cmdList {
 		fmt.Printf("  % 10s - %s\n", cmd.Cmd(), cmd.Help())
 	}
 	fmt.Println("  help - print this help")
@@ -164,7 +171,7 @@ func initCloudRegistry(ctx context.Context, config *appcontext.Config, numberOfA
 		Port:       config.Server.Registry.Port,
 		Check: cloudregistry.Check{
 			ID:  "health",
-			TTL: time.Second * 20,
+			TTL: 20 * time.Second,
 			HTTP: struct {
 				URL     string
 				Method  string
@@ -180,9 +187,9 @@ func initCloudRegistry(ctx context.Context, config *appcontext.Config, numberOfA
 	}
 
 	// Run service discovery
-	go jobs.RunIntervalJob(ctx, "service-discovery", time.Second*30, func(ctx context.Context) error {
+	go jobs.RunIntervalJob(ctx, "service-discovery", 30*time.Second, func(ctx context.Context) error {
 		services, err := registry.Discover(ctx,
-			&cloudregistry.ServicePrefix{Name: config.ServiceName}, time.Second*30)
+			&cloudregistry.ServicePrefix{Name: config.ServiceName}, 30*time.Second)
 		ctxlogger.Get(ctx).Info("service discovery", zap.Int("count", len(services)), zap.Error(err))
 		if err != nil {
 			_ = numberOfAdServers.SetValue("service", len(services))

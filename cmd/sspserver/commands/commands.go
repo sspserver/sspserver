@@ -11,6 +11,3 @@ func (c ICommands) Get(name string) ICommand {
 	}
 	return nil
 }
-
-// Commands list
-var Commands = ICommands{}

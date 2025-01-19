@@ -73,20 +73,6 @@ type ServerConfig struct {
 	} `field:"registry" yaml:"registry" json:"registry"`
 }
 
-type testmodeConfig struct {
-	// Percent of traffic for the test
-	TrafficPercent int `json:"traffic_percent" yaml:"traffic_percent" env:"TESTMODE_TRAFFIC_PERCENT" default:"1"`
-
-	// Maximal traffic by days
-	MaxTraffic []int `json:"max_traffic" yaml:"max_traffic" env:"TESTMODE_MAX_TRAFFIC"` // Buy days
-
-	// Minimal lead count to finish test
-	MinLeads int `json:"min_leads" yaml:"min_leads" env:"TESTMODE_MIN_LEADS" default:"1"`
-
-	// Minimal click count to finish test
-	MinClicks int `json:"min_clicks" yaml:"min_clicks" env:"TESTMODE_MIN_CLICKS" default:"1"`
-}
-
 type adeventer struct {
 	EventQueue struct {
 		Connection string `field:"connection" json:"connection" yaml:"connection" env:"EVENTSTREAM_EVENT_QUEUE_CONNECTION"`
@@ -141,9 +127,6 @@ type AdServerConfig struct {
 
 	// EventPipeline of the results
 	EventPipeline adeventer `field:"event_pipeline" yaml:"event_pipeline" json:"event_pipeline"`
-
-	// TestMode of ad testing
-	TestMode testmodeConfig `field:"test_mode" yaml:"test_mode" json:"test_mode"`
 
 	// Logic of adserver behavier
 	Logic adLogic `field:"logic" yaml:"logic" json:"logic"`

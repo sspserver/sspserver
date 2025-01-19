@@ -65,6 +65,15 @@ For more detailed information on how to configure and run SSP Server, check out 
 - HTTP Server: Provides endpoints for external ad requests, utilizing fasthttp for high performance.
 - Extensions: Extend the server with features such as pixel tracking, DSP integration, and analytics.
 
+## Project dependencies
+
+- AdCoreLib - basic library for Ad server
+- Udetect - everething about user detection and user data (Browser, Os, Device, etc)
+- adstdendpoints - endpoints for Ad rendering endpoints (Banners, iFrames, dynamic/video content, popups, etc)
+- adstorage - storage for Ad objects and refresh data
+- adsource-openrtb - OpenRTB source for Ad objects protocol support
+- adjssdk - SDK for Ad rendering in JS
+
 ## Documentation
 
 - [Quick Start](docs/quick-start.md)

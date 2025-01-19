@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/zap"
-
 	"github.com/demdxx/cloudregistry"
 	"github.com/demdxx/gocast/v2"
 	"github.com/demdxx/goconfig"
@@ -18,18 +16,12 @@ import (
 	"github.com/geniusrabbit/adcorelib/profiler"
 	"github.com/geniusrabbit/adcorelib/zlogger"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
 	"github.com/sspserver/sspserver/cmd/sspserver/commands"
 	"github.com/sspserver/sspserver/cmd/sspserver/jobs"
 	"github.com/sspserver/sspserver/internal/cregistry"
-)
-
-const (
-	eventsStreamName   = "events"
-	userInfoStreamName = "user_info"
-	winStreamName      = "wins"
-	adInfoStreamName   = "ad_info"
 )
 
 var (

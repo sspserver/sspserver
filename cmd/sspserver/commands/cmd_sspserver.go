@@ -23,7 +23,9 @@ import (
 	"github.com/geniusrabbit/adstdendpoints/dynamic"
 	"github.com/geniusrabbit/adstdendpoints/proxy"
 	"github.com/geniusrabbit/adstorage"
+	"github.com/geniusrabbit/adstorage/accessors/adsourceaccessor"
 	"github.com/geniusrabbit/adstorage/accessors/formataccessor"
+	"github.com/geniusrabbit/adstorage/accessors/trafficrouteraccessor"
 	nc "github.com/geniusrabbit/notificationcenter/v2"
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
@@ -125,8 +127,20 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 	// Ad source is a specific driver for advertisement access
 	// ========================================================
 
+	trafficRouters, err := storageDataAccessor.TrafficRouters()
+	if err != nil {
+		logger.Error("traffic router accessor", zap.Error(err))
+	}
+
 	// Init RTB source accessor
-	sourceAccessor, err := storageDataAccessor.Sources(openrtbsrc.NewFactory(netdriver.NewDriver))
+	sourceAccessor, err := storageDataAccessor.Sources(
+		[]adsourceaccessor.SourceFactory{
+			openrtbsrc.NewFactory(netdriver.NewDriver),
+		},
+		adsourceaccessor.WithCustomIterator[datainit.Account](
+			newAdSourceIterator(trafficRouters),
+		),
+	)
 	if err != nil {
 		return errors.Wrap(err, "RTB source accessor")
 	}
@@ -222,4 +236,53 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 
 	fmt.Println("Run HTTP server", config.Server.HTTP.Listen)
 	return server.Listen(ctx, config.Server.HTTP.Listen)
+}
+
+func newAdSourceIterator(trafficRouters *trafficrouteraccessor.TrafficRouterAccessor) adsourceaccessor.CustomIteratorFnk {
+	return func(request *adtype.BidRequest, sources []adtype.Source) adtype.SourceIterator {
+		var weights map[uint64]float32
+
+		// Retrieve the traffic router list once to avoid repeated calls
+		if list, _ := trafficRouters.TrafficRouterList(); len(list) > 0 {
+			// Preallocate the weights map with an estimated size to reduce reallocation
+			weights = make(map[uint64]float32, len(sources))
+
+			for _, tr := range list {
+				if tr == nil {
+					continue
+				}
+
+				// Use a single loop to handle both RTBSourceIDs and the default weight
+				for _, id := range tr.RTBSourceIDs {
+					if currentWeight, exists := weights[id]; !exists || tr.Percent > currentWeight {
+						weights[id] = tr.Percent
+					}
+				}
+
+				// Handle the case where no RTBSourceIDs are defined
+				if len(tr.RTBSourceIDs) == 0 {
+					if currentWeight, exists := weights[0]; !exists || tr.Percent > currentWeight {
+						weights[0] = tr.Percent
+					}
+				}
+			}
+		}
+
+		if len(weights) == 0 {
+			return adsourceaccessor.NewLinearIterator(request, sources)
+		}
+
+		// Return the priority iterator with a precomputed weight function
+		return adsourceaccessor.NewPriorityIterator(request, sources,
+			func(request *adtype.BidRequest, src adtype.Source) float32 {
+				if src == nil {
+					return 0
+				}
+				// Use a single lookup for the source ID and fallback to the default weight
+				if weight, exists := weights[src.ID()]; exists {
+					return weight
+				}
+				return weights[0]
+			})
+	}
 }

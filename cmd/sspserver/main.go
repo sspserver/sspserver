@@ -44,6 +44,9 @@ func init() {
 	fmt.Println("     ██      ██ ██           ██ ██      ██   ██  ██  ██  ██      ██   ██")
 	fmt.Println("███████ ███████ ██      ███████ ███████ ██   ██   ████   ███████ ██   ██")
 	fmt.Println()
+	fmt.Println("Version:", buildVersion, " (", buildCommit, ")")
+	fmt.Println("Build date:", buildDate)
+	fmt.Println()
 
 	args := os.Args
 	if len(args) > 1 {

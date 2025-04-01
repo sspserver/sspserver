@@ -6,7 +6,7 @@ APP_TAGS  ?= $(or ${APP_BUILD_TAGS},${DEF_APP_TAGS})
 
 include deploy/build.mk
 
-PROJECT_WORKSPACE := adnet-project
+PROJECT_WORKSPACE := ssp-project
 PROJECT_NAME ?= sspserver
 DOCKER_COMPOSE := docker compose -p $(PROJECT_WORKSPACE) -f deploy/develop/docker-compose.yml
 DOCKER_CONTAINER_IMAGE := ${PROJECT_WORKSPACE}/${PROJECT_NAME}
@@ -71,8 +71,8 @@ stop: ## Stop all services
 	@echo "Stop all services"
 	$(DOCKER_COMPOSE) stop
 
-.PHONY: dbcli
-dbcli: ## Open development database
+.PHONY: db-cli
+db-cli: ## Open development database
 	$(DOCKER_COMPOSE) exec $(DOCKER_DATABASE_NAME) psql -U $(DATABASE_USER) $(DATABASE_DB)
 
 .PHONY: chi

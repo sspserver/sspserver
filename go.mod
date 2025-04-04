@@ -9,16 +9,16 @@ require (
 	github.com/demdxx/gocast/v2 v2.9.0
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20250331161235-6cd254991b72
+	github.com/geniusrabbit/adcorelib v0.0.0-20250404160750-8b48bbb2c888
 	github.com/geniusrabbit/adsource-openrtb v0.0.0-20250401122123-19562167401b
 	github.com/geniusrabbit/adstdendpoints v0.0.0-20250401122344-e657aba307ba
-	github.com/geniusrabbit/adstorage v0.0.0-20250331161817-ac24ee424e32
+	github.com/geniusrabbit/adstorage v0.0.0-20250401122625-54650221b929
 	github.com/geniusrabbit/notificationcenter/v2 v2.3.8
 	github.com/geniusrabbit/udetect v0.0.0-20241212120023-b56946c9a075
-	github.com/nats-io/nats.go v1.40.1
+	github.com/nats-io/nats.go v1.41.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
-	github.com/valyala/fasthttp v1.59.0
+	github.com/valyala/fasthttp v1.60.0
 	go.uber.org/zap v1.27.0
 )
 
@@ -37,7 +37,7 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/demdxx/rpool/v2 v2.0.1 // indirect
-	github.com/demdxx/xtypes v0.2.0 // indirect
+	github.com/demdxx/xtypes v0.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
@@ -54,7 +54,7 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/pprof v0.0.0-20250317173921-a4b03ec1a45e // indirect
+	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
 	github.com/guregu/null v4.0.0+incompatible // indirect
@@ -84,7 +84,7 @@ require (
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-sqlite3 v1.14.24 // indirect
+	github.com/mattn/go-sqlite3 v1.14.27 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
 	github.com/microsoft/go-mssqldb v1.8.0 // indirect
 	github.com/mileusna/useragent v1.3.5 // indirect
@@ -102,7 +102,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.63.0 // indirect
 	github.com/prometheus/procfs v0.16.0 // indirect
-	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
+	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/redis/go-redis/v9 v9.7.3 // indirect
 	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
@@ -122,8 +122,8 @@ require (
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250404141209-ee84b53bf3d0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250404141209-ee84b53bf3d0 // indirect
 	google.golang.org/grpc v1.71.1 // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
@@ -135,4 +135,4 @@ require (
 	gorm.io/gorm v1.25.12 // indirect
 )
 
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250324211829-b45e905df463
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250404141209-ee84b53bf3d0

@@ -96,10 +96,6 @@ func main() {
 		Date:    buildDate,
 	})
 
-	// Profiling server of collector
-	profiler.Run(config.Server.Profile.Mode,
-		config.Server.Profile.Listen, logger, true)
-
 	if len(os.Args) < 2 {
 		printCommandsUsage()
 		return
@@ -127,6 +123,10 @@ func main() {
 			"cloud registry init",
 		)
 	}
+
+	// Profiling server of collector
+	profiler.Run(config.Server.Profile.Mode,
+		config.Server.Profile.Listen, logger, true)
 
 	// Run command with context
 	fmt.Println()

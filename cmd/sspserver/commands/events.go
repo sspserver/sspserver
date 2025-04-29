@@ -27,7 +27,7 @@ func initEventsGenerator[EventT EventType](
 	)
 
 	// Event flow processor
-	eventGenerator := eventgenerator.New[EventT, *eventgenerator.TestUserInfo](
+	eventGenerator := eventgenerator.New(
 		serviceName,
 		eventAllocator,
 		func() *eventgenerator.TestUserInfo { return &eventgenerator.TestUserInfo{} },

@@ -90,7 +90,7 @@ func newEvent() Event {
 		Platform:      1,
 		Domain:        "domain.com",
 		ApplicationID: 11,
-		ZoneID:        12,
+		AdUnitID:      12,
 		AdWidth:       101,
 		AdHeight:      22,
 		SourceURL:     "http://as.com",

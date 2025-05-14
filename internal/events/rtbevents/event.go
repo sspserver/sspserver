@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/demdxx/gocast/v2"
-	"github.com/geniusrabbit/adcorelib/admodels"
 	"github.com/geniusrabbit/adcorelib/admodels/types"
 	"github.com/geniusrabbit/adcorelib/adtype"
 	"github.com/geniusrabbit/adcorelib/billing"
@@ -40,7 +39,7 @@ type Event struct {
 	Platform      int    `json:"pl,omitempty"`  // Where displaid? 0 – undefined, 1 – web site, 2 – native app, 3 – game
 	Domain        string `json:"dm,omitempty"`  // If not web site then "bundle"
 	ApplicationID uint64 `json:"app,omitempty"` // application ID (registered in the system)
-	ZoneID        uint64 `json:"z,omitempty"`   // -- // --
+	AdUnitID      uint64 `json:"z,omitempty"`   // -- // --
 	PixelID       uint64 `json:"pxl,omitempty"` // -- // --
 	FormatID      uint64 `json:"fmt,omitempty"` // Format ID
 	AdWidth       int    `json:"aw,omitempty"`  // -- // --
@@ -153,10 +152,10 @@ func (event *Event) SetEventPurchaseViewPrice(price int64) error {
 // Fill event object from response and Ad item objects
 func (event *Event) Fill(service string, eventType events.Type, status uint8, response adtype.Responser, it adtype.ResponserItem) error {
 	var (
-		r        = response.Request()
-		imp      = it.Impression()
-		sourceID uint64
-		zoneID   uint64
+		r            = response.Request()
+		imp          = it.Impression()
+		sourceID     uint64
+		targetSpotID uint64
 	)
 
 	if src := it.Source(); src != nil {
@@ -168,7 +167,7 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 	}
 
 	if imp != nil && imp.Target != nil {
-		zoneID = imp.Target.ID()
+		targetSpotID = imp.Target.ID()
 	}
 
 	if _, ok := it.(adtype.ResponserMultipleItem); ok {
@@ -195,7 +194,7 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		Platform:      0,                           // Where displaid? 0 – undefined, 1 – web site, 2 – native app, 3 – game
 		Domain:        r.DomainName(),              //
 		ApplicationID: r.AppID(),                   // Place target
-		ZoneID:        zoneID,                      // -- // --
+		AdUnitID:      targetSpotID,                // -- // --
 		FormatID:      it.Format().ID,              // Format object ID
 		AdWidth:       positiveNumber(it.Width()),  // -- // --
 		AdHeight:      positiveNumber(it.Height()), // -- // --
@@ -204,19 +203,19 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		URL:           it.ActionURL(),              // Non modified target URL
 
 		// Money
-		PricingModel:        it.PricingModel().UInt(),                        // Display As CPM/CPC/CPA/CPI
-		ECPM:                it.ECPM().Float64(),                             // Effective Cost Per Mille (1000 views)
-		PurchaseViewPrice:   it.PurchasePrice(admodels.ActionView).Int64(),   // Price of of the view of source traffic cost
-		PurchaseClickPrice:  it.PurchasePrice(admodels.ActionClick).Int64(),  // Price of of the click of source traffic cost
-		PurchaseLeadPrice:   it.PurchasePrice(admodels.ActionLead).Int64(),   // Price of of the lead of source traffic cost
-		PotentialViewPrice:  it.PotentialPrice(admodels.ActionView).Int64(),  // Price of of the view of source traffic cost including descrepancy correction
-		PotentialClickPrice: it.PotentialPrice(admodels.ActionClick).Int64(), // Price of of the click of source traffic cost including descrepancy correction
-		PotentialLeadPrice:  it.PotentialPrice(admodels.ActionLead).Int64(),  // Price of of the lead of source traffic cost including descrepancy correction
-		ViewPrice:           it.FinalPrice(admodels.ActionView).Int64(),      // Price per view with total comissions and with descrepancy correction
-		ClickPrice:          it.FinalPrice(admodels.ActionClick).Int64(),     // Price per click with total comissions and with descrepancy correction
-		LeadPrice:           it.FinalPrice(admodels.ActionLead).Int64(),      // Price per lead with total comissions and with descrepancy correction
-		CompetitorSourceID:  it.Second().GetSourceID(),                       // Competitor source ID
-		CompetitorECPM:      it.Second().GetECPM().Float64(),                 // Competitor ECPM or auction
+		PricingModel:        it.PricingModel().UInt(),                    // Display As CPM/CPC/CPA/CPI
+		ECPM:                it.ECPM().Float64(),                         // Effective Cost Per Mille (1000 views)
+		PurchaseViewPrice:   it.PurchasePrice(adtype.ActionView).I64(),   // Price of of the view of source traffic cost
+		PurchaseClickPrice:  it.PurchasePrice(adtype.ActionClick).I64(),  // Price of of the click of source traffic cost
+		PurchaseLeadPrice:   it.PurchasePrice(adtype.ActionLead).I64(),   // Price of of the lead of source traffic cost
+		PotentialViewPrice:  it.PotentialPrice(adtype.ActionView).I64(),  // Price of of the view of source traffic cost including descrepancy correction
+		PotentialClickPrice: it.PotentialPrice(adtype.ActionClick).I64(), // Price of of the click of source traffic cost including descrepancy correction
+		PotentialLeadPrice:  it.PotentialPrice(adtype.ActionLead).I64(),  // Price of of the lead of source traffic cost including descrepancy correction
+		ViewPrice:           it.FinalPrice(adtype.ActionView).I64(),      // Price per view with total comissions and with descrepancy correction
+		ClickPrice:          it.FinalPrice(adtype.ActionClick).I64(),     // Price per click with total comissions and with descrepancy correction
+		LeadPrice:           it.FinalPrice(adtype.ActionLead).I64(),      // Price per lead with total comissions and with descrepancy correction
+		CompetitorSourceID:  it.Second().GetSourceID(),                   // Competitor source ID
+		CompetitorECPM:      it.Second().GetECPM().Float64(),             // Competitor ECPM or auction
 
 		// User IDENTITY
 		UDID:        r.DeviceInfo().IFA,         // Unique Device ID (IDFA)
@@ -298,7 +297,8 @@ func (event *Event) PrepareURL(url string) string {
 		"{aucid}", event.AuctionID,
 		"{auctype}", types.AuctionType(event.AuctionType).Name(),
 		"{platform}", types.PlatformType(event.Platform).Name(),
-		"{zone_id}", gocast.Str(event.ZoneID),
+		"{zone_id}", gocast.Str(event.AdUnitID),
+		"{adunit_id}", gocast.Str(event.AdUnitID),
 		"{pm}", types.PricingModel(event.PricingModel).Name(),
 		"{udid}", event.UDID,
 		"{uuid}", event.UUID,

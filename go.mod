@@ -1,6 +1,6 @@
 module github.com/sspserver/sspserver
 
-go 1.24.2
+go 1.24.3
 
 require (
 	github.com/demdxx/cloudregistry v0.0.0-20241209114227-a563c1384366
@@ -9,16 +9,16 @@ require (
 	github.com/demdxx/gocast/v2 v2.9.0
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20250429095349-1a4ebc3221bf
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20250426104220-b2d032201b96
-	github.com/geniusrabbit/adstdendpoints v0.0.0-20250401122344-e657aba307ba
-	github.com/geniusrabbit/adstorage v0.0.0-20250426103506-9bc93fb8d4cb
+	github.com/geniusrabbit/adcorelib v0.0.0-20250514152307-15f00acdbc06
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20250514152640-e3800c8c768e
+	github.com/geniusrabbit/adstdendpoints v0.0.0-20250511144604-f8b1427dc92d
+	github.com/geniusrabbit/adstorage v0.0.0-20250511144156-3a0a8674af01
 	github.com/geniusrabbit/notificationcenter/v2 v2.4.0
-	github.com/geniusrabbit/udetect v0.0.0-20250425134628-4a4f1fa5c991
-	github.com/nats-io/nats.go v1.41.2
+	github.com/geniusrabbit/udetect v0.0.0-20250511143927-35a146c11d35
+	github.com/nats-io/nats.go v1.42.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
-	github.com/valyala/fasthttp v1.61.0
+	github.com/valyala/fasthttp v1.62.0
 	go.uber.org/zap v1.27.0
 )
 
@@ -54,11 +54,10 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/pprof v0.0.0-20250423184734-337e5dd93bb4 // indirect
+	github.com/google/pprof v0.0.0-20250501235452-c0086092b71a // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
-	github.com/guregu/null v4.0.0+incompatible // indirect
-	github.com/hashicorp/consul/api v1.32.0 // indirect
+	github.com/hashicorp/consul/api v1.32.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect
@@ -86,7 +85,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
-	github.com/microsoft/go-mssqldb v1.8.0 // indirect
+	github.com/microsoft/go-mssqldb v1.8.1 // indirect
 	github.com/mileusna/useragent v1.3.5 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -103,7 +102,7 @@ require (
 	github.com/prometheus/common v0.63.0 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
-	github.com/redis/go-redis/v9 v9.7.3 // indirect
+	github.com/redis/go-redis/v9 v9.8.0 // indirect
 	github.com/savsgio/gotils v0.0.0-20250408102913-196191ec6287 // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
@@ -116,14 +115,14 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.21 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/sync v0.13.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250428153025-10db94c68c34 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250428153025-10db94c68c34 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250512202823-5a2f75b736a9 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250512202823-5a2f75b736a9 // indirect
 	google.golang.org/grpc v1.72.0 // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
@@ -132,7 +131,7 @@ require (
 	gorm.io/driver/postgres v1.5.11 // indirect
 	gorm.io/driver/sqlite v1.5.7 // indirect
 	gorm.io/driver/sqlserver v1.5.4 // indirect
-	gorm.io/gorm v1.25.12 // indirect
+	gorm.io/gorm v1.26.1 // indirect
 )
 
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250428153025-10db94c68c34
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250512202823-5a2f75b736a9

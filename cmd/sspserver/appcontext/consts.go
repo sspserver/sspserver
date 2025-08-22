@@ -11,3 +11,7 @@ const (
 	Network     = "geniusrabbit"
 	Version     = "1.0"
 )
+
+const (
+	PriceParamName = "prc"
+)

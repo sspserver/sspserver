@@ -8,6 +8,10 @@ import (
 
 	"github.com/demdxx/cloudregistry"
 	"github.com/fasthttp/router"
+	"github.com/pkg/errors"
+	"github.com/valyala/fasthttp"
+	"go.uber.org/zap"
+
 	"github.com/geniusrabbit/adcorelib/adsource"
 	"github.com/geniusrabbit/adcorelib/adtype"
 	"github.com/geniusrabbit/adcorelib/context/ctxlogger"
@@ -27,9 +31,6 @@ import (
 	"github.com/geniusrabbit/adstorage/accessors/formataccessor"
 	"github.com/geniusrabbit/adstorage/accessors/trafficrouteraccessor"
 	nc "github.com/geniusrabbit/notificationcenter/v2"
-	"github.com/pkg/errors"
-	"github.com/valyala/fasthttp"
-	"go.uber.org/zap"
 
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
 	"github.com/sspserver/sspserver/cmd/sspserver/datainit"
@@ -213,6 +214,7 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 				actiontracker.WithHTTPHandlerWrapper[*eventType](httpHandlerWrapper),
 				actiontracker.WithURLGenerator[*eventType](urlGenerator),
 				actiontracker.WithEventAllocator(eventAllocator),
+				actiontracker.WithDefaultPriceExtractor[*eventType](appcontext.PriceParamName),
 			),
 			// Register HTTP endpoints extensions
 			endpoint.NewExtension(

@@ -124,14 +124,10 @@ github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHk
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
 github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
-github.com/geniusrabbit/adcorelib v0.0.0-20250822114457-5a53351d20e5 h1:hYMYOlIPwLP0TTl+zfPdbeAQyMYvnemPb4teVrHR0f4=
-github.com/geniusrabbit/adcorelib v0.0.0-20250822114457-5a53351d20e5/go.mod h1:8/zbACuqJBd84C0g7BoHTpZ+aMgD4zmPANXzPwePbzk=
-github.com/geniusrabbit/adcorelib v0.0.0-20250822114824-f28b9923fe01 h1:PSW8ndtfC33am3xeu3IRNsUjTNhXj1nPJuX8dqI2rmg=
-github.com/geniusrabbit/adcorelib v0.0.0-20250822114824-f28b9923fe01/go.mod h1:tFXg8bh47drPSV8w0PH6DYBQZfQSWGfM8a26frhwcJ8=
+github.com/geniusrabbit/adcorelib v0.0.0-20250822191542-ac2e136b817e h1:gtlEvd11EyurJepFF1/Bj+5HO1gloz/UjWf2bLqSWDM=
+github.com/geniusrabbit/adcorelib v0.0.0-20250822191542-ac2e136b817e/go.mod h1:tFXg8bh47drPSV8w0PH6DYBQZfQSWGfM8a26frhwcJ8=
 github.com/geniusrabbit/adsource-openrtb v0.0.0-20250822114722-ba59d146158f h1:iU/BZa2Oyg7UMKO7bS3sTlk4IwCtsaNBiICNwr3XpU8=
 github.com/geniusrabbit/adsource-openrtb v0.0.0-20250822114722-ba59d146158f/go.mod h1:EEAZUnGSVcgkGU5DMtnEJIDtcX2zETJ/9lqmnqPTJqE=
-github.com/geniusrabbit/adstdendpoints v0.0.0-20250511144604-f8b1427dc92d h1:xyrgiq53E9T1W4MNFlqJZxP46D4yUgpdAh6JuYnGZWY=
-github.com/geniusrabbit/adstdendpoints v0.0.0-20250511144604-f8b1427dc92d/go.mod h1:Zht/GKBcOSd4gZPjb1MgMTbb0la+rJdFdyFQ/59rOBU=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20250822125810-bf6f57977751 h1:jPFIbjRDkGuk6FHS47y8F7GHTjkjfdUkNUVDAStc2co=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20250822125810-bf6f57977751/go.mod h1:NyxxHkwEYz62bjB5xud7Dq/NEX3D4JDdToiRaWONeHo=
 github.com/geniusrabbit/adstorage v0.0.0-20250511144156-3a0a8674af01 h1:x2AxABzgSXC5Pq+FAfnNU6o2sIHdtgBdC/DjvopCUHU=

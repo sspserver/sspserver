@@ -47,13 +47,14 @@ func initEventsGenerator[EventT EventType](
 		EventGenerator: eventGenerator,
 		PixelGenerator: pixelgenerator.NewPixelGenerator[EventT, LeadT](adServerConf.TrackerHost),
 
-		Schema:        "",
-		ServiceDomain: serviceHostname,
-		CDNDomain:     adServerConf.CDNDomain,
-		LibDomain:     adServerConf.LibDomain,
-		ClickPattern:  "/click?c={code}",
-		DirectPattern: "/direct?c={code}",
-		WinPattern:    "/win?c={code}",
+		Schema:         "",
+		ServiceDomain:  serviceHostname,
+		CDNDomain:      adServerConf.CDNDomain,
+		LibDomain:      adServerConf.LibDomain,
+		ClickPattern:   "/click?c={code}",
+		DirectPattern:  "/direct?c={code}",
+		WinPattern:     "/win?c={code}",
+		PriceParamName: appcontext.PriceParamName,
 	}).Init()
 
 	return ctx, urlGenerator, eventStream, nil

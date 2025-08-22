@@ -42,64 +42,45 @@ streams {
       "timemark=tm:unixnano",               // DateTime
       "delay=dl:uint",                      // UInt64
       "duration=d:uint",                    // UInt64
-      "service=srv:fix*16",                 // FixedString(16)
-      "cluster=cl:fix*2",                   // FixedString(2)
       "event=e",                            // Event Type
       "status=st:uint8",                    // Status: 0 - undefined, 1 - success, 2 - failed, 3 - compromised
-      // Accounts link information
-      "project=pr:uint",                    // UInt64
-      "pub_account=pcb:uint",               // UInt64
-      "adv_account=acv:uint",               // UInt64
       // Source
-      "aucid=auc:uuid",                     // FixedString(16)  -- Internal Auction ID
-      "auctype=auctype:uint8",              // Aution type 1 - First price, 2 - Second price
-      "impid=imp:uuid",                     // FixedString(16)
-      "impadid=impad:uuid",                 // FixedString(16)
-      "extaucid=eauc",                      // RTB Request/Response ID
-      "extimpid=eimp",                      // RTB Imp ID
-      "extzoneid=extz",                     // RTB Zone ID (tagid)
-      "source=sid:uint",                    // UInt64
+      "auc_id=auc:uuid",                    // FixedString(16)  -- Internal Auction ID
+      "auc_type=auctype:uint8",             // Aution type 1 - First price, 2 - Second price
+      "imp_id=imp:uuid",                    // FixedString(16)
+      "impad_id=impad:uuid",                // FixedString(16)
+      "extauc_id=eauc",                     // RTB Request/Response ID
+      "extimp_id=eimp",                     // RTB Imp ID
+      "source_id=sid:uint",                 // UInt64
       "network=net",                        // String
-      "access_point=acp:uint",              // UInt64
       // State Location
-      "platform=pl:uint8",                  // UInt8
+      "platform_type=pl:uint8",             // UInt8
       "domain=dm",                          // String
-      "app:int",                            // UInt64
-      "zone=z:int",                         // UInt64
-      "pixel=pxl:uint",                     // UInt64
-      "campaign=cmp:int",                   // UInt64
-      "format=fmt:uint32",                  // UInt32
-      "ad=ad:uint",                         // UInt64
+      "app_id:int",                         // UInt64
+      "zone_id=z:int",                      // UInt64
+      "format_id=fmt:uint32",               // UInt32
       "ad_w=aw:uint32",                     // UInt32
       "ad_h=ah:uint32",                     // UInt32
-      "src_url=su",                         // String
-      "win_url=wu",                         // String
-      "url=u",                              // String
-      "jumper=j:int",                       // UInt64
+      # "src_url=su",                         // String
+      # "win_url=wu",                         // String
+      # "url=u",                              // String
       // Money section
       "pricing_model=pm:uint8",             // UInt8
       "purchase_view_price=pvpr:uint",      // UInt64
       "purchase_click_price=pcpr:uint",     // UInt64
-      "purchase_lead_price=plpr:uint",      // UInt64
       "potential_view_price=ptvpr:uint",    // UInt64
       "potential_click_price=ptcpr:uint",   // UInt64
-      "potential_lead_price=ptlpr:uint",    // UInt64
       "view_price=vpr:uint",                // UInt64
       "click_price=cpr:uint",               // UInt64
-      "lead_price=lpr:uint",                // UInt64
-      "competitor=cmid:uint",               // UInt64
-      "competitor_source=cmsrc:uint",       // UInt64
-      "competitor_ecpm=cmecpm:int",         // UInt64
       // User IDENTITY
-      "udid=udi",                           // FixedString(16)
-      "uuid=uui:uuid",                      // FixedString(16)
-      "sessid=ses:uuid",                    // FixedString(16)
+      "ud_id=udi",                          // FixedString(16)
+      "uu_id=uui:uuid",                     // FixedString(16)
+      "sess_id=ses:uuid",                   // FixedString(16)
       "fingerprint=fpr:uuid",               // String
       "etag=etg",                           // String
       // Targeting
-      "carrier=car:uint",                   // UInt64
+      "carrier_id=car:uint",                // UInt64
       "country=cc:fix*2",                   // FixedString(2)
-      "city=ct:fix*5",                      // FixedString(5)
       "latitude=lt:float",                  // Float64
       "longitude=lg:float",                 // Float64
       "language=lng:fix*5",                 // FixedString(5)
@@ -108,10 +89,10 @@ streams {
       "page_url=page",                      // String
       "ua",                                 // String
       "device_type=dvt:uint32",             // UInt32
-      "device=dv:uint32",                   // UInt32
-      "os:uint32",                          // UInt32
-      "browser=br:uint32",                  // UInt32
-      "categories=c:[]int32",               // Array(Int32)
+      "device_id=dv:uint32",                // UInt32
+      "os_id:uint32",                       // UInt32
+      "browser_id=br:uint32",               // UInt32
+      "category_ids=c:[]int32",             // Array(Int32)
       "adblock=ab:uint8",                   // UInt8
       "private=prv:uint8",                  // UInt8
       "robot=rt:uint8",                     // UInt8
@@ -205,7 +186,6 @@ streams {
       // Targeting
       "carrier=car:uint",                   // UInt64
       "country=cc:fix*2",                   // FixedString(2)
-      "city=ct:fix*5",                      // FixedString(5)
       "latitude=lt:float",                  // Float64
       "longitude=lg:float",                 // Float64
       "language=lng:fix*5",                 // FixedString(5)

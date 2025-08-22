@@ -69,9 +69,9 @@ func connectPublisherOrLog(ctx context.Context, name, connection string, debug b
 func infoHandler(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json")
 	headers := make(map[string]any)
-	ctx.Request.Header.VisitAll(func(key, value []byte) {
+	for key, value := range ctx.Request.Header.All() {
 		headers[string(key)] = string(value)
-	})
+	}
 
 	ver := version.Get(ctx)
 

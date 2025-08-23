@@ -40,7 +40,6 @@ type Event struct {
 	Domain        string `json:"dm,omitempty"`  // If not web site then "bundle"
 	ApplicationID uint64 `json:"app,omitempty"` // application ID (registered in the system)
 	AdUnitID      uint64 `json:"z,omitempty"`   // -- // --
-	PixelID       uint64 `json:"pxl,omitempty"` // -- // --
 	FormatID      uint64 `json:"fmt,omitempty"` // Format ID
 	AdWidth       int    `json:"aw,omitempty"`  // -- // --
 	AdHeight      int    `json:"ah,omitempty"`  // -- // --
@@ -67,13 +66,10 @@ type Event struct {
 	// We are buying the place of advertisement display
 	PurchaseViewPrice   int64   `json:"pvpr,omitempty"`   // Price of the view of source traffic cost
 	PurchaseClickPrice  int64   `json:"pcpr,omitempty"`   // Price of the click of source traffic cost
-	PurchaseLeadPrice   int64   `json:"plpr,omitempty"`   // Price of the lead of source traffic cost
 	PotentialViewPrice  int64   `json:"ptvpr,omitempty"`  // Price of the view of source of ads oitential
 	PotentialClickPrice int64   `json:"ptcpr,omitempty"`  // Price of the click of source of ads oitential
-	PotentialLeadPrice  int64   `json:"ptlpr,omitempty"`  // Price of the lead of source of ads oitential
 	ViewPrice           int64   `json:"vpr,omitempty"`    // Price per view
 	ClickPrice          int64   `json:"cpr,omitempty"`    // Price per click
-	LeadPrice           int64   `json:"lpr,omitempty"`    // Price per lead
 	CompetitorSourceID  uint64  `json:"cmsrc,omitempty"`  // Competitor source ID
 	CompetitorECPM      float64 `json:"cmecpm,omitempty"` // Competitor ECPM or auction
 
@@ -207,13 +203,10 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		ECPM:                it.ECPM().Float64(),                         // Effective Cost Per Mille (1000 views)
 		PurchaseViewPrice:   it.PurchasePrice(adtype.ActionView).I64(),   // Price of of the view of source traffic cost
 		PurchaseClickPrice:  it.PurchasePrice(adtype.ActionClick).I64(),  // Price of of the click of source traffic cost
-		PurchaseLeadPrice:   it.PurchasePrice(adtype.ActionLead).I64(),   // Price of of the lead of source traffic cost
 		PotentialViewPrice:  it.PotentialPrice(adtype.ActionView).I64(),  // Price of of the view of source traffic cost including descrepancy correction
 		PotentialClickPrice: it.PotentialPrice(adtype.ActionClick).I64(), // Price of of the click of source traffic cost including descrepancy correction
-		PotentialLeadPrice:  it.PotentialPrice(adtype.ActionLead).I64(),  // Price of of the lead of source traffic cost including descrepancy correction
 		ViewPrice:           it.FinalPrice(adtype.ActionView).I64(),      // Price per view with total comissions and with descrepancy correction
 		ClickPrice:          it.FinalPrice(adtype.ActionClick).I64(),     // Price per click with total comissions and with descrepancy correction
-		LeadPrice:           it.FinalPrice(adtype.ActionLead).I64(),      // Price per lead with total comissions and with descrepancy correction
 		CompetitorSourceID:  it.Second().GetSourceID(),                   // Competitor source ID
 		CompetitorECPM:      it.Second().GetECPM().Float64(),             // Competitor ECPM or auction
 

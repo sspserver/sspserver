@@ -56,7 +56,7 @@ streams {
       // State Location
       "platform_type=pl:uint8",             // UInt8
       "domain=dm",                          // String
-      "app_id:int",                         // UInt64
+      "app_id=app:int",                     // UInt64
       "zone_id=z:int",                      // UInt64
       "format_id=fmt:uint32",               // UInt32
       "ad_w=aw:uint32",                     // UInt32

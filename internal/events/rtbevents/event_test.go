@@ -101,10 +101,8 @@ func newEvent() Event {
 		PricingModel:       1,
 		PurchaseViewPrice:  2000,
 		PurchaseClickPrice: 1000,
-		PurchaseLeadPrice:  1000,
 		ViewPrice:          1000,
 		ClickPrice:         1000,
-		LeadPrice:          19992,
 		CompetitorSourceID: 1000,
 		CompetitorECPM:     1000000,
 		// User IDENTITY

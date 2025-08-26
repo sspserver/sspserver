@@ -9,22 +9,22 @@ require (
 	github.com/demdxx/gocast/v2 v2.10.2
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20250822191542-ac2e136b817e
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20250822114722-ba59d146158f
+	github.com/geniusrabbit/adcorelib v0.0.0-20250826134505-d9679a9a9b02
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20250826134624-2085ed0f9b0b
 	github.com/geniusrabbit/adstdendpoints v0.0.0-20250822125810-bf6f57977751
 	github.com/geniusrabbit/adstorage v0.0.0-20250511144156-3a0a8674af01
 	github.com/geniusrabbit/notificationcenter/v2 v2.4.0
 	github.com/geniusrabbit/udetect v0.0.0-20250511143927-35a146c11d35
 	github.com/nats-io/nats.go v1.45.0
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 	github.com/valyala/fasthttp v1.65.0
 	go.uber.org/zap v1.27.0
 )
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/IBM/sarama v1.45.2 // indirect
+	github.com/IBM/sarama v1.46.0 // indirect
 	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -85,7 +85,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
-	github.com/microsoft/go-mssqldb v1.9.2 // indirect
+	github.com/microsoft/go-mssqldb v1.9.3 // indirect
 	github.com/mileusna/useragent v1.3.5 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -122,8 +122,8 @@ require (
 	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250818200422-3122310a409c // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250818200422-3122310a409c // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250825161204-c5933d9347a5 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250825161204-c5933d9347a5 // indirect
 	google.golang.org/grpc v1.75.0 // indirect
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
@@ -135,4 +135,4 @@ require (
 	gorm.io/gorm v1.30.1 // indirect
 )
 
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250818200422-3122310a409c
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250825161204-c5933d9347a5

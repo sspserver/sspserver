@@ -148,7 +148,7 @@ func (event *Event) SetEventPurchaseViewPrice(price int64) error {
 // Fill event object from response and Ad item objects
 func (event *Event) Fill(service string, eventType events.Type, status uint8, response adtype.Responser, it adtype.ResponserItem) error {
 	var (
-		r            = response.Request()
+		req          = response.Request()
 		imp          = it.Impression()
 		sourceID     uint64
 		targetSpotID uint64
@@ -178,18 +178,18 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		Status:   status,
 
 		// Source
-		AuctionID:    r.ID,                          // ID of last auction
+		AuctionID:    req.ID,                        // ID of last auction
 		AuctionType:  uint8(response.AuctionType()), // Aution type 1 - First price, 2 - Second price
 		ImpID:        it.ImpressionID(),             // Sub ID of request for paticular impression spot
 		ImpAdID:      it.ID(),                       // Specific ID for paticular ad impression
-		ExtAuctionID: r.ExtID,                       // External auction ID
+		ExtAuctionID: req.ExtID,                     // External auction ID
 		ExtImpID:     it.ExtImpressionID(),          // External auction Imp ID
 		SourceID:     sourceID,                      // Advertisement Source ID
 
 		// State Location
 		Platform:      0,                           // Where displaid? 0 – undefined, 1 – web site, 2 – native app, 3 – game
-		Domain:        r.DomainName(),              //
-		ApplicationID: r.AppID(),                   // Place target
+		Domain:        req.DomainName(),            //
+		ApplicationID: req.AppID(),                 // Place target
 		AdUnitID:      targetSpotID,                // -- // --
 		FormatID:      it.Format().ID,              // Format object ID
 		AdWidth:       positiveNumber(it.Width()),  // -- // --
@@ -211,32 +211,32 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		CompetitorECPM:      it.Second().GetECPM().Float64(),             // Competitor ECPM or auction
 
 		// User IDENTITY
-		UDID:        r.DeviceInfo().IFA,         // Unique Device ID (IDFA)
-		UUID:        r.UserInfo().ID,            // User
-		SessionID:   r.UserInfo().SessionID,     // -- // --
-		Fingerprint: r.UserInfo().FingerPrintID, //
-		ETag:        r.UserInfo().ETag,          //
+		UDID:        req.DeviceInfo().IFA,         // Unique Device ID (IDFA)
+		UUID:        req.UserInfo().ID,            // User
+		SessionID:   req.UserInfo().SessionID,     // -- // --
+		Fingerprint: req.UserInfo().FingerPrintID, //
+		ETag:        req.UserInfo().ETag,          //
 
 		// Targeting
-		CarrierID:       r.CarrierInfo().ID,
-		Country:         r.GeoInfo().Country,
-		Language:        r.BrowserInfo().PrimaryLanguage,
-		Referer:         r.BrowserInfo().Ref,
-		IPString:        r.GeoInfo().IP.String(),
-		UserAgent:       r.BrowserInfo().UA,
-		DeviceID:        r.DeviceInfo().ID,
-		OSID:            r.DeviceInfo().OS.ID,
-		BrowserID:       uint(r.BrowserInfo().ID),
+		CarrierID:       req.CarrierInfo().ID,
+		Country:         req.GeoInfo().Country,
+		Language:        req.BrowserInfo().PrimaryLanguage,
+		Referer:         req.BrowserInfo().Ref,
+		IPString:        req.GeoInfo().IP.String(),
+		UserAgent:       req.BrowserInfo().UA,
+		DeviceID:        req.DeviceInfo().ID,
+		OSID:            req.DeviceInfo().OS.ID,
+		BrowserID:       uint(req.BrowserInfo().ID),
 		Categories:      "",
-		Adblock:         b2u(r.IsAdblock()),
-		PrivateBrowsing: b2u(r.IsPrivateBrowsing()),
-		Robot:           b2u(r.IsRobot()),
-		Proxy:           b2u(r.IsProxy()),
+		Adblock:         b2u(req.IsAdblock()),
+		PrivateBrowsing: b2u(req.IsPrivateBrowsing()),
+		Robot:           b2u(req.IsRobot()),
+		Proxy:           b2u(req.IsProxy()),
 		Backup:          b2u(it.IsBackup()),
 		X:               positiveNumber(imp.X),
 		Y:               positiveNumber(imp.Y),
-		Width:           positiveNumber(r.Width()),
-		Height:          positiveNumber(r.Height()),
+		Width:           positiveNumber(req.Width()),
+		Height:          positiveNumber(req.Height()),
 
 		SubID1: imp.SubID1,
 		SubID2: imp.SubID2,

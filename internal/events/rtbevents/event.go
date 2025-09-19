@@ -64,10 +64,13 @@ type Event struct {
 	ECPM         float64 `json:"ecpm,omitempty"` // Effective Cost per Mille
 	// Prurchase price from SSP or other TRAFFIC sources (menetisation of income requests)
 	// We are buying the place of advertisement display
+	PurchaseImpPrice    int64   `json:"pipr,omitempty"`   // Price of the impression of source traffic cost
 	PurchaseViewPrice   int64   `json:"pvpr,omitempty"`   // Price of the view of source traffic cost
 	PurchaseClickPrice  int64   `json:"pcpr,omitempty"`   // Price of the click of source traffic cost
+	PotentialImpPrice   int64   `json:"ptipr,omitempty"`  // Price of the impression of source of ads oitential
 	PotentialViewPrice  int64   `json:"ptvpr,omitempty"`  // Price of the view of source of ads oitential
 	PotentialClickPrice int64   `json:"ptcpr,omitempty"`  // Price of the click of source of ads oitential
+	ImpPrice            int64   `json:"ipr,omitempty"`    // Price of the impression of source traffic cost
 	ViewPrice           int64   `json:"vpr,omitempty"`    // Price per view
 	ClickPrice          int64   `json:"cpr,omitempty"`    // Price per click
 	CompetitorSourceID  uint64  `json:"cmsrc,omitempty"`  // Competitor source ID
@@ -201,10 +204,13 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		// Money
 		PricingModel:        it.PricingModel().UInt(),                    // Display As CPM/CPC/CPA/CPI
 		ECPM:                it.ECPM().Float64(),                         // Effective Cost Per Mille (1000 views)
+		PurchaseImpPrice:    it.PurchasePrice(adtype.ActionImp).I64(),    // Price of the impression of source traffic cost
 		PurchaseViewPrice:   it.PurchasePrice(adtype.ActionView).I64(),   // Price of of the view of source traffic cost
 		PurchaseClickPrice:  it.PurchasePrice(adtype.ActionClick).I64(),  // Price of of the click of source traffic cost
+		PotentialImpPrice:   it.PotentialPrice(adtype.ActionImp).I64(),   // Price of the impression of source traffic cost including descrepancy correction
 		PotentialViewPrice:  it.PotentialPrice(adtype.ActionView).I64(),  // Price of of the view of source traffic cost including descrepancy correction
 		PotentialClickPrice: it.PotentialPrice(adtype.ActionClick).I64(), // Price of of the click of source traffic cost including descrepancy correction
+		ImpPrice:            it.FinalPrice(adtype.ActionImp).I64(),       // Price per impression with total comissions and with descrepancy correction
 		ViewPrice:           it.FinalPrice(adtype.ActionView).I64(),      // Price per view with total comissions and with descrepancy correction
 		ClickPrice:          it.FinalPrice(adtype.ActionClick).I64(),     // Price per click with total comissions and with descrepancy correction
 		CompetitorSourceID:  it.Second().GetSourceID(),                   // Competitor source ID
@@ -284,7 +290,9 @@ func (event *Event) PrepareURL(url string) string {
 	}
 	replacer := strings.NewReplacer(
 		"{country}", event.Country,
+		"{cc}", event.Country,
 		"{lang}", event.Language,
+		"{lng}", event.Language,
 		"{domain}", event.Domain,
 		"{impid}", event.ImpID,
 		"{aucid}", event.AuctionID,

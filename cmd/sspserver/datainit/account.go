@@ -1,6 +1,8 @@
 package datainit
 
 import (
+	"context"
+
 	"github.com/geniusrabbit/adcorelib/admodels"
 	"github.com/geniusrabbit/adcorelib/billing"
 )
@@ -21,7 +23,7 @@ type Account struct {
 	RevenueShare float64 `json:"revenue_share" yaml:"revenue_share"` // % 100_00, 1 -> 100%, 0.655 -> 65.5%
 }
 
-func AdModelAccount(a *Account) (*admodels.Account, bool) {
+func AdModelAccount(ctx context.Context, a *Account) (*admodels.Account, bool) {
 	return &admodels.Account{
 		IDval:        a.ID,
 		MaxDaily:     a.MaxDaily,

@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/demdxx/cloudregistry"
 	"github.com/fasthttp/router"
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
@@ -34,6 +33,7 @@ import (
 
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
 	"github.com/sspserver/sspserver/cmd/sspserver/datainit"
+	"github.com/sspserver/sspserver/internal/appcmd"
 	"github.com/sspserver/sspserver/internal/events/rtbevents"
 	"github.com/sspserver/sspserver/internal/netdriver"
 )
@@ -44,29 +44,30 @@ type sspserverConfig struct {
 	LogLevel string `json:"log_level" default:"error" env:"LOG_LEVEL"`
 
 	// Server config
-	Server appcontext.ServerConfig `field:"server" json:"server" yaml:"server"`
+	Server appcontext.ServerConfig `field:"server" json:"server" yaml:"server" envPrefix:"SERVER_"`
 
 	// Configuration of Advertisement server
-	AdServer appcontext.AdServerConfig `field:"adserver" yaml:"adserver" json:"adserver"`
+	AdServer appcontext.AdServerConfig `field:"adserver" yaml:"adserver" json:"adserver" envPrefix:"ADSERVER_"`
 
 	// Person data extraction service
-	Person appcontext.PersonConfig `field:"person" yaml:"person" json:"person"`
+	Person appcontext.PersonConfig `field:"person" yaml:"person" json:"person" envPrefix:"PERSON_"`
 }
 
 func (cfg *sspserverConfig) IsDebug() bool {
 	return strings.EqualFold(cfg.LogLevel, "debug")
 }
 
-var SSPServerCommand = &Command[sspserverConfig]{
+var SSPServerCommand = &appcmd.Command[sspserverConfig]{
 	Name:     "sspserver",
 	HelpDesc: "Run SSP server",
 	Exec:     sspServerCommand,
 }
 
-func sspServerCommand(ctx context.Context, args []string, config *sspserverConfig, numberOfAdServers *cloudregistry.SyncUInt64Value) error {
+func sspServerCommand(ctx context.Context, args []string, config *sspserverConfig) error {
 	type eventType = rtbevents.Event
 
 	var (
+		// numberOfAdServers = cloudreg.GetCloudRegistryServerNumberConfig(ctx)
 		eventAllocator = rtbevents.AllocateEvent
 		logger         = ctxlogger.Get(ctx)
 		adServerConf   = &config.AdServer
@@ -226,7 +227,10 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 				endpoint.WithSpy(spyMiddleware),
 				endpoint.WithSendpoints(
 					direct.New(formatAccessor, adServerConf.Logic.Direct.DefaultURL),
-					dynamic.New(urlGenerator),
+					dynamic.New(urlGenerator, dynamic.MetaConfig{
+						ComplaintAdURL: adServerConf.Info.ComplaintAdURL,
+						AboutAdURL:     adServerConf.Info.AboutAdURL,
+					}),
 					proxy.New(),
 				),
 			),
@@ -241,11 +245,11 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 }
 
 func newAdSourceIterator(trafficRouters *trafficrouteraccessor.TrafficRouterAccessor) adsourceaccessor.CustomIteratorFnk {
-	return func(request *adtype.BidRequest, sources []adtype.Source) adtype.SourceIterator {
+	return func(request adtype.BidRequester, sources []adtype.Source) adtype.SourceIterator {
 		var weights map[uint64]float32
 
 		// Retrieve the traffic router list once to avoid repeated calls
-		if list, _ := trafficRouters.TrafficRouterList(); len(list) > 0 {
+		if list, _ := trafficRouters.TrafficRouterList(request.Context()); len(list) > 0 {
 			// Preallocate the weights map with an estimated size to reduce reallocation
 			weights = make(map[uint64]float32, len(sources))
 
@@ -276,7 +280,7 @@ func newAdSourceIterator(trafficRouters *trafficrouteraccessor.TrafficRouterAcce
 
 		// Return the priority iterator with a precomputed weight function
 		return adsourceaccessor.NewPriorityIterator(request, sources,
-			func(request *adtype.BidRequest, src adtype.Source) float32 {
+			func(request adtype.BidRequester, src adtype.Source) float32 {
 				if src == nil {
 					return 0
 				}

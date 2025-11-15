@@ -5,6 +5,7 @@ import (
 
 	"github.com/geniusrabbit/adcorelib/net/fasthttp/middleware"
 	"github.com/geniusrabbit/adcorelib/personification"
+	"github.com/geniusrabbit/adcorelib/personification/simple"
 	"github.com/geniusrabbit/udetect"
 	"github.com/geniusrabbit/udetect/transport/http"
 
@@ -19,7 +20,7 @@ func initPersonification(ctx context.Context, conf *appcontext.PersonConfig) (pe
 			http.WithTimeout(conf.RequestTimeout, conf.KeepAliveTimeout),
 		))
 	} else {
-		personDetector = &personification.SimpleClient{}
+		personDetector = &simple.SimpleClient{}
 	}
 
 	// Init signature

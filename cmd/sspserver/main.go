@@ -21,6 +21,8 @@ import (
 	"github.com/sspserver/sspserver/cmd/sspserver/appcontext"
 	"github.com/sspserver/sspserver/cmd/sspserver/commands"
 	"github.com/sspserver/sspserver/cmd/sspserver/jobs"
+	"github.com/sspserver/sspserver/internal/appcmd"
+	"github.com/sspserver/sspserver/internal/context/cloudreg"
 	"github.com/sspserver/sspserver/internal/cregistry"
 )
 
@@ -30,11 +32,6 @@ var (
 	buildVersion = "develop"
 	buildDate    = "unknown"
 )
-
-// Define command list
-var cmdList = commands.ICommands{
-	commands.SSPServerCommand,
-}
 
 func init() {
 	fmt.Println()
@@ -80,69 +77,66 @@ func init() {
 
 func main() {
 	var (
-		logger            = zap.L()
-		numberOfAdServers = cloudregistry.NewSyncUInt64Value(max(1, uint64(config.Server.Datacenter.ServiceCount)))
-		ctx, cancel       = signal.NotifyContext(context.Background(), os.Interrupt)
+		logger      = zap.L()
+		ctx, cancel = signal.NotifyContext(context.Background(), os.Interrupt)
 	)
 	defer cancel()
 
-	// Add logger to context
-	ctx = ctxlogger.WithLogger(ctx, logger)
+	// Application configuration with command description
+	app := &appcmd.App{
+		Name:        "sspserver",
+		Description: "SSPServer - Open Source Supply Side Platform for AdTech",
+		Version:     buildVersion,
+		BuildCommit: buildCommit,
+		BuildDate:   buildDate,
+		CmdList: appcmd.ICommands{
+			commands.SSPServerCommand.
+				WithInitContext(func(ctx context.Context) (context.Context, error) {
+					// =========== Init cloud registry ========================
+					// Cloud registry is a main entry point for service discovery
+					// ========================================================
 
-	// Register version information
-	ctx = version.WithContext(ctx, &version.Version{
-		Commit:  buildCommit,
-		Version: buildVersion,
-		Date:    buildDate,
-	})
+					numberOfAdServers := cloudregistry.NewSyncUInt64Value(
+						max(1, uint64(config.Server.Datacenter.ServiceCount)))
 
-	if len(os.Args) < 2 {
-		printCommandsUsage()
-		return
+					if config.Server.Registry.Connection != "" {
+						fatalError(
+							initCloudRegistry(ctx, &config, numberOfAdServers),
+							"cloud registry init",
+						)
+					}
+
+					// Add number of advertisement servers to context
+					ctx = cloudreg.WithCloudRegistryServerNumberConfig(ctx, numberOfAdServers)
+
+					return ctx, nil
+				}),
+		},
+		BeforeCommandRun: func(ctx context.Context, cmd appcmd.ICommand) (context.Context, error) {
+			// Profiling server of collector
+			profiler.Run(config.Server.Profile.Mode,
+				config.Server.Profile.Listen, logger)
+
+			// Run command with context
+			fmt.Println()
+			fmt.Println("░█ Log Level:\x1b[32m", config.LogLevel, "\x1b[0m")
+			fmt.Println("░█ Run command:\x1b[31m", cmd.Cmd(), "\x1b[0m")
+
+			// Add logger to context
+			ctx = ctxlogger.WithLogger(ctx, logger)
+
+			// Register version information
+			ctx = version.WithContext(ctx, &version.Version{
+				Commit:  buildCommit,
+				Version: buildVersion,
+				Date:    buildDate,
+			})
+
+			return ctx, nil
+		},
 	}
 
-	// Get command name
-	cmdName := os.Args[1]
-
-	// Run command by name
-	icmd := cmdList.Get(cmdName)
-
-	// Print help if command not found
-	if cmdName == "help" || icmd == nil {
-		printCommandsUsage()
-		return
-	}
-
-	// =========== Init cloud registry ========================
-	// Cloud registry is a main entry point for service discovery
-	// ========================================================
-
-	if config.Server.Registry.Connection != "" {
-		fatalError(
-			initCloudRegistry(ctx, &config, numberOfAdServers),
-			"cloud registry init",
-		)
-	}
-
-	// Profiling server of collector
-	profiler.Run(config.Server.Profile.Mode,
-		config.Server.Profile.Listen, logger, true)
-
-	// Run command with context
-	fmt.Println()
-	fmt.Println("░█ Run command:\x1b[31m", icmd.Cmd(), "\x1b[0m")
-	fmt.Println()
-
-	fatalError(icmd.Run(ctx, os.Args[2:], numberOfAdServers), "command execution")
-}
-
-func printCommandsUsage() {
-	fmt.Println("Usage: sspserver <command> [options]")
-	fmt.Println("Commands:")
-	for _, cmd := range cmdList {
-		fmt.Printf("  % 10s - %s\n", cmd.Cmd(), cmd.Help())
-	}
-	fmt.Println("  help - print this help")
+	fatalError(app.Run(ctx, os.Args), "application run")
 }
 
 func initCloudRegistry(ctx context.Context, config *appcontext.Config, numberOfAdServers *cloudregistry.SyncUInt64Value) error {

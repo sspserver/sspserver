@@ -149,7 +149,7 @@ func (event *Event) SetEventPurchaseViewPrice(price int64) error {
 }
 
 // Fill event object from response and Ad item objects
-func (event *Event) Fill(service string, eventType events.Type, status uint8, response adtype.Responser, it adtype.ResponserItem) error {
+func (event *Event) Fill(service string, eventType events.Type, status uint8, response adtype.Response, it adtype.ResponseItem) error {
 	var (
 		req          = response.Request()
 		imp          = it.Impression()
@@ -169,9 +169,12 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		targetSpotID = imp.Target.ID()
 	}
 
-	if _, ok := it.(adtype.ResponserMultipleItem); ok {
+	if _, ok := it.(adtype.ResponseMultipleItem); ok {
 		return ErrInvalidMultipleItemAsSingle
 	}
+
+	// Get size of the add
+	w, h := req.Size()
 
 	*event = Event{
 		Time:     time.Now().UnixNano(),
@@ -181,11 +184,11 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		Status:   status,
 
 		// Source
-		AuctionID:    req.ID,                        // ID of last auction
+		AuctionID:    req.AuctionID(),               // ID of last auction
 		AuctionType:  uint8(response.AuctionType()), // Aution type 1 - First price, 2 - Second price
 		ImpID:        it.ImpressionID(),             // Sub ID of request for paticular impression spot
 		ImpAdID:      it.ID(),                       // Specific ID for paticular ad impression
-		ExtAuctionID: req.ExtID,                     // External auction ID
+		ExtAuctionID: req.ExternalAuctionID(),       // External auction ID
 		ExtImpID:     it.ExtImpressionID(),          // External auction Imp ID
 		SourceID:     sourceID,                      // Advertisement Source ID
 
@@ -234,15 +237,15 @@ func (event *Event) Fill(service string, eventType events.Type, status uint8, re
 		OSID:            req.DeviceInfo().OS.ID,
 		BrowserID:       uint(req.BrowserInfo().ID),
 		Categories:      "",
-		Adblock:         b2u(req.IsAdblock()),
+		Adblock:         b2u(req.IsAdBlock()),
 		PrivateBrowsing: b2u(req.IsPrivateBrowsing()),
 		Robot:           b2u(req.IsRobot()),
 		Proxy:           b2u(req.IsProxy()),
 		Backup:          b2u(it.IsBackup()),
 		X:               positiveNumber(imp.X),
 		Y:               positiveNumber(imp.Y),
-		Width:           positiveNumber(req.Width()),
-		Height:          positiveNumber(req.Height()),
+		Width:           positiveNumber(w),
+		Height:          positiveNumber(h),
 
 		SubID1: imp.SubID1,
 		SubID2: imp.SubID2,

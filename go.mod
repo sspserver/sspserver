@@ -11,7 +11,7 @@ require (
 	github.com/fasthttp/router v1.5.4
 	github.com/geniusrabbit/adcorelib v0.0.0-20251115160709-3e353e72dd57
 	github.com/geniusrabbit/adsource-openrtb v0.0.0-20251115160406-b47a7dbb5aa4
-	github.com/geniusrabbit/adstdendpoints v0.0.0-20251115150933-261f2be29443
+	github.com/geniusrabbit/adstdendpoints v0.0.0-20251116095810-7a6442dac7b7
 	github.com/geniusrabbit/adstorage v0.0.0-20251010141621-6c74a1da3adc
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0
 	github.com/geniusrabbit/udetect v0.0.0-20251009164230-11a5e0a2d3b8

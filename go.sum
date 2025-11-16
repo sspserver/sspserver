@@ -128,6 +128,8 @@ github.com/geniusrabbit/adsource-openrtb v0.0.0-20251115160406-b47a7dbb5aa4 h1:r
 github.com/geniusrabbit/adsource-openrtb v0.0.0-20251115160406-b47a7dbb5aa4/go.mod h1:vNW/MJgyc2vsws38mNhOvnmUSQUUb/CdXVLMWui9Ql8=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20251115150933-261f2be29443 h1:VufbI3szvjZ/yGixWx1cTl2B4j5T3rQjXiDwz8BSZws=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20251115150933-261f2be29443/go.mod h1:pxBx3YIw+BgEBWf1YmsHDUpn8KVj+2R+oebfhN2EeRw=
+github.com/geniusrabbit/adstdendpoints v0.0.0-20251116095810-7a6442dac7b7 h1:k22pQ5zITv4x2wvMAzEGIciKeBUkKWA/lM7n/ezxeEI=
+github.com/geniusrabbit/adstdendpoints v0.0.0-20251116095810-7a6442dac7b7/go.mod h1:pxBx3YIw+BgEBWf1YmsHDUpn8KVj+2R+oebfhN2EeRw=
 github.com/geniusrabbit/adstorage v0.0.0-20251010141621-6c74a1da3adc h1:8fOtXz6TfB6sAQa6vIsGExkDCmsQu4cXE6YzWtu3jmw=
 github.com/geniusrabbit/adstorage v0.0.0-20251010141621-6c74a1da3adc/go.mod h1:x4vPT9hcTT52miiQ305eY8oel8IK86mOCRLF4mDZ9vg=
 github.com/geniusrabbit/gogeo v0.0.0-20190430153311-59b5dca35b92 h1:4zzWLdGtzQxDg6WcFpSzcfEBct6xBmGk7T26I1IlNt8=

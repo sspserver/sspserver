@@ -9,9 +9,9 @@ require (
 	github.com/demdxx/gocast/v2 v2.11.0
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20260331151326-8e9dacd691a6
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260331162450-787cfcc0844b
-	github.com/geniusrabbit/adstdendpoints v0.0.0-20260331162534-e0896d6e15c7
+	github.com/geniusrabbit/adcorelib v0.0.0-20260331163616-23b31d280bc8
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260331163840-4c5197c16ef9
+	github.com/geniusrabbit/adstdendpoints v0.0.0-20260331163916-c3d2e87d29d1
 	github.com/geniusrabbit/adstorage v0.0.0-20251010141621-6c74a1da3adc
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0
 	github.com/geniusrabbit/udetect v0.0.0-20251009164230-11a5e0a2d3b8

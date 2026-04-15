@@ -75,6 +75,10 @@ stop: ## Stop all services
 db-cli: ## Open development database
 	$(DOCKER_COMPOSE) exec $(DOCKER_DATABASE_NAME) psql -U $(DATABASE_USER) $(DATABASE_DB)
 
+.PHONY: ch-cli
+ch-cli: ## Open clickhouse client
+	$(DOCKER_COMPOSE) exec clickhouse-server clickhouse-client
+
 .PHONY: chi
 chi: ## Run clickhouse client
 	${K8C} -n adlab-statistic exec -it chi-statistic-statistic-0-0-0 -- clickhouse-client

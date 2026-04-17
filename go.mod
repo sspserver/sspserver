@@ -9,9 +9,9 @@ require (
 	github.com/demdxx/gocast/v2 v2.11.0
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20260415124817-2e3d66408ddf
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260415125131-ecc3c14af332
-	github.com/geniusrabbit/adstdendpoints v0.0.0-20260331163916-c3d2e87d29d1
+	github.com/geniusrabbit/adcorelib v0.0.0-20260417110201-0a9162963a17
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260417111347-c741e14df7b1
+	github.com/geniusrabbit/adstdendpoints v0.0.0-20260417110417-dfee9f5645fe
 	github.com/geniusrabbit/adstorage v0.0.0-20251010141621-6c74a1da3adc
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0
 	github.com/geniusrabbit/udetect v0.0.0-20251009164230-11a5e0a2d3b8
@@ -55,7 +55,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
 	github.com/hashicorp/consul/api v1.34.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -81,8 +81,8 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-sqlite3 v1.14.37 // indirect
+	github.com/mattn/go-isatty v0.0.21 // indirect
+	github.com/mattn/go-sqlite3 v1.14.42 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
 	github.com/microsoft/go-mssqldb v1.9.8 // indirect
 	github.com/mileusna/useragent v1.3.5 // indirect

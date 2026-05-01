@@ -112,6 +112,8 @@ type adInfoConfig struct {
 }
 
 type AdServerConfig struct {
+	DefaultHttpSchema string `field:"default_http_schema" yaml:"default_http_schema" json:"default_http_schema" env:"DEFAULT_HTTP_SCHEMA" default:"https"`
+
 	// Storage of the advertisement
 	Storage adstorage `field:"storage" yaml:"storage" json:"storage" envPrefix:"ADSTORAGE_"`
 

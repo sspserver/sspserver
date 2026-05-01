@@ -91,6 +91,8 @@ services:
       # - jssdk
     volumes:
       - ../../:/project
+    environment:
+      - ADSERVER_DEFAULT_HTTP_SCHEMA=http
 
 volumes:
   clickhouse:

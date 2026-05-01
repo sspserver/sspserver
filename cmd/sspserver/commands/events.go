@@ -46,8 +46,7 @@ func initEventsGenerator[EventT EventType](
 	urlGenerator := (&urlgenerator.Generator[EventT, LeadT, UserInfoT]{
 		EventGenerator: eventGenerator,
 		PixelGenerator: pixelgenerator.NewPixelGenerator[EventT, LeadT](adServerConf.TrackerHost),
-
-		Schema:         "",
+		Schema:         adServerConf.DefaultHttpSchema,
 		ServiceDomain:  serviceHostname,
 		CDNDomain:      adServerConf.CDNDomain,
 		LibDomain:      adServerConf.LibDomain,

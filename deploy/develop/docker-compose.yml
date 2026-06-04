@@ -93,6 +93,7 @@ services:
       - ../../:/project
     environment:
       - ADSERVER_DEFAULT_HTTP_SCHEMA=http
+      - ADSERVER_TESTING_DATA_PATH=/project/deploy/rtb_test
 
 volumes:
   clickhouse:

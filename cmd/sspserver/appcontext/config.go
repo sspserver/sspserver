@@ -102,8 +102,8 @@ type adstorage struct {
 
 type adLogic struct {
 	Direct struct {
-		DefaultURL string `field:"default_url" yaml:"default_url" json:"default_url" env:"ADSERVER_LOGIC_DIRECT_DEFAULT_URL"`
-	} `field:"direct" yaml:"direct" json:"direct"`
+		DefaultURL string `field:"default_url" yaml:"default_url" json:"default_url" env:"DEFAULT_URL"`
+	} `field:"direct" yaml:"direct" json:"direct" envPrefix:"DIRECT_"`
 }
 
 type adInfoConfig struct {
@@ -140,6 +140,9 @@ type AdServerConfig struct {
 
 	// Information about ads
 	Info adInfoConfig `field:"info" yaml:"info" json:"info" envPrefix:"ADINFO_"`
+
+	// Testing data path for adserver
+	TestingDataPath string `field:"testing_data_path" yaml:"testing_data_path" json:"testing_data_path" env:"TESTING_DATA_PATH"`
 }
 
 type adsourceConfig struct {

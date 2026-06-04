@@ -1,0 +1,19 @@
+{
+  "id": "1234567890",
+  "seatbid": [
+    {
+      "bid": [
+        {
+          "id": "ban1",
+          "impid": "IMP_ID_FROM_BID_REQUEST",
+          "price": 0.1,
+          "nurl": "https://ad.twinrdengine.com/win/...?p=${AUCTION_PRICE}",
+          "adm": "<html><body><h1>Test Ad</h1><p>This is a test ad for TwinRed's RTB integration ${AUCTION_PRICE}.</p></body></html>",
+          "ext": {
+            ".adformat": ["banner_300x250"]
+          }
+        }
+      ]
+    }
+  ]
+}

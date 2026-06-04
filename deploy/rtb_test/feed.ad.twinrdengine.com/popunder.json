@@ -1,0 +1,19 @@
+{
+  "id": "29ASDJKASDJ321495",
+  "seatbid": [
+    {
+      "bid": [
+        {
+          "id": "pop1",
+          "impid": "IMP_ID_FROM_BID_REQUEST",
+          "price": 0.2,
+          "nurl": "https://ad.twinrdengine.com/win/IIbPHOzDbpiljGknX1XT0_U...?p=${AUCTION_PRICE}",
+          "adm": "https://some-popunder-redirect-url.com/?subid=48230948",
+          "ext": {
+            ".adformat": ["popunder"]
+          }
+        }
+      ]
+    }
+  ]
+}

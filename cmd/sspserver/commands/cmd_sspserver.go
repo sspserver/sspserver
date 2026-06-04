@@ -141,29 +141,7 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 	// Init RTB source accessor
 	sourceAccessor, err := storageDataAccessor.Sources(
 		[]adsourceaccessor.SourceFactory{
-			openrtbsrc.NewFactory(func(ctx context.Context, src *admodels.RTBSource, a ...any) (requester.RTBRequester, error) {
-				// For testing purposes, if TestMode is enabled for the source, we use a simulation requester that generates mock responses based on predefined testing data.
-				if src.Options.TestMode == 1 {
-					if config.AdServer.TestingDataPath == "" {
-						return nil, fmt.Errorf("testing data path is not configured for test mode")
-					}
-					urlObj, err := url.Parse(src.URL)
-					if err != nil {
-						return nil, err
-					}
-					data := GetOpenrtbTestingData(config.AdServer.TestingDataPath, urlObj.Hostname())
-					if len(data) == 0 {
-						return nil, fmt.Errorf("no testing data found for host: %s", urlObj.Hostname())
-					}
-					return rtbreq.NewSimulationRTBRequester(data)
-				}
-				// For real RTB sources, we use the HTTP requester with a custom network driver
-				netDriver, err := netdriver.NewDriver(ctx, time.Duration(max(50, src.Timeout))*time.Millisecond)
-				if err != nil {
-					return nil, err
-				}
-				return rtbreq.NewHttpRTBRequester(src, netDriver)
-			}),
+			openrtbsrc.NewFactory(newRTBRequester(config.AdServer.TestingDataPath)),
 		},
 		adsourceaccessor.WithCustomIterator[datainit.Account](
 			newAdSourceIterator(trafficRouters),
@@ -316,5 +294,31 @@ func newAdSourceIterator(trafficRouters *trafficrouteraccessor.TrafficRouterAcce
 				}
 				return weights[0]
 			})
+	}
+}
+
+func newRTBRequester(testDataPath string) func(context.Context, *admodels.RTBSource, ...any) (requester.RTBRequester, error) {
+	return func(ctx context.Context, src *admodels.RTBSource, a ...any) (requester.RTBRequester, error) {
+		// For testing purposes, if TestMode is enabled for the source, we use a simulation requester that generates mock responses based on predefined testing data.
+		if src.Options.TestMode == 1 {
+			if testDataPath == "" {
+				return nil, fmt.Errorf("testing data path is not configured for test mode")
+			}
+			urlObj, err := url.Parse(src.URL)
+			if err != nil {
+				return nil, err
+			}
+			data := GetOpenrtbTestingData(testDataPath, urlObj.Hostname())
+			if len(data) == 0 {
+				return nil, fmt.Errorf("no testing data found for host: %s", urlObj.Hostname())
+			}
+			return rtbreq.NewSimulationRTBRequester(data)
+		}
+		// For real RTB sources, we use the HTTP requester with a custom network driver
+		netDriver, err := netdriver.NewDriver(ctx, time.Duration(max(50, src.Timeout))*time.Millisecond)
+		if err != nil {
+			return nil, err
+		}
+		return rtbreq.NewHttpRTBRequester(src, netDriver)
 	}
 }

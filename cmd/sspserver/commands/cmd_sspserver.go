@@ -24,7 +24,6 @@ import (
 	"github.com/geniusrabbit/adcorelib/httpserver/extensions/version"
 	"github.com/geniusrabbit/adcorelib/httpserver/wrappers/httphandler"
 	openrtbsrc "github.com/geniusrabbit/adsource-openrtb"
-	"github.com/geniusrabbit/adsource-openrtb/response/requester"
 	rtbreq "github.com/geniusrabbit/adsource-openrtb/response/requester"
 	"github.com/geniusrabbit/adstdendpoints/direct"
 	"github.com/geniusrabbit/adstdendpoints/dynamic"
@@ -297,8 +296,8 @@ func newAdSourceIterator(trafficRouters *trafficrouteraccessor.TrafficRouterAcce
 	}
 }
 
-func newRTBRequester(testDataPath string) func(context.Context, *admodels.RTBSource, ...any) (requester.RTBRequester, error) {
-	return func(ctx context.Context, src *admodels.RTBSource, a ...any) (requester.RTBRequester, error) {
+func newRTBRequester(testDataPath string) func(context.Context, *admodels.RTBSource, ...any) (rtbreq.RTBRequester, error) {
+	return func(ctx context.Context, src *admodels.RTBSource, a ...any) (rtbreq.RTBRequester, error) {
 		// For testing purposes, if TestMode is enabled for the source, we use a simulation requester that generates mock responses based on predefined testing data.
 		if src.Options.TestMode == 1 {
 			if testDataPath == "" {

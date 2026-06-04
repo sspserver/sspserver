@@ -9,8 +9,8 @@ require (
 	github.com/demdxx/gocast/v2 v2.11.0
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20260604142346-ee306f778d42
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260604144621-07498866b294
+	github.com/geniusrabbit/adcorelib v0.0.0-20260604171022-6146965dc8ab
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260604172439-620b847057f9
 	github.com/geniusrabbit/adstdendpoints v0.0.0-20260604143403-e37fd25f0946
 	github.com/geniusrabbit/adstorage v0.0.0-20260517193112-1bffbafd33d7
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0
@@ -51,7 +51,7 @@ require (
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/pprof v0.0.0-20260507013755-92041b743c96 // indirect
+	github.com/google/pprof v0.0.0-20260604005048-7023385849c0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
 	github.com/hashicorp/consul/api v1.34.3 // indirect
@@ -87,11 +87,11 @@ require (
 	github.com/mileusna/useragent v1.3.5 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/nats-io/nkeys v0.4.15 // indirect
+	github.com/nats-io/nkeys v0.4.16 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
-	github.com/pierrec/lz4/v4 v4.1.26 // indirect
+	github.com/pierrec/lz4/v4 v4.1.27 // indirect
 	github.com/pkg/profile v1.7.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect

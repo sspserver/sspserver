@@ -9,8 +9,8 @@ require (
 	github.com/demdxx/gocast/v2 v2.12.1
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
-	github.com/geniusrabbit/adcorelib v0.0.0-20260621140204-b087d03dff42
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260621144041-1d4e6720aee4
+	github.com/geniusrabbit/adcorelib v0.0.0-20260621200018-7f3ae258c395
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260621200413-6c308cf96d62
 	github.com/geniusrabbit/adstdendpoints v0.0.0-20260618203217-5c275e65b241
 	github.com/geniusrabbit/adstorage v0.0.0-20260517193112-1bffbafd33d7
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0
@@ -81,7 +81,7 @@ require (
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
-	github.com/mattn/go-sqlite3 v1.14.46 // indirect
+	github.com/mattn/go-sqlite3 v1.14.47 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
 	github.com/microsoft/go-mssqldb v1.10.0 // indirect
 	github.com/mileusna/useragent v1.3.5 // indirect

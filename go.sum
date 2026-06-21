@@ -116,10 +116,10 @@ github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHk
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
 github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
-github.com/geniusrabbit/adcorelib v0.0.0-20260621140204-b087d03dff42 h1:apOFMOGYm5mgzXApAsYGzFV95QsF//3ISbrlDZKeaXQ=
-github.com/geniusrabbit/adcorelib v0.0.0-20260621140204-b087d03dff42/go.mod h1:isCnRzmMif/4FsoXY23zfyy70/16R0tcu3iAh5iff6c=
-github.com/geniusrabbit/adsource-openrtb v0.0.0-20260621144041-1d4e6720aee4 h1:SgTK2XOPypbRIrejKu5EnxRp7Lg2HR3sPS5nx6o561c=
-github.com/geniusrabbit/adsource-openrtb v0.0.0-20260621144041-1d4e6720aee4/go.mod h1:izxBMaVi5xEWnUwsDeykRKgz/SgIynzIh7Xk1tTiV1o=
+github.com/geniusrabbit/adcorelib v0.0.0-20260621200018-7f3ae258c395 h1:wxqYt/l5ZBhuTiCpz2tG+neSm2Xt1Ortnq9unT/wXD8=
+github.com/geniusrabbit/adcorelib v0.0.0-20260621200018-7f3ae258c395/go.mod h1:isCnRzmMif/4FsoXY23zfyy70/16R0tcu3iAh5iff6c=
+github.com/geniusrabbit/adsource-openrtb v0.0.0-20260621200413-6c308cf96d62 h1:VJVs40NV5lludpH7FkRysGhLQjzm3h8M22PJsmsfR7M=
+github.com/geniusrabbit/adsource-openrtb v0.0.0-20260621200413-6c308cf96d62/go.mod h1:W0yHfUR83UltOZg7lMNtbfpKS+voOwQWf7Igirh87qc=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20260618203217-5c275e65b241 h1:Bh80G8A8BiTtlTwxncVl39iHMGuhJ9Z4UXXPkVf9H+4=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20260618203217-5c275e65b241/go.mod h1:O2pX3X5dsH8fyHtOxJ5qN/fiN55Q4fkOidI0DcEF8mk=
 github.com/geniusrabbit/adstorage v0.0.0-20260517193112-1bffbafd33d7 h1:+frteLC6ivY7ld7DbnFFHcSUkeTA7lIoTf+ovWDW4SY=
@@ -305,8 +305,8 @@ github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Ky
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/mattn/go-isatty v0.0.22 h1:j8l17JJ9i6VGPUFUYoTUKPSgKe/83EYU2zBC7YNKMw4=
 github.com/mattn/go-isatty v0.0.22/go.mod h1:ZXfXG4SQHsB/w3ZeOYbR0PrPwLy+n6xiMrJlRFqopa4=
-github.com/mattn/go-sqlite3 v1.14.46 h1:ZfaNcYO/CGNMRxkN1vvG9qf+Y+uvXfgT9a6MlEw+HmU=
-github.com/mattn/go-sqlite3 v1.14.46/go.mod h1:6JTjA44L93a0QCyJef5YvlPoKXntQPjzWv5gtm9sB6w=
+github.com/mattn/go-sqlite3 v1.14.47 h1:jOBI62gS7nKeZv+as1oGEy0+1qISgXwH/QBlR6KbfIo=
+github.com/mattn/go-sqlite3 v1.14.47/go.mod h1:6JTjA44L93a0QCyJef5YvlPoKXntQPjzWv5gtm9sB6w=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/mcuadros/go-defaults v1.2.0 h1:FODb8WSf0uGaY8elWJAkoLL0Ri6AlZ1bFlenk56oZtc=
 github.com/mcuadros/go-defaults v1.2.0/go.mod h1:WEZtHEVIGYVDqkKSWBdWKUVdRyKlMfulPaGDWIVeCWY=

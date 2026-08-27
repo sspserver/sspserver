@@ -53,7 +53,6 @@ func initEventsGenerator[EventT EventType](
 		ClickPattern:   "/click?c={code}",
 		DirectPattern:  "/direct?c={code}",
 		WinPattern:     "/win?c={code}",
-		PriceParamName: appcontext.PriceParamName,
 	}).Init()
 
 	return ctx, urlGenerator, eventStream, nil

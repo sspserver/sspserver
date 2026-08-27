@@ -11,8 +11,11 @@ import (
 	"github.com/geniusrabbit/adcorelib/admodels/types"
 	"github.com/geniusrabbit/adcorelib/adtype"
 	"github.com/geniusrabbit/adcorelib/billing"
+	"github.com/geniusrabbit/adcorelib/eventtraking/eventgenerator"
 	"github.com/geniusrabbit/adcorelib/eventtraking/events"
 )
+
+var _ eventgenerator.EventType = (*Event)(nil)
 
 // ErrInvalidMultipleItemAsSingle invalid multiple item as single action
 var ErrInvalidMultipleItemAsSingle = errors.New("can`t convert multipleitem to single action")
@@ -136,6 +139,11 @@ func (event *Event) EventType() events.Type {
 // EventURL of event return URL of event target
 func (event *Event) EventURL() string {
 	return event.URL
+}
+
+// PreparedEventURL returns prepared url of event target
+func (event *Event) PreparedEventURL() string {
+	return event.PrepareURL(event.EventURL())
 }
 
 // SetEventPurchaseViewPrice set price of the event

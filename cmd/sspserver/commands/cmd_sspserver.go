@@ -117,7 +117,7 @@ func sspServerCommand(ctx context.Context, args []string, config *sspserverConfi
 	// Init side modules
 	datainit.Initialize(config.IsDebug(), urlGenerator)
 
-	// =================== Init formats ========================
+	// =================== Init formats =======================
 	// Format is a specific type of advertisement
 	// ========================================================
 

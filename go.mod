@@ -10,7 +10,7 @@ require (
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
 	github.com/geniusrabbit/adcorelib v0.0.0-20260826120507-01c65f91ba39
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260827135912-9c0a5af88853
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260828091246-aaad7145cd3a
 	github.com/geniusrabbit/adstdendpoints v0.0.0-20260827140210-80c1d0e5740a
 	github.com/geniusrabbit/adstorage v0.0.0-20260827140139-85fcf1c1d54f
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0
@@ -25,7 +25,7 @@ require (
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/IBM/sarama v1.60.2 // indirect
-	github.com/andybalholm/brotli v1.2.2 // indirect
+	github.com/andybalholm/brotli v1.2.3 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bkaradzic/go-lz4 v1.0.0 // indirect

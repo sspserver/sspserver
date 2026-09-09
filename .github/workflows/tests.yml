@@ -35,10 +35,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Run linters
-      uses: golangci/golangci-lint-action@v8
+      uses: golangci/golangci-lint-action@v9
       with:
         version: latest
-        skip-cache: true
         args: --fix
 
   test:

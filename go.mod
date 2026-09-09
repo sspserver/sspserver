@@ -10,7 +10,7 @@ require (
 	github.com/demdxx/goconfig v1.3.1
 	github.com/fasthttp/router v1.5.4
 	github.com/geniusrabbit/adcorelib v0.0.0-20260909140805-d36e2764a607
-	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260828091246-aaad7145cd3a
+	github.com/geniusrabbit/adsource-openrtb v0.0.0-20260903183750-1afa1d88b31c
 	github.com/geniusrabbit/adstdendpoints v0.0.0-20260909195239-c83d4b35dcc9
 	github.com/geniusrabbit/adstorage v0.0.0-20260827140139-85fcf1c1d54f
 	github.com/geniusrabbit/notificationcenter/v2 v2.5.0

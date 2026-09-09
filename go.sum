@@ -101,6 +101,8 @@ github.com/geniusrabbit/adcorelib v0.0.0-20260909140805-d36e2764a607 h1:ZpSgVp+b
 github.com/geniusrabbit/adcorelib v0.0.0-20260909140805-d36e2764a607/go.mod h1:2zVyHL+SuWowzIbtOjKV31Fc+ZnBfwCXK+fyPgG1XAA=
 github.com/geniusrabbit/adsource-openrtb v0.0.0-20260828091246-aaad7145cd3a h1:0tpwQaxdQ9GVWBDwq3K3FagtDrrQmYc9O8DDCxn15yc=
 github.com/geniusrabbit/adsource-openrtb v0.0.0-20260828091246-aaad7145cd3a/go.mod h1:yKe0iR0pvEbgLEufAALTqN+ai4RQVz90s/X7eQm9NmM=
+github.com/geniusrabbit/adsource-openrtb v0.0.0-20260903183750-1afa1d88b31c h1:9mrylCJBLX+NYXYU5nuW7Tn1PTyrSpsoKDOGhKIn3BI=
+github.com/geniusrabbit/adsource-openrtb v0.0.0-20260903183750-1afa1d88b31c/go.mod h1:kYofDPt3DJxP2GSB/aHCSAtB9aT42fdVBwjyLmqNlwQ=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20260909195239-c83d4b35dcc9 h1:L9cAQP3FFi6fNFUMVWx3apoYxjasjoDAiJB/ar3xAwo=
 github.com/geniusrabbit/adstdendpoints v0.0.0-20260909195239-c83d4b35dcc9/go.mod h1:rFjQ+kZJZGzBD2lSMYsm0/suGVpzNinR+pgputLqfKc=
 github.com/geniusrabbit/adstorage v0.0.0-20260827140139-85fcf1c1d54f h1:xFyvM662iukzaVvTh1Y8EsJ+yxiWPnrUBKEKSRBolyw=
